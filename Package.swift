@@ -5,6 +5,10 @@ import PackageDescription
 
 let package = Package(
     name: "AppServerClient",
+    platforms: [
+        .macOS(.v10_15),
+        .iOS(.v18),
+    ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
@@ -23,6 +27,10 @@ let package = Package(
             name: "AppServerClient",
             dependencies: [
                 .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
+            ],
+            exclude: [
+                "JSONSchema",
+                "openapi.json.template",
             ],
             plugins: [
                 .plugin(name: "OpenAPIGenerator", package: "swift-openapi-generator")

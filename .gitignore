@@ -6,3 +6,8 @@ DerivedData/
 .swiftpm/configuration/registries.json
 .swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
 .netrc
+
+*.pyc
+
+# This file is code-generated, it's better not to keep it in the repo
+Sources/AppServerClient/openapi.json

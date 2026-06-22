@@ -1,0 +1,21 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Codex App Server Protocol",
+    "version": "0.0.0"
+  },
+  "paths": {},
+  "components": {
+    "schemas": {
+      "ClientRequest": {
+        "$ref": "./JSONSchema/ClientRequest.json"
+      },
+      "ServerRequest": {
+        "$ref": "./JSONSchema/ServerRequest.json"
+      },
+      "ServerNotification": {
+        "$ref": "./JSONSchema/ServerNotification.json"
+      }
+    }
+  }
+}
