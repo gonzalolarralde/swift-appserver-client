@@ -10,6 +10,7 @@ class UnionCase:
     alias_name: str
     component_name: str
     params_type: str
+    response_type: str | None
     properties: tuple[str, ...]
 
 

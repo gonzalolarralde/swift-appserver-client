@@ -10,6 +10,7 @@ enum AppServerModels {
 
 protocol ClientRequestable {
     associatedtype Params
+    associatedtype Response
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest
     var id: Components.Schemas.RequestId { get }
     var params: Params { get }
@@ -17,6 +18,7 @@ protocol ClientRequestable {
 
 protocol ServerRequestable {
     associatedtype Params
+    associatedtype Response
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest
     var id: Components.Schemas.RequestId { get }
     var params: Params { get }
@@ -149,6 +151,128 @@ extension AppServerModels.ClientRequest {
     typealias FuzzyFileSearchSessionUpdate = Components.Schemas.ClientRequestFuzzyFileSearchSessionUpdateRequest
     typealias FuzzyFileSearchSessionStop = Components.Schemas.ClientRequestFuzzyFileSearchSessionStopRequest
 
+    enum Response {
+        typealias Initialize = Components.Schemas.InitializeResponse
+        typealias ThreadStart = Components.Schemas.ThreadStartResponse
+        typealias ThreadResume = Components.Schemas.ThreadResumeResponse
+        typealias ThreadFork = Components.Schemas.ThreadForkResponse
+        typealias ThreadArchive = Components.Schemas.ThreadArchiveResponse
+        typealias ThreadDelete = Components.Schemas.ThreadDeleteResponse
+        typealias ThreadUnsubscribe = Components.Schemas.ThreadUnsubscribeResponse
+        typealias ThreadIncrementElicitation = Components.Schemas.ThreadIncrementElicitationResponse
+        typealias ThreadDecrementElicitation = Components.Schemas.ThreadDecrementElicitationResponse
+        typealias ThreadNameSet = Components.Schemas.ThreadSetNameResponse
+        typealias ThreadGoalSet = Components.Schemas.ThreadGoalSetResponse
+        typealias ThreadGoalGet = Components.Schemas.ThreadGoalGetResponse
+        typealias ThreadGoalClear = Components.Schemas.ThreadGoalClearResponse
+        typealias ThreadMetadataUpdate = Components.Schemas.ThreadMetadataUpdateResponse
+        typealias ThreadSettingsUpdate = Components.Schemas.ThreadSettingsUpdateResponse
+        typealias ThreadMemoryModeSet = Components.Schemas.ThreadMemoryModeSetResponse
+        typealias MemoryReset = Components.Schemas.MemoryResetResponse
+        typealias ThreadUnarchive = Components.Schemas.ThreadUnarchiveResponse
+        typealias ThreadCompactStart = Components.Schemas.ThreadCompactStartResponse
+        typealias ThreadShellCommand = Components.Schemas.ThreadShellCommandResponse
+        typealias ThreadApproveGuardianDeniedAction = Components.Schemas.ThreadApproveGuardianDeniedActionResponse
+        typealias ThreadBackgroundTerminalsClean = Components.Schemas.ThreadBackgroundTerminalsCleanResponse
+        typealias ThreadBackgroundTerminalsList = Components.Schemas.ThreadBackgroundTerminalsListResponse
+        typealias ThreadBackgroundTerminalsTerminate = Components.Schemas.ThreadBackgroundTerminalsTerminateResponse
+        typealias ThreadRollback = Components.Schemas.ThreadRollbackResponse
+        typealias ThreadList = Components.Schemas.ThreadListResponse
+        typealias ThreadSearch = Components.Schemas.ThreadSearchResponse
+        typealias ThreadLoadedList = Components.Schemas.ThreadLoadedListResponse
+        typealias ThreadRead = Components.Schemas.ThreadReadResponse
+        typealias ThreadTurnsList = Components.Schemas.ThreadTurnsListResponse
+        typealias ThreadTurnsItemsList = Components.Schemas.ThreadTurnsItemsListResponse
+        typealias ThreadInjectItems = Components.Schemas.ThreadInjectItemsResponse
+        typealias SkillsList = Components.Schemas.SkillsListResponse
+        typealias SkillsExtraRootsSet = Components.Schemas.SkillsExtraRootsSetResponse
+        typealias HooksList = Components.Schemas.HooksListResponse
+        typealias MarketplaceAdd = Components.Schemas.MarketplaceAddResponse
+        typealias MarketplaceRemove = Components.Schemas.MarketplaceRemoveResponse
+        typealias MarketplaceUpgrade = Components.Schemas.MarketplaceUpgradeResponse
+        typealias PluginList = Components.Schemas.PluginListResponse
+        typealias PluginInstalled = Components.Schemas.PluginInstalledResponse
+        typealias PluginRead = Components.Schemas.PluginReadResponse
+        typealias PluginSkillRead = Components.Schemas.PluginSkillReadResponse
+        typealias PluginShareSave = Components.Schemas.PluginShareSaveResponse
+        typealias PluginShareUpdateTargets = Components.Schemas.PluginShareUpdateTargetsResponse
+        typealias PluginShareList = Components.Schemas.PluginShareListResponse
+        typealias PluginShareCheckout = Components.Schemas.PluginShareCheckoutResponse
+        typealias PluginShareDelete = Components.Schemas.PluginShareDeleteResponse
+        typealias AppList = Components.Schemas.AppsListResponse
+        typealias FsReadFile = Components.Schemas.FsReadFileResponse
+        typealias FsWriteFile = Components.Schemas.FsWriteFileResponse
+        typealias FsCreateDirectory = Components.Schemas.FsCreateDirectoryResponse
+        typealias FsGetMetadata = Components.Schemas.FsGetMetadataResponse
+        typealias FsReadDirectory = Components.Schemas.FsReadDirectoryResponse
+        typealias FsRemove = Components.Schemas.FsRemoveResponse
+        typealias FsCopy = Components.Schemas.FsCopyResponse
+        typealias FsWatch = Components.Schemas.FsWatchResponse
+        typealias FsUnwatch = Components.Schemas.FsUnwatchResponse
+        typealias SkillsConfigWrite = Components.Schemas.SkillsConfigWriteResponse
+        typealias PluginInstall = Components.Schemas.PluginInstallResponse
+        typealias PluginUninstall = Components.Schemas.PluginUninstallResponse
+        typealias TurnStart = Components.Schemas.TurnStartResponse
+        typealias TurnSteer = Components.Schemas.TurnSteerResponse
+        typealias TurnInterrupt = Components.Schemas.TurnInterruptResponse
+        typealias ThreadRealtimeStart = Components.Schemas.ThreadRealtimeStartResponse
+        typealias ThreadRealtimeAppendAudio = Components.Schemas.ThreadRealtimeAppendAudioResponse
+        typealias ThreadRealtimeAppendText = Components.Schemas.ThreadRealtimeAppendTextResponse
+        typealias ThreadRealtimeAppendSpeech = Components.Schemas.ThreadRealtimeAppendSpeechResponse
+        typealias ThreadRealtimeStop = Components.Schemas.ThreadRealtimeStopResponse
+        typealias ThreadRealtimeListVoices = Components.Schemas.ThreadRealtimeListVoicesResponse
+        typealias ReviewStart = Components.Schemas.ReviewStartResponse
+        typealias ModelList = Components.Schemas.ModelListResponse
+        typealias ModelProviderCapabilitiesRead = Components.Schemas.ModelProviderCapabilitiesReadResponse
+        typealias ExperimentalFeatureList = Components.Schemas.ExperimentalFeatureListResponse
+        typealias PermissionProfileList = Components.Schemas.PermissionProfileListResponse
+        typealias ExperimentalFeatureEnablementSet = Components.Schemas.ExperimentalFeatureEnablementSetResponse
+        typealias RemoteControlEnable = Components.Schemas.RemoteControlEnableResponse
+        typealias RemoteControlDisable = Components.Schemas.RemoteControlDisableResponse
+        typealias RemoteControlStatusRead = Components.Schemas.RemoteControlStatusReadResponse
+        typealias RemoteControlPairingStart = Components.Schemas.RemoteControlPairingStartResponse
+        typealias RemoteControlPairingStatus = Components.Schemas.RemoteControlPairingStatusResponse
+        typealias RemoteControlClientList = Components.Schemas.RemoteControlClientsListResponse
+        typealias RemoteControlClientRevoke = Components.Schemas.RemoteControlClientsRevokeResponse
+        typealias CollaborationModeList = Components.Schemas.CollaborationModeListResponse
+        typealias MockExperimentalMethod = Components.Schemas.MockExperimentalMethodResponse
+        typealias EnvironmentAdd = Components.Schemas.EnvironmentAddResponse
+        typealias McpServerOauthLogin = Components.Schemas.McpServerOauthLoginResponse
+        typealias ConfigMcpServerReload = Components.Schemas.McpServerRefreshResponse
+        typealias McpServerStatusList = Components.Schemas.ListMcpServerStatusResponse
+        typealias McpServerResourceRead = Components.Schemas.McpResourceReadResponse
+        typealias McpServerToolCall = Components.Schemas.McpServerToolCallResponse
+        typealias WindowsSandboxSetupStart = Components.Schemas.WindowsSandboxSetupStartResponse
+        typealias WindowsSandboxReadiness = Components.Schemas.WindowsSandboxReadinessResponse
+        typealias AccountLoginStart = Components.Schemas.LoginAccountResponse
+        typealias AccountLoginCancel = Components.Schemas.CancelLoginAccountResponse
+        typealias AccountLogout = Components.Schemas.LogoutAccountResponse
+        typealias AccountRateLimitsRead = Components.Schemas.GetAccountRateLimitsResponse
+        typealias AccountRateLimitResetCreditConsume = Components.Schemas.ConsumeAccountRateLimitResetCreditResponse
+        typealias AccountUsageRead = Components.Schemas.GetAccountTokenUsageResponse
+        typealias AccountSendAddCreditsNudgeEmail = Components.Schemas.SendAddCreditsNudgeEmailResponse
+        typealias FeedbackUpload = Components.Schemas.FeedbackUploadResponse
+        typealias CommandExec = Components.Schemas.CommandExecResponse
+        typealias CommandExecWrite = Components.Schemas.CommandExecWriteResponse
+        typealias CommandExecTerminate = Components.Schemas.CommandExecTerminateResponse
+        typealias CommandExecResize = Components.Schemas.CommandExecResizeResponse
+        typealias ProcessSpawn = Components.Schemas.ProcessSpawnResponse
+        typealias ProcessWriteStdin = Components.Schemas.ProcessWriteStdinResponse
+        typealias ProcessKill = Components.Schemas.ProcessKillResponse
+        typealias ProcessResizePty = Components.Schemas.ProcessResizePtyResponse
+        typealias ConfigRead = Components.Schemas.ConfigReadResponse
+        typealias ExternalAgentConfigDetect = Components.Schemas.ExternalAgentConfigDetectResponse
+        typealias ExternalAgentConfigImport = Components.Schemas.ExternalAgentConfigImportResponse
+        typealias ConfigValueWrite = Components.Schemas.ConfigWriteResponse
+        typealias ConfigBatchWrite = Components.Schemas.ConfigWriteResponse
+        typealias ConfigRequirementsRead = Components.Schemas.ConfigRequirementsReadResponse
+        typealias AccountRead = Components.Schemas.GetAccountResponse
+        typealias FuzzyFileSearch = Components.Schemas.FuzzyFileSearchResponse
+        typealias FuzzyFileSearchSessionStart = Components.Schemas.FuzzyFileSearchSessionStartResponse
+        typealias FuzzyFileSearchSessionUpdate = Components.Schemas.FuzzyFileSearchSessionUpdateResponse
+        typealias FuzzyFileSearchSessionStop = Components.Schemas.FuzzyFileSearchSessionStopResponse
+    }
+
     var asClientRequest: any ClientRequestable {
         switch self {
         case let .initialize(value): value
@@ -276,6 +400,7 @@ extension AppServerModels.ClientRequest {
 
 extension Components.Schemas.ClientRequestInitializeRequest: ClientRequestable {
     typealias Params = Components.Schemas.InitializeParams
+    typealias Response = AppServerModels.ClientRequest.Response.Initialize
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .initialize(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -283,6 +408,7 @@ extension Components.Schemas.ClientRequestInitializeRequest: ClientRequestable {
 
 extension Components.Schemas.ClientRequestThreadStartRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadStartParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadStart
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadStart(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -290,6 +416,7 @@ extension Components.Schemas.ClientRequestThreadStartRequest: ClientRequestable 
 
 extension Components.Schemas.ClientRequestThreadResumeRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadResumeParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadResume
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadResume(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -297,6 +424,7 @@ extension Components.Schemas.ClientRequestThreadResumeRequest: ClientRequestable
 
 extension Components.Schemas.ClientRequestThreadForkRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadForkParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadFork
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadFork(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -304,6 +432,7 @@ extension Components.Schemas.ClientRequestThreadForkRequest: ClientRequestable {
 
 extension Components.Schemas.ClientRequestThreadArchiveRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadArchiveParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadArchive
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadArchive(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -311,6 +440,7 @@ extension Components.Schemas.ClientRequestThreadArchiveRequest: ClientRequestabl
 
 extension Components.Schemas.ClientRequestThreadDeleteRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadDeleteParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadDelete
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadDelete(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -318,6 +448,7 @@ extension Components.Schemas.ClientRequestThreadDeleteRequest: ClientRequestable
 
 extension Components.Schemas.ClientRequestThreadUnsubscribeRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadUnsubscribeParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadUnsubscribe
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadUnsubscribe(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -325,6 +456,7 @@ extension Components.Schemas.ClientRequestThreadUnsubscribeRequest: ClientReques
 
 extension Components.Schemas.ClientRequestThreadIncrementElicitationRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadIncrementElicitationParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadIncrementElicitation
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadIncrementElicitation(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -332,6 +464,7 @@ extension Components.Schemas.ClientRequestThreadIncrementElicitationRequest: Cli
 
 extension Components.Schemas.ClientRequestThreadDecrementElicitationRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadDecrementElicitationParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadDecrementElicitation
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadDecrementElicitation(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -339,6 +472,7 @@ extension Components.Schemas.ClientRequestThreadDecrementElicitationRequest: Cli
 
 extension Components.Schemas.ClientRequestThreadNameSetRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadSetNameParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadNameSet
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadNameSet(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -346,6 +480,7 @@ extension Components.Schemas.ClientRequestThreadNameSetRequest: ClientRequestabl
 
 extension Components.Schemas.ClientRequestThreadGoalSetRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadGoalSetParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadGoalSet
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadGoalSet(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -353,6 +488,7 @@ extension Components.Schemas.ClientRequestThreadGoalSetRequest: ClientRequestabl
 
 extension Components.Schemas.ClientRequestThreadGoalGetRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadGoalGetParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadGoalGet
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadGoalGet(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -360,6 +496,7 @@ extension Components.Schemas.ClientRequestThreadGoalGetRequest: ClientRequestabl
 
 extension Components.Schemas.ClientRequestThreadGoalClearRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadGoalClearParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadGoalClear
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadGoalClear(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -367,6 +504,7 @@ extension Components.Schemas.ClientRequestThreadGoalClearRequest: ClientRequesta
 
 extension Components.Schemas.ClientRequestThreadMetadataUpdateRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadMetadataUpdateParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadMetadataUpdate
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadMetadataUpdate(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -374,6 +512,7 @@ extension Components.Schemas.ClientRequestThreadMetadataUpdateRequest: ClientReq
 
 extension Components.Schemas.ClientRequestThreadSettingsUpdateRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadSettingsUpdateParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadSettingsUpdate
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadSettingsUpdate(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -381,6 +520,7 @@ extension Components.Schemas.ClientRequestThreadSettingsUpdateRequest: ClientReq
 
 extension Components.Schemas.ClientRequestThreadMemoryModeSetRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadMemoryModeSetParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadMemoryModeSet
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadMemoryModeSet(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -388,6 +528,7 @@ extension Components.Schemas.ClientRequestThreadMemoryModeSetRequest: ClientRequ
 
 extension Components.Schemas.ClientRequestMemoryResetRequest: ClientRequestable {
     typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
+    typealias Response = AppServerModels.ClientRequest.Response.MemoryReset
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .memoryReset(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -395,6 +536,7 @@ extension Components.Schemas.ClientRequestMemoryResetRequest: ClientRequestable 
 
 extension Components.Schemas.ClientRequestThreadUnarchiveRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadUnarchiveParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadUnarchive
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadUnarchive(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -402,6 +544,7 @@ extension Components.Schemas.ClientRequestThreadUnarchiveRequest: ClientRequesta
 
 extension Components.Schemas.ClientRequestThreadCompactStartRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadCompactStartParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadCompactStart
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadCompactStart(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -409,6 +552,7 @@ extension Components.Schemas.ClientRequestThreadCompactStartRequest: ClientReque
 
 extension Components.Schemas.ClientRequestThreadShellCommandRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadShellCommandParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadShellCommand
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadShellCommand(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -416,6 +560,7 @@ extension Components.Schemas.ClientRequestThreadShellCommandRequest: ClientReque
 
 extension Components.Schemas.ClientRequestThreadApproveGuardianDeniedActionRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadApproveGuardianDeniedActionParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadApproveGuardianDeniedAction
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadApproveGuardianDeniedAction(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -423,6 +568,7 @@ extension Components.Schemas.ClientRequestThreadApproveGuardianDeniedActionReque
 
 extension Components.Schemas.ClientRequestThreadBackgroundTerminalsCleanRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadBackgroundTerminalsCleanParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadBackgroundTerminalsClean
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadBackgroundTerminalsClean(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -430,6 +576,7 @@ extension Components.Schemas.ClientRequestThreadBackgroundTerminalsCleanRequest:
 
 extension Components.Schemas.ClientRequestThreadBackgroundTerminalsListRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadBackgroundTerminalsListParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadBackgroundTerminalsList
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadBackgroundTerminalsList(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -437,6 +584,7 @@ extension Components.Schemas.ClientRequestThreadBackgroundTerminalsListRequest: 
 
 extension Components.Schemas.ClientRequestThreadBackgroundTerminalsTerminateRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadBackgroundTerminalsTerminateParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadBackgroundTerminalsTerminate
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadBackgroundTerminalsTerminate(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -444,6 +592,7 @@ extension Components.Schemas.ClientRequestThreadBackgroundTerminalsTerminateRequ
 
 extension Components.Schemas.ClientRequestThreadRollbackRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadRollbackParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadRollback
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadRollback(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -451,6 +600,7 @@ extension Components.Schemas.ClientRequestThreadRollbackRequest: ClientRequestab
 
 extension Components.Schemas.ClientRequestThreadListRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadListParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadList
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadList(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -458,6 +608,7 @@ extension Components.Schemas.ClientRequestThreadListRequest: ClientRequestable {
 
 extension Components.Schemas.ClientRequestThreadSearchRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadSearchParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadSearch
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadSearch(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -465,6 +616,7 @@ extension Components.Schemas.ClientRequestThreadSearchRequest: ClientRequestable
 
 extension Components.Schemas.ClientRequestThreadLoadedListRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadLoadedListParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadLoadedList
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadLoadedList(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -472,6 +624,7 @@ extension Components.Schemas.ClientRequestThreadLoadedListRequest: ClientRequest
 
 extension Components.Schemas.ClientRequestThreadReadRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadReadParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadRead
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadRead(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -479,6 +632,7 @@ extension Components.Schemas.ClientRequestThreadReadRequest: ClientRequestable {
 
 extension Components.Schemas.ClientRequestThreadTurnsListRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadTurnsListParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadTurnsList
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadTurnsList(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -486,6 +640,7 @@ extension Components.Schemas.ClientRequestThreadTurnsListRequest: ClientRequesta
 
 extension Components.Schemas.ClientRequestThreadTurnsItemsListRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadTurnsItemsListParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadTurnsItemsList
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadTurnsItemsList(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -493,6 +648,7 @@ extension Components.Schemas.ClientRequestThreadTurnsItemsListRequest: ClientReq
 
 extension Components.Schemas.ClientRequestThreadInjectItemsRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadInjectItemsParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadInjectItems
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadInjectItems(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -500,6 +656,7 @@ extension Components.Schemas.ClientRequestThreadInjectItemsRequest: ClientReques
 
 extension Components.Schemas.ClientRequestSkillsListRequest: ClientRequestable {
     typealias Params = Components.Schemas.SkillsListParams
+    typealias Response = AppServerModels.ClientRequest.Response.SkillsList
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .skillsList(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -507,6 +664,7 @@ extension Components.Schemas.ClientRequestSkillsListRequest: ClientRequestable {
 
 extension Components.Schemas.ClientRequestSkillsExtraRootsSetRequest: ClientRequestable {
     typealias Params = Components.Schemas.SkillsExtraRootsSetParams
+    typealias Response = AppServerModels.ClientRequest.Response.SkillsExtraRootsSet
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .skillsExtraRootsSet(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -514,6 +672,7 @@ extension Components.Schemas.ClientRequestSkillsExtraRootsSetRequest: ClientRequ
 
 extension Components.Schemas.ClientRequestHooksListRequest: ClientRequestable {
     typealias Params = Components.Schemas.HooksListParams
+    typealias Response = AppServerModels.ClientRequest.Response.HooksList
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .hooksList(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -521,6 +680,7 @@ extension Components.Schemas.ClientRequestHooksListRequest: ClientRequestable {
 
 extension Components.Schemas.ClientRequestMarketplaceAddRequest: ClientRequestable {
     typealias Params = Components.Schemas.MarketplaceAddParams
+    typealias Response = AppServerModels.ClientRequest.Response.MarketplaceAdd
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .marketplaceAdd(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -528,6 +688,7 @@ extension Components.Schemas.ClientRequestMarketplaceAddRequest: ClientRequestab
 
 extension Components.Schemas.ClientRequestMarketplaceRemoveRequest: ClientRequestable {
     typealias Params = Components.Schemas.MarketplaceRemoveParams
+    typealias Response = AppServerModels.ClientRequest.Response.MarketplaceRemove
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .marketplaceRemove(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -535,6 +696,7 @@ extension Components.Schemas.ClientRequestMarketplaceRemoveRequest: ClientReques
 
 extension Components.Schemas.ClientRequestMarketplaceUpgradeRequest: ClientRequestable {
     typealias Params = Components.Schemas.MarketplaceUpgradeParams
+    typealias Response = AppServerModels.ClientRequest.Response.MarketplaceUpgrade
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .marketplaceUpgrade(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -542,6 +704,7 @@ extension Components.Schemas.ClientRequestMarketplaceUpgradeRequest: ClientReque
 
 extension Components.Schemas.ClientRequestPluginListRequest: ClientRequestable {
     typealias Params = Components.Schemas.PluginListParams
+    typealias Response = AppServerModels.ClientRequest.Response.PluginList
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .pluginList(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -549,6 +712,7 @@ extension Components.Schemas.ClientRequestPluginListRequest: ClientRequestable {
 
 extension Components.Schemas.ClientRequestPluginInstalledRequest: ClientRequestable {
     typealias Params = Components.Schemas.PluginInstalledParams
+    typealias Response = AppServerModels.ClientRequest.Response.PluginInstalled
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .pluginInstalled(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -556,6 +720,7 @@ extension Components.Schemas.ClientRequestPluginInstalledRequest: ClientRequesta
 
 extension Components.Schemas.ClientRequestPluginReadRequest: ClientRequestable {
     typealias Params = Components.Schemas.PluginReadParams
+    typealias Response = AppServerModels.ClientRequest.Response.PluginRead
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .pluginRead(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -563,6 +728,7 @@ extension Components.Schemas.ClientRequestPluginReadRequest: ClientRequestable {
 
 extension Components.Schemas.ClientRequestPluginSkillReadRequest: ClientRequestable {
     typealias Params = Components.Schemas.PluginSkillReadParams
+    typealias Response = AppServerModels.ClientRequest.Response.PluginSkillRead
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .pluginSkillRead(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -570,6 +736,7 @@ extension Components.Schemas.ClientRequestPluginSkillReadRequest: ClientRequesta
 
 extension Components.Schemas.ClientRequestPluginShareSaveRequest: ClientRequestable {
     typealias Params = Components.Schemas.PluginShareSaveParams
+    typealias Response = AppServerModels.ClientRequest.Response.PluginShareSave
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .pluginShareSave(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -577,6 +744,7 @@ extension Components.Schemas.ClientRequestPluginShareSaveRequest: ClientRequesta
 
 extension Components.Schemas.ClientRequestPluginShareUpdateTargetsRequest: ClientRequestable {
     typealias Params = Components.Schemas.PluginShareUpdateTargetsParams
+    typealias Response = AppServerModels.ClientRequest.Response.PluginShareUpdateTargets
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .pluginShareUpdateTargets(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -584,6 +752,7 @@ extension Components.Schemas.ClientRequestPluginShareUpdateTargetsRequest: Clien
 
 extension Components.Schemas.ClientRequestPluginShareListRequest: ClientRequestable {
     typealias Params = Components.Schemas.PluginShareListParams
+    typealias Response = AppServerModels.ClientRequest.Response.PluginShareList
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .pluginShareList(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -591,6 +760,7 @@ extension Components.Schemas.ClientRequestPluginShareListRequest: ClientRequesta
 
 extension Components.Schemas.ClientRequestPluginShareCheckoutRequest: ClientRequestable {
     typealias Params = Components.Schemas.PluginShareCheckoutParams
+    typealias Response = AppServerModels.ClientRequest.Response.PluginShareCheckout
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .pluginShareCheckout(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -598,6 +768,7 @@ extension Components.Schemas.ClientRequestPluginShareCheckoutRequest: ClientRequ
 
 extension Components.Schemas.ClientRequestPluginShareDeleteRequest: ClientRequestable {
     typealias Params = Components.Schemas.PluginShareDeleteParams
+    typealias Response = AppServerModels.ClientRequest.Response.PluginShareDelete
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .pluginShareDelete(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -605,6 +776,7 @@ extension Components.Schemas.ClientRequestPluginShareDeleteRequest: ClientReques
 
 extension Components.Schemas.ClientRequestAppListRequest: ClientRequestable {
     typealias Params = Components.Schemas.AppsListParams
+    typealias Response = AppServerModels.ClientRequest.Response.AppList
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .appList(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -612,6 +784,7 @@ extension Components.Schemas.ClientRequestAppListRequest: ClientRequestable {
 
 extension Components.Schemas.ClientRequestFsReadFileRequest: ClientRequestable {
     typealias Params = Components.Schemas.FsReadFileParams
+    typealias Response = AppServerModels.ClientRequest.Response.FsReadFile
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .fsReadFile(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -619,6 +792,7 @@ extension Components.Schemas.ClientRequestFsReadFileRequest: ClientRequestable {
 
 extension Components.Schemas.ClientRequestFsWriteFileRequest: ClientRequestable {
     typealias Params = Components.Schemas.FsWriteFileParams
+    typealias Response = AppServerModels.ClientRequest.Response.FsWriteFile
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .fsWriteFile(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -626,6 +800,7 @@ extension Components.Schemas.ClientRequestFsWriteFileRequest: ClientRequestable 
 
 extension Components.Schemas.ClientRequestFsCreateDirectoryRequest: ClientRequestable {
     typealias Params = Components.Schemas.FsCreateDirectoryParams
+    typealias Response = AppServerModels.ClientRequest.Response.FsCreateDirectory
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .fsCreateDirectory(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -633,6 +808,7 @@ extension Components.Schemas.ClientRequestFsCreateDirectoryRequest: ClientReques
 
 extension Components.Schemas.ClientRequestFsGetMetadataRequest: ClientRequestable {
     typealias Params = Components.Schemas.FsGetMetadataParams
+    typealias Response = AppServerModels.ClientRequest.Response.FsGetMetadata
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .fsGetMetadata(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -640,6 +816,7 @@ extension Components.Schemas.ClientRequestFsGetMetadataRequest: ClientRequestabl
 
 extension Components.Schemas.ClientRequestFsReadDirectoryRequest: ClientRequestable {
     typealias Params = Components.Schemas.FsReadDirectoryParams
+    typealias Response = AppServerModels.ClientRequest.Response.FsReadDirectory
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .fsReadDirectory(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -647,6 +824,7 @@ extension Components.Schemas.ClientRequestFsReadDirectoryRequest: ClientRequesta
 
 extension Components.Schemas.ClientRequestFsRemoveRequest: ClientRequestable {
     typealias Params = Components.Schemas.FsRemoveParams
+    typealias Response = AppServerModels.ClientRequest.Response.FsRemove
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .fsRemove(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -654,6 +832,7 @@ extension Components.Schemas.ClientRequestFsRemoveRequest: ClientRequestable {
 
 extension Components.Schemas.ClientRequestFsCopyRequest: ClientRequestable {
     typealias Params = Components.Schemas.FsCopyParams
+    typealias Response = AppServerModels.ClientRequest.Response.FsCopy
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .fsCopy(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -661,6 +840,7 @@ extension Components.Schemas.ClientRequestFsCopyRequest: ClientRequestable {
 
 extension Components.Schemas.ClientRequestFsWatchRequest: ClientRequestable {
     typealias Params = Components.Schemas.FsWatchParams
+    typealias Response = AppServerModels.ClientRequest.Response.FsWatch
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .fsWatch(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -668,6 +848,7 @@ extension Components.Schemas.ClientRequestFsWatchRequest: ClientRequestable {
 
 extension Components.Schemas.ClientRequestFsUnwatchRequest: ClientRequestable {
     typealias Params = Components.Schemas.FsUnwatchParams
+    typealias Response = AppServerModels.ClientRequest.Response.FsUnwatch
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .fsUnwatch(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -675,6 +856,7 @@ extension Components.Schemas.ClientRequestFsUnwatchRequest: ClientRequestable {
 
 extension Components.Schemas.ClientRequestSkillsConfigWriteRequest: ClientRequestable {
     typealias Params = Components.Schemas.SkillsConfigWriteParams
+    typealias Response = AppServerModels.ClientRequest.Response.SkillsConfigWrite
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .skillsConfigWrite(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -682,6 +864,7 @@ extension Components.Schemas.ClientRequestSkillsConfigWriteRequest: ClientReques
 
 extension Components.Schemas.ClientRequestPluginInstallRequest: ClientRequestable {
     typealias Params = Components.Schemas.PluginInstallParams
+    typealias Response = AppServerModels.ClientRequest.Response.PluginInstall
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .pluginInstall(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -689,6 +872,7 @@ extension Components.Schemas.ClientRequestPluginInstallRequest: ClientRequestabl
 
 extension Components.Schemas.ClientRequestPluginUninstallRequest: ClientRequestable {
     typealias Params = Components.Schemas.PluginUninstallParams
+    typealias Response = AppServerModels.ClientRequest.Response.PluginUninstall
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .pluginUninstall(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -696,6 +880,7 @@ extension Components.Schemas.ClientRequestPluginUninstallRequest: ClientRequesta
 
 extension Components.Schemas.ClientRequestTurnStartRequest: ClientRequestable {
     typealias Params = Components.Schemas.TurnStartParams
+    typealias Response = AppServerModels.ClientRequest.Response.TurnStart
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .turnStart(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -703,6 +888,7 @@ extension Components.Schemas.ClientRequestTurnStartRequest: ClientRequestable {
 
 extension Components.Schemas.ClientRequestTurnSteerRequest: ClientRequestable {
     typealias Params = Components.Schemas.TurnSteerParams
+    typealias Response = AppServerModels.ClientRequest.Response.TurnSteer
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .turnSteer(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -710,6 +896,7 @@ extension Components.Schemas.ClientRequestTurnSteerRequest: ClientRequestable {
 
 extension Components.Schemas.ClientRequestTurnInterruptRequest: ClientRequestable {
     typealias Params = Components.Schemas.TurnInterruptParams
+    typealias Response = AppServerModels.ClientRequest.Response.TurnInterrupt
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .turnInterrupt(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -717,6 +904,7 @@ extension Components.Schemas.ClientRequestTurnInterruptRequest: ClientRequestabl
 
 extension Components.Schemas.ClientRequestThreadRealtimeStartRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadRealtimeStartParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadRealtimeStart
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadRealtimeStart(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -724,6 +912,7 @@ extension Components.Schemas.ClientRequestThreadRealtimeStartRequest: ClientRequ
 
 extension Components.Schemas.ClientRequestThreadRealtimeAppendAudioRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadRealtimeAppendAudioParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadRealtimeAppendAudio
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadRealtimeAppendAudio(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -731,6 +920,7 @@ extension Components.Schemas.ClientRequestThreadRealtimeAppendAudioRequest: Clie
 
 extension Components.Schemas.ClientRequestThreadRealtimeAppendTextRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadRealtimeAppendTextParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadRealtimeAppendText
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadRealtimeAppendText(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -738,6 +928,7 @@ extension Components.Schemas.ClientRequestThreadRealtimeAppendTextRequest: Clien
 
 extension Components.Schemas.ClientRequestThreadRealtimeAppendSpeechRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadRealtimeAppendSpeechParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadRealtimeAppendSpeech
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadRealtimeAppendSpeech(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -745,6 +936,7 @@ extension Components.Schemas.ClientRequestThreadRealtimeAppendSpeechRequest: Cli
 
 extension Components.Schemas.ClientRequestThreadRealtimeStopRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadRealtimeStopParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadRealtimeStop
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadRealtimeStop(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -752,6 +944,7 @@ extension Components.Schemas.ClientRequestThreadRealtimeStopRequest: ClientReque
 
 extension Components.Schemas.ClientRequestThreadRealtimeListVoicesRequest: ClientRequestable {
     typealias Params = Components.Schemas.ThreadRealtimeListVoicesParams
+    typealias Response = AppServerModels.ClientRequest.Response.ThreadRealtimeListVoices
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadRealtimeListVoices(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -759,6 +952,7 @@ extension Components.Schemas.ClientRequestThreadRealtimeListVoicesRequest: Clien
 
 extension Components.Schemas.ClientRequestReviewStartRequest: ClientRequestable {
     typealias Params = Components.Schemas.ReviewStartParams
+    typealias Response = AppServerModels.ClientRequest.Response.ReviewStart
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .reviewStart(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -766,6 +960,7 @@ extension Components.Schemas.ClientRequestReviewStartRequest: ClientRequestable 
 
 extension Components.Schemas.ClientRequestModelListRequest: ClientRequestable {
     typealias Params = Components.Schemas.ModelListParams
+    typealias Response = AppServerModels.ClientRequest.Response.ModelList
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .modelList(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -773,6 +968,7 @@ extension Components.Schemas.ClientRequestModelListRequest: ClientRequestable {
 
 extension Components.Schemas.ClientRequestModelProviderCapabilitiesReadRequest: ClientRequestable {
     typealias Params = Components.Schemas.ModelProviderCapabilitiesReadParams
+    typealias Response = AppServerModels.ClientRequest.Response.ModelProviderCapabilitiesRead
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .modelProviderCapabilitiesRead(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -780,6 +976,7 @@ extension Components.Schemas.ClientRequestModelProviderCapabilitiesReadRequest: 
 
 extension Components.Schemas.ClientRequestExperimentalFeatureListRequest: ClientRequestable {
     typealias Params = Components.Schemas.ExperimentalFeatureListParams
+    typealias Response = AppServerModels.ClientRequest.Response.ExperimentalFeatureList
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .experimentalFeatureList(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -787,6 +984,7 @@ extension Components.Schemas.ClientRequestExperimentalFeatureListRequest: Client
 
 extension Components.Schemas.ClientRequestPermissionProfileListRequest: ClientRequestable {
     typealias Params = Components.Schemas.PermissionProfileListParams
+    typealias Response = AppServerModels.ClientRequest.Response.PermissionProfileList
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .permissionProfileList(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -794,6 +992,7 @@ extension Components.Schemas.ClientRequestPermissionProfileListRequest: ClientRe
 
 extension Components.Schemas.ClientRequestExperimentalFeatureEnablementSetRequest: ClientRequestable {
     typealias Params = Components.Schemas.ExperimentalFeatureEnablementSetParams
+    typealias Response = AppServerModels.ClientRequest.Response.ExperimentalFeatureEnablementSet
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .experimentalFeatureEnablementSet(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -801,6 +1000,7 @@ extension Components.Schemas.ClientRequestExperimentalFeatureEnablementSetReques
 
 extension Components.Schemas.ClientRequestRemoteControlEnableRequest: ClientRequestable {
     typealias Params = Components.Schemas.RemoteControlEnableParams?
+    typealias Response = AppServerModels.ClientRequest.Response.RemoteControlEnable
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .remoteControlEnable(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -808,6 +1008,7 @@ extension Components.Schemas.ClientRequestRemoteControlEnableRequest: ClientRequ
 
 extension Components.Schemas.ClientRequestRemoteControlDisableRequest: ClientRequestable {
     typealias Params = Components.Schemas.RemoteControlDisableParams?
+    typealias Response = AppServerModels.ClientRequest.Response.RemoteControlDisable
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .remoteControlDisable(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -815,6 +1016,7 @@ extension Components.Schemas.ClientRequestRemoteControlDisableRequest: ClientReq
 
 extension Components.Schemas.ClientRequestRemoteControlStatusReadRequest: ClientRequestable {
     typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
+    typealias Response = AppServerModels.ClientRequest.Response.RemoteControlStatusRead
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .remoteControlStatusRead(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -822,6 +1024,7 @@ extension Components.Schemas.ClientRequestRemoteControlStatusReadRequest: Client
 
 extension Components.Schemas.ClientRequestRemoteControlPairingStartRequest: ClientRequestable {
     typealias Params = Components.Schemas.RemoteControlPairingStartParams
+    typealias Response = AppServerModels.ClientRequest.Response.RemoteControlPairingStart
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .remoteControlPairingStart(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -829,6 +1032,7 @@ extension Components.Schemas.ClientRequestRemoteControlPairingStartRequest: Clie
 
 extension Components.Schemas.ClientRequestRemoteControlPairingStatusRequest: ClientRequestable {
     typealias Params = Components.Schemas.RemoteControlPairingStatusParams
+    typealias Response = AppServerModels.ClientRequest.Response.RemoteControlPairingStatus
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .remoteControlPairingStatus(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -836,6 +1040,7 @@ extension Components.Schemas.ClientRequestRemoteControlPairingStatusRequest: Cli
 
 extension Components.Schemas.ClientRequestRemoteControlClientListRequest: ClientRequestable {
     typealias Params = Components.Schemas.RemoteControlClientsListParams
+    typealias Response = AppServerModels.ClientRequest.Response.RemoteControlClientList
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .remoteControlClientList(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -843,6 +1048,7 @@ extension Components.Schemas.ClientRequestRemoteControlClientListRequest: Client
 
 extension Components.Schemas.ClientRequestRemoteControlClientRevokeRequest: ClientRequestable {
     typealias Params = Components.Schemas.RemoteControlClientsRevokeParams
+    typealias Response = AppServerModels.ClientRequest.Response.RemoteControlClientRevoke
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .remoteControlClientRevoke(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -850,6 +1056,7 @@ extension Components.Schemas.ClientRequestRemoteControlClientRevokeRequest: Clie
 
 extension Components.Schemas.ClientRequestCollaborationModeListRequest: ClientRequestable {
     typealias Params = Components.Schemas.CollaborationModeListParams
+    typealias Response = AppServerModels.ClientRequest.Response.CollaborationModeList
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .collaborationModeList(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -857,6 +1064,7 @@ extension Components.Schemas.ClientRequestCollaborationModeListRequest: ClientRe
 
 extension Components.Schemas.ClientRequestMockExperimentalMethodRequest: ClientRequestable {
     typealias Params = Components.Schemas.MockExperimentalMethodParams
+    typealias Response = AppServerModels.ClientRequest.Response.MockExperimentalMethod
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .mockExperimentalMethod(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -864,6 +1072,7 @@ extension Components.Schemas.ClientRequestMockExperimentalMethodRequest: ClientR
 
 extension Components.Schemas.ClientRequestEnvironmentAddRequest: ClientRequestable {
     typealias Params = Components.Schemas.EnvironmentAddParams
+    typealias Response = AppServerModels.ClientRequest.Response.EnvironmentAdd
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .environmentAdd(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -871,6 +1080,7 @@ extension Components.Schemas.ClientRequestEnvironmentAddRequest: ClientRequestab
 
 extension Components.Schemas.ClientRequestMcpServerOauthLoginRequest: ClientRequestable {
     typealias Params = Components.Schemas.McpServerOauthLoginParams
+    typealias Response = AppServerModels.ClientRequest.Response.McpServerOauthLogin
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .mcpServerOauthLogin(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -878,6 +1088,7 @@ extension Components.Schemas.ClientRequestMcpServerOauthLoginRequest: ClientRequ
 
 extension Components.Schemas.ClientRequestConfigMcpServerReloadRequest: ClientRequestable {
     typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
+    typealias Response = AppServerModels.ClientRequest.Response.ConfigMcpServerReload
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .configMcpServerReload(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -885,6 +1096,7 @@ extension Components.Schemas.ClientRequestConfigMcpServerReloadRequest: ClientRe
 
 extension Components.Schemas.ClientRequestMcpServerStatusListRequest: ClientRequestable {
     typealias Params = Components.Schemas.ListMcpServerStatusParams
+    typealias Response = AppServerModels.ClientRequest.Response.McpServerStatusList
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .mcpServerStatusList(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -892,6 +1104,7 @@ extension Components.Schemas.ClientRequestMcpServerStatusListRequest: ClientRequ
 
 extension Components.Schemas.ClientRequestMcpServerResourceReadRequest: ClientRequestable {
     typealias Params = Components.Schemas.McpResourceReadParams
+    typealias Response = AppServerModels.ClientRequest.Response.McpServerResourceRead
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .mcpServerResourceRead(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -899,6 +1112,7 @@ extension Components.Schemas.ClientRequestMcpServerResourceReadRequest: ClientRe
 
 extension Components.Schemas.ClientRequestMcpServerToolCallRequest: ClientRequestable {
     typealias Params = Components.Schemas.McpServerToolCallParams
+    typealias Response = AppServerModels.ClientRequest.Response.McpServerToolCall
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .mcpServerToolCall(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -906,6 +1120,7 @@ extension Components.Schemas.ClientRequestMcpServerToolCallRequest: ClientReques
 
 extension Components.Schemas.ClientRequestWindowsSandboxSetupStartRequest: ClientRequestable {
     typealias Params = Components.Schemas.WindowsSandboxSetupStartParams
+    typealias Response = AppServerModels.ClientRequest.Response.WindowsSandboxSetupStart
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .windowsSandboxSetupStart(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -913,6 +1128,7 @@ extension Components.Schemas.ClientRequestWindowsSandboxSetupStartRequest: Clien
 
 extension Components.Schemas.ClientRequestWindowsSandboxReadinessRequest: ClientRequestable {
     typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
+    typealias Response = AppServerModels.ClientRequest.Response.WindowsSandboxReadiness
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .windowsSandboxReadiness(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -920,6 +1136,7 @@ extension Components.Schemas.ClientRequestWindowsSandboxReadinessRequest: Client
 
 extension Components.Schemas.ClientRequestAccountLoginStartRequest: ClientRequestable {
     typealias Params = Components.Schemas.LoginAccountParams
+    typealias Response = AppServerModels.ClientRequest.Response.AccountLoginStart
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .accountLoginStart(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -927,6 +1144,7 @@ extension Components.Schemas.ClientRequestAccountLoginStartRequest: ClientReques
 
 extension Components.Schemas.ClientRequestAccountLoginCancelRequest: ClientRequestable {
     typealias Params = Components.Schemas.CancelLoginAccountParams
+    typealias Response = AppServerModels.ClientRequest.Response.AccountLoginCancel
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .accountLoginCancel(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -934,6 +1152,7 @@ extension Components.Schemas.ClientRequestAccountLoginCancelRequest: ClientReque
 
 extension Components.Schemas.ClientRequestAccountLogoutRequest: ClientRequestable {
     typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
+    typealias Response = AppServerModels.ClientRequest.Response.AccountLogout
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .accountLogout(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -941,6 +1160,7 @@ extension Components.Schemas.ClientRequestAccountLogoutRequest: ClientRequestabl
 
 extension Components.Schemas.ClientRequestAccountRateLimitsReadRequest: ClientRequestable {
     typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
+    typealias Response = AppServerModels.ClientRequest.Response.AccountRateLimitsRead
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .accountRateLimitsRead(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -948,6 +1168,7 @@ extension Components.Schemas.ClientRequestAccountRateLimitsReadRequest: ClientRe
 
 extension Components.Schemas.ClientRequestAccountRateLimitResetCreditConsumeRequest: ClientRequestable {
     typealias Params = Components.Schemas.ConsumeAccountRateLimitResetCreditParams
+    typealias Response = AppServerModels.ClientRequest.Response.AccountRateLimitResetCreditConsume
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .accountRateLimitResetCreditConsume(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -955,6 +1176,7 @@ extension Components.Schemas.ClientRequestAccountRateLimitResetCreditConsumeRequ
 
 extension Components.Schemas.ClientRequestAccountUsageReadRequest: ClientRequestable {
     typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
+    typealias Response = AppServerModels.ClientRequest.Response.AccountUsageRead
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .accountUsageRead(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -962,6 +1184,7 @@ extension Components.Schemas.ClientRequestAccountUsageReadRequest: ClientRequest
 
 extension Components.Schemas.ClientRequestAccountSendAddCreditsNudgeEmailRequest: ClientRequestable {
     typealias Params = Components.Schemas.SendAddCreditsNudgeEmailParams
+    typealias Response = AppServerModels.ClientRequest.Response.AccountSendAddCreditsNudgeEmail
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .accountSendAddCreditsNudgeEmail(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -969,6 +1192,7 @@ extension Components.Schemas.ClientRequestAccountSendAddCreditsNudgeEmailRequest
 
 extension Components.Schemas.ClientRequestFeedbackUploadRequest: ClientRequestable {
     typealias Params = Components.Schemas.FeedbackUploadParams
+    typealias Response = AppServerModels.ClientRequest.Response.FeedbackUpload
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .feedbackUpload(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -976,6 +1200,7 @@ extension Components.Schemas.ClientRequestFeedbackUploadRequest: ClientRequestab
 
 extension Components.Schemas.ClientRequestCommandExecRequest: ClientRequestable {
     typealias Params = Components.Schemas.CommandExecParams
+    typealias Response = AppServerModels.ClientRequest.Response.CommandExec
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .commandExec(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -983,6 +1208,7 @@ extension Components.Schemas.ClientRequestCommandExecRequest: ClientRequestable 
 
 extension Components.Schemas.ClientRequestCommandExecWriteRequest: ClientRequestable {
     typealias Params = Components.Schemas.CommandExecWriteParams
+    typealias Response = AppServerModels.ClientRequest.Response.CommandExecWrite
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .commandExecWrite(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -990,6 +1216,7 @@ extension Components.Schemas.ClientRequestCommandExecWriteRequest: ClientRequest
 
 extension Components.Schemas.ClientRequestCommandExecTerminateRequest: ClientRequestable {
     typealias Params = Components.Schemas.CommandExecTerminateParams
+    typealias Response = AppServerModels.ClientRequest.Response.CommandExecTerminate
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .commandExecTerminate(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -997,6 +1224,7 @@ extension Components.Schemas.ClientRequestCommandExecTerminateRequest: ClientReq
 
 extension Components.Schemas.ClientRequestCommandExecResizeRequest: ClientRequestable {
     typealias Params = Components.Schemas.CommandExecResizeParams
+    typealias Response = AppServerModels.ClientRequest.Response.CommandExecResize
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .commandExecResize(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -1004,6 +1232,7 @@ extension Components.Schemas.ClientRequestCommandExecResizeRequest: ClientReques
 
 extension Components.Schemas.ClientRequestProcessSpawnRequest: ClientRequestable {
     typealias Params = Components.Schemas.ProcessSpawnParams
+    typealias Response = AppServerModels.ClientRequest.Response.ProcessSpawn
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .processSpawn(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -1011,6 +1240,7 @@ extension Components.Schemas.ClientRequestProcessSpawnRequest: ClientRequestable
 
 extension Components.Schemas.ClientRequestProcessWriteStdinRequest: ClientRequestable {
     typealias Params = Components.Schemas.ProcessWriteStdinParams
+    typealias Response = AppServerModels.ClientRequest.Response.ProcessWriteStdin
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .processWriteStdin(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -1018,6 +1248,7 @@ extension Components.Schemas.ClientRequestProcessWriteStdinRequest: ClientReques
 
 extension Components.Schemas.ClientRequestProcessKillRequest: ClientRequestable {
     typealias Params = Components.Schemas.ProcessKillParams
+    typealias Response = AppServerModels.ClientRequest.Response.ProcessKill
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .processKill(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -1025,6 +1256,7 @@ extension Components.Schemas.ClientRequestProcessKillRequest: ClientRequestable 
 
 extension Components.Schemas.ClientRequestProcessResizePtyRequest: ClientRequestable {
     typealias Params = Components.Schemas.ProcessResizePtyParams
+    typealias Response = AppServerModels.ClientRequest.Response.ProcessResizePty
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .processResizePty(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -1032,6 +1264,7 @@ extension Components.Schemas.ClientRequestProcessResizePtyRequest: ClientRequest
 
 extension Components.Schemas.ClientRequestConfigReadRequest: ClientRequestable {
     typealias Params = Components.Schemas.ConfigReadParams
+    typealias Response = AppServerModels.ClientRequest.Response.ConfigRead
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .configRead(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -1039,6 +1272,7 @@ extension Components.Schemas.ClientRequestConfigReadRequest: ClientRequestable {
 
 extension Components.Schemas.ClientRequestExternalAgentConfigDetectRequest: ClientRequestable {
     typealias Params = Components.Schemas.ExternalAgentConfigDetectParams
+    typealias Response = AppServerModels.ClientRequest.Response.ExternalAgentConfigDetect
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .externalAgentConfigDetect(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -1046,6 +1280,7 @@ extension Components.Schemas.ClientRequestExternalAgentConfigDetectRequest: Clie
 
 extension Components.Schemas.ClientRequestExternalAgentConfigImportRequest: ClientRequestable {
     typealias Params = Components.Schemas.ExternalAgentConfigImportParams
+    typealias Response = AppServerModels.ClientRequest.Response.ExternalAgentConfigImport
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .externalAgentConfigImport(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -1053,6 +1288,7 @@ extension Components.Schemas.ClientRequestExternalAgentConfigImportRequest: Clie
 
 extension Components.Schemas.ClientRequestConfigValueWriteRequest: ClientRequestable {
     typealias Params = Components.Schemas.ConfigValueWriteParams
+    typealias Response = AppServerModels.ClientRequest.Response.ConfigValueWrite
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .configValueWrite(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -1060,6 +1296,7 @@ extension Components.Schemas.ClientRequestConfigValueWriteRequest: ClientRequest
 
 extension Components.Schemas.ClientRequestConfigBatchWriteRequest: ClientRequestable {
     typealias Params = Components.Schemas.ConfigBatchWriteParams
+    typealias Response = AppServerModels.ClientRequest.Response.ConfigBatchWrite
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .configBatchWrite(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -1067,6 +1304,7 @@ extension Components.Schemas.ClientRequestConfigBatchWriteRequest: ClientRequest
 
 extension Components.Schemas.ClientRequestConfigRequirementsReadRequest: ClientRequestable {
     typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
+    typealias Response = AppServerModels.ClientRequest.Response.ConfigRequirementsRead
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .configRequirementsRead(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -1074,6 +1312,7 @@ extension Components.Schemas.ClientRequestConfigRequirementsReadRequest: ClientR
 
 extension Components.Schemas.ClientRequestAccountReadRequest: ClientRequestable {
     typealias Params = Components.Schemas.GetAccountParams
+    typealias Response = AppServerModels.ClientRequest.Response.AccountRead
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .accountRead(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -1081,6 +1320,7 @@ extension Components.Schemas.ClientRequestAccountReadRequest: ClientRequestable 
 
 extension Components.Schemas.ClientRequestFuzzyFileSearchRequest: ClientRequestable {
     typealias Params = Components.Schemas.FuzzyFileSearchParams
+    typealias Response = AppServerModels.ClientRequest.Response.FuzzyFileSearch
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .fuzzyFileSearch(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -1088,6 +1328,7 @@ extension Components.Schemas.ClientRequestFuzzyFileSearchRequest: ClientRequesta
 
 extension Components.Schemas.ClientRequestFuzzyFileSearchSessionStartRequest: ClientRequestable {
     typealias Params = Components.Schemas.FuzzyFileSearchSessionStartParams
+    typealias Response = AppServerModels.ClientRequest.Response.FuzzyFileSearchSessionStart
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .fuzzyFileSearchSessionStart(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -1095,6 +1336,7 @@ extension Components.Schemas.ClientRequestFuzzyFileSearchSessionStartRequest: Cl
 
 extension Components.Schemas.ClientRequestFuzzyFileSearchSessionUpdateRequest: ClientRequestable {
     typealias Params = Components.Schemas.FuzzyFileSearchSessionUpdateParams
+    typealias Response = AppServerModels.ClientRequest.Response.FuzzyFileSearchSessionUpdate
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .fuzzyFileSearchSessionUpdate(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -1102,6 +1344,7 @@ extension Components.Schemas.ClientRequestFuzzyFileSearchSessionUpdateRequest: C
 
 extension Components.Schemas.ClientRequestFuzzyFileSearchSessionStopRequest: ClientRequestable {
     typealias Params = Components.Schemas.FuzzyFileSearchSessionStopParams
+    typealias Response = AppServerModels.ClientRequest.Response.FuzzyFileSearchSessionStop
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .fuzzyFileSearchSessionStop(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -1118,6 +1361,19 @@ extension AppServerModels.ServerRequest {
     typealias AttestationGenerate = Components.Schemas.ServerRequestAttestationGenerateRequest
     typealias ApplyPatchApproval = Components.Schemas.ServerRequestApplyPatchApprovalRequest
     typealias ExecCommandApproval = Components.Schemas.ServerRequestExecCommandApprovalRequest
+
+    enum Response {
+        typealias ItemCommandExecutionRequestApproval = Components.Schemas.CommandExecutionRequestApprovalResponse
+        typealias ItemFileChangeRequestApproval = Components.Schemas.FileChangeRequestApprovalResponse
+        typealias ItemToolRequestUserInput = Components.Schemas.ToolRequestUserInputResponse
+        typealias McpServerElicitationRequest = Components.Schemas.McpServerElicitationRequestResponse
+        typealias ItemPermissionsRequestApproval = Components.Schemas.PermissionsRequestApprovalResponse
+        typealias ItemToolCall = Components.Schemas.DynamicToolCallResponse
+        typealias AccountChatgptAuthTokensRefresh = Components.Schemas.ChatgptAuthTokensRefreshResponse
+        typealias AttestationGenerate = Components.Schemas.AttestationGenerateResponse
+        typealias ApplyPatchApproval = Components.Schemas.ApplyPatchApprovalResponse
+        typealias ExecCommandApproval = Components.Schemas.ExecCommandApprovalResponse
+    }
 
     var asServerRequest: any ServerRequestable {
         switch self {
@@ -1137,6 +1393,7 @@ extension AppServerModels.ServerRequest {
 
 extension Components.Schemas.ServerRequestItemCommandExecutionRequestApprovalRequest: ServerRequestable {
     typealias Params = Components.Schemas.CommandExecutionRequestApprovalParams
+    typealias Response = AppServerModels.ServerRequest.Response.ItemCommandExecutionRequestApproval
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
         .itemCommandExecutionRequestApproval(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -1144,6 +1401,7 @@ extension Components.Schemas.ServerRequestItemCommandExecutionRequestApprovalReq
 
 extension Components.Schemas.ServerRequestItemFileChangeRequestApprovalRequest: ServerRequestable {
     typealias Params = Components.Schemas.FileChangeRequestApprovalParams
+    typealias Response = AppServerModels.ServerRequest.Response.ItemFileChangeRequestApproval
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
         .itemFileChangeRequestApproval(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -1151,6 +1409,7 @@ extension Components.Schemas.ServerRequestItemFileChangeRequestApprovalRequest: 
 
 extension Components.Schemas.ServerRequestItemToolRequestUserInputRequest: ServerRequestable {
     typealias Params = Components.Schemas.ToolRequestUserInputParams
+    typealias Response = AppServerModels.ServerRequest.Response.ItemToolRequestUserInput
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
         .itemToolRequestUserInput(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -1158,6 +1417,7 @@ extension Components.Schemas.ServerRequestItemToolRequestUserInputRequest: Serve
 
 extension Components.Schemas.ServerRequestMcpServerElicitationRequestRequest: ServerRequestable {
     typealias Params = Components.Schemas.McpServerElicitationRequestParams
+    typealias Response = AppServerModels.ServerRequest.Response.McpServerElicitationRequest
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
         .mcpServerElicitationRequest(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -1165,6 +1425,7 @@ extension Components.Schemas.ServerRequestMcpServerElicitationRequestRequest: Se
 
 extension Components.Schemas.ServerRequestItemPermissionsRequestApprovalRequest: ServerRequestable {
     typealias Params = Components.Schemas.PermissionsRequestApprovalParams
+    typealias Response = AppServerModels.ServerRequest.Response.ItemPermissionsRequestApproval
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
         .itemPermissionsRequestApproval(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -1172,6 +1433,7 @@ extension Components.Schemas.ServerRequestItemPermissionsRequestApprovalRequest:
 
 extension Components.Schemas.ServerRequestItemToolCallRequest: ServerRequestable {
     typealias Params = Components.Schemas.DynamicToolCallParams
+    typealias Response = AppServerModels.ServerRequest.Response.ItemToolCall
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
         .itemToolCall(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -1179,6 +1441,7 @@ extension Components.Schemas.ServerRequestItemToolCallRequest: ServerRequestable
 
 extension Components.Schemas.ServerRequestAccountChatgptAuthTokensRefreshRequest: ServerRequestable {
     typealias Params = Components.Schemas.ChatgptAuthTokensRefreshParams
+    typealias Response = AppServerModels.ServerRequest.Response.AccountChatgptAuthTokensRefresh
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
         .accountChatgptAuthTokensRefresh(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -1186,6 +1449,7 @@ extension Components.Schemas.ServerRequestAccountChatgptAuthTokensRefreshRequest
 
 extension Components.Schemas.ServerRequestAttestationGenerateRequest: ServerRequestable {
     typealias Params = Components.Schemas.AttestationGenerateParams
+    typealias Response = AppServerModels.ServerRequest.Response.AttestationGenerate
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
         .attestationGenerate(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -1193,6 +1457,7 @@ extension Components.Schemas.ServerRequestAttestationGenerateRequest: ServerRequ
 
 extension Components.Schemas.ServerRequestApplyPatchApprovalRequest: ServerRequestable {
     typealias Params = Components.Schemas.ApplyPatchApprovalParams
+    typealias Response = AppServerModels.ServerRequest.Response.ApplyPatchApproval
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
         .applyPatchApproval(.init(id: id, method: .allCases.first!, params: params))
     }
@@ -1200,6 +1465,7 @@ extension Components.Schemas.ServerRequestApplyPatchApprovalRequest: ServerReque
 
 extension Components.Schemas.ServerRequestExecCommandApprovalRequest: ServerRequestable {
     typealias Params = Components.Schemas.ExecCommandApprovalParams
+    typealias Response = AppServerModels.ServerRequest.Response.ExecCommandApproval
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
         .execCommandApproval(.init(id: id, method: .allCases.first!, params: params))
     }

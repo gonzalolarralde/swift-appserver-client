@@ -15,6 +15,10 @@ let package = Package(
             name: "AppServerClient",
             targets: ["AppServerClient"]
         ),
+        .executable(
+            name: "appserver-smoke",
+            targets: ["AppServerSmokeCLI"]
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-openapi-generator", .upToNextMajor(from: "1.12.2")),
@@ -35,6 +39,10 @@ let package = Package(
             plugins: [
                 .plugin(name: "OpenAPIGenerator", package: "swift-openapi-generator")
             ]
+        ),
+        .executableTarget(
+            name: "AppServerSmokeCLI",
+            dependencies: ["AppServerClient"]
         ),
         .testTarget(
             name: "AppServerClientTests",

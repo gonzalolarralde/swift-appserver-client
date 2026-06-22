@@ -68,8 +68,21 @@ class Bundler:
                 suggested_name=name,
             )
 
+        self.import_schema_files(self.template_path.parent / "JSONSchema", "*Response.json")
+
         output["components"]["schemas"] = self.components
         return output
+
+    def import_schema_files(self, root: Path, pattern: str) -> None:
+        for path in sorted(root.glob(f"**/{pattern}")):
+            schema = self.load_json(path)
+            name = schema.get("title") or path.stem
+            self.import_component(
+                name,
+                schema,
+                base_path=path,
+                source_key="#",
+            )
 
     def load_json(self, path: Path) -> Any:
         path = path.resolve()

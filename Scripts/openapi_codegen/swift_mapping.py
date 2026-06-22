@@ -5,6 +5,33 @@ from typing import Any
 from openapi_codegen.common import UnionCase, UnionMapping, pascal_case
 
 
+RESPONSE_OVERRIDES = {
+    "ClientRequestThreadNameSetRequest": "ThreadSetNameResponse",
+    "ClientRequestAppListRequest": "AppsListResponse",
+    "ClientRequestRemoteControlClientListRequest": "RemoteControlClientsListResponse",
+    "ClientRequestRemoteControlClientRevokeRequest": "RemoteControlClientsRevokeResponse",
+    "ClientRequestConfigMcpServerReloadRequest": "McpServerRefreshResponse",
+    "ClientRequestMcpServerStatusListRequest": "ListMcpServerStatusResponse",
+    "ClientRequestMcpServerResourceReadRequest": "McpResourceReadResponse",
+    "ClientRequestAccountLoginStartRequest": "LoginAccountResponse",
+    "ClientRequestAccountLoginCancelRequest": "CancelLoginAccountResponse",
+    "ClientRequestAccountLogoutRequest": "LogoutAccountResponse",
+    "ClientRequestAccountRateLimitsReadRequest": "GetAccountRateLimitsResponse",
+    "ClientRequestAccountRateLimitResetCreditConsumeRequest": "ConsumeAccountRateLimitResetCreditResponse",
+    "ClientRequestAccountUsageReadRequest": "GetAccountTokenUsageResponse",
+    "ClientRequestAccountSendAddCreditsNudgeEmailRequest": "SendAddCreditsNudgeEmailResponse",
+    "ClientRequestConfigValueWriteRequest": "ConfigWriteResponse",
+    "ClientRequestConfigBatchWriteRequest": "ConfigWriteResponse",
+    "ClientRequestAccountReadRequest": "GetAccountResponse",
+    "ServerRequestItemCommandExecutionRequestApprovalRequest": "CommandExecutionRequestApprovalResponse",
+    "ServerRequestItemFileChangeRequestApprovalRequest": "FileChangeRequestApprovalResponse",
+    "ServerRequestItemToolRequestUserInputRequest": "ToolRequestUserInputResponse",
+    "ServerRequestItemPermissionsRequestApprovalRequest": "PermissionsRequestApprovalResponse",
+    "ServerRequestItemToolCallRequest": "DynamicToolCallResponse",
+    "ServerRequestAccountChatgptAuthTokensRefreshRequest": "ChatgptAuthTokensRefreshResponse",
+}
+
+
 class SchemaIntrospector:
     def __init__(self, document: dict[str, Any]) -> None:
         self.schemas = document["components"]["schemas"]
@@ -16,10 +43,11 @@ class SchemaIntrospector:
         protocol_name: str,
         accessor_name: str,
         has_id: bool,
+        has_response: bool,
     ) -> UnionMapping:
         schema = self.schemas[schema_name]
         cases = tuple(
-            self.union_case(schema_name, ref)
+            self.union_case(schema_name, ref, has_response=has_response)
             for ref in schema["oneOf"]
         )
         return UnionMapping(
@@ -31,7 +59,13 @@ class SchemaIntrospector:
             has_id=has_id,
         )
 
-    def union_case(self, schema_name: str, ref_schema: dict[str, str]) -> UnionCase:
+    def union_case(
+        self,
+        schema_name: str,
+        ref_schema: dict[str, str],
+        *,
+        has_response: bool,
+    ) -> UnionCase:
         component_name = ref_schema["$ref"].removeprefix("#/components/schemas/")
         component = self.schemas[component_name]
         properties = component.get("properties", {})
@@ -45,8 +79,29 @@ class SchemaIntrospector:
                 properties["params"],
                 required="params" in required,
             ),
+            response_type=(
+                self.response_type_for_component(schema_name, component_name)
+                if has_response
+                else None
+            ),
             properties=tuple(properties),
         )
+
+    def response_type_for_component(self, schema_name: str, component_name: str) -> str:
+        response_name = RESPONSE_OVERRIDES.get(component_name)
+        if response_name is None:
+            response_name = self.response_name_candidate(schema_name, component_name)
+        if response_name not in self.schemas:
+            raise ValueError(f"Missing response schema for {component_name}: {response_name}")
+        return f"Components.Schemas.{response_name}"
+
+    def response_name_candidate(self, schema_name: str, component_name: str) -> str:
+        name = component_name
+        if name.startswith(schema_name):
+            name = name[len(schema_name):]
+        if name.endswith("Request"):
+            name = name[:-len("Request")]
+        return f"{name}Response"
 
     def singleton_string_value(self, schema: dict[str, Any]) -> str:
         enum_values = schema.get("enum")
@@ -92,18 +147,21 @@ class SwiftMappingGenerator:
                 protocol_name="ClientRequestable",
                 accessor_name="asClientRequest",
                 has_id=True,
+                has_response=True,
             ),
             introspector.union_mapping(
                 "ServerRequest",
                 protocol_name="ServerRequestable",
                 accessor_name="asServerRequest",
                 has_id=True,
+                has_response=True,
             ),
             introspector.union_mapping(
                 "ServerNotification",
                 protocol_name="ServerNotificationPayload",
                 accessor_name="asServerNotification",
                 has_id=False,
+                has_response=False,
             ),
         )
 
@@ -130,6 +188,7 @@ class SwiftMappingGenerator:
         return [
             "protocol ClientRequestable {",
             "    associatedtype Params",
+            "    associatedtype Response",
             "    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest",
             "    var id: Components.Schemas.RequestId { get }",
             "    var params: Params { get }",
@@ -137,6 +196,7 @@ class SwiftMappingGenerator:
             "",
             "protocol ServerRequestable {",
             "    associatedtype Params",
+            "    associatedtype Response",
             "    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest",
             "    var id: Components.Schemas.RequestId { get }",
             "    var params: Params { get }",
@@ -156,6 +216,12 @@ class SwiftMappingGenerator:
             lines.append(
                 f"    typealias {case.alias_name} = Components.Schemas.{case.component_name}"
             )
+        response_cases = [case for case in mapping.cases if case.response_type is not None]
+        if response_cases:
+            lines.extend(["", "    enum Response {"])
+            for case in response_cases:
+                lines.append(f"        typealias {case.alias_name} = {case.response_type}")
+            lines.append("    }")
         lines.extend([
             "",
             f"    var {mapping.accessor_name}: any {mapping.protocol_name} {{",
@@ -183,6 +249,10 @@ class SwiftMappingGenerator:
             f"extension {component_type}: {mapping.protocol_name} {{",
             f"    typealias Params = {case.params_type}",
         ]
+        if case.response_type is not None:
+            lines.append(
+                f"    typealias Response = AppServerModels.{mapping.schema_name}.Response.{case.alias_name}"
+            )
         if mapping.has_id:
             lines.extend([
                 f"    static func build(id: Components.Schemas.RequestId, params: Params) -> {mapping.build_return_type} {{",
