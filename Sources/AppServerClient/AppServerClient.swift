@@ -27,7 +27,7 @@ public actor AppServerClient<Connection: AppServerConnection> {
         self.connection = connection
     }
 
-    private func sendInitialize() async throws -> AppServerModels.ClientRequest.Initialize.Response {
+    public func sendInitialize() async throws -> AppServerModels.ClientRequest.Initialize.Response {
         try await send(
             request: AppServerModels.ClientRequest.Initialize.self,
             with: .init(
@@ -41,7 +41,7 @@ public actor AppServerClient<Connection: AppServerConnection> {
         )
     }
 
-    private func send<Requestable: ClientRequestable>(request: Requestable.Type, with params: Requestable.Params) async throws -> Requestable.Response {
+    public func send<Requestable: ClientRequestable>(request: Requestable.Type, with params: Requestable.Params) async throws -> Requestable.Response {
         let decoder = JSONDecoder()
 
         let id = AppServerModels.ID(value2: nextRequestID)
@@ -65,30 +65,25 @@ public actor AppServerClient<Connection: AppServerConnection> {
         }
     }
 
-    public func run() async throws {
+    public func handleEvents() async {
         let decoder = JSONDecoder()
 
-        Task {
-            for await data in await connection.reader {
-                if let response = try? decoder.decode(CallResult<VoidCodable>.self, from: data) {
-                    if let pendingRequest = pendingClientRequests.removeValue(forKey: response.id) {
-                        pendingRequest(data)
-                    } else {
-                        print("server-response: received reponse for unknown id \(response.id)")
-                    }
-                } else if let request = try? decoder.decode(AppServerModels.ServerRequest.self, from: data) {
-                    print("server-request: \(request)")
-                } else if let notification = try? decoder.decode(AppServerModels.ServerNotification.self, from: data) {
-                    print("server-notification: \(notification)")
-                } else if let pretty = Self.prettyPrintedJSON(data) {
-                    print("json: \(pretty)")
+        for await data in await connection.reader {
+            if let response = try? decoder.decode(CallResult<VoidCodable>.self, from: data) {
+                if let pendingRequest = pendingClientRequests.removeValue(forKey: response.id) {
+                    pendingRequest(data)
                 } else {
-                    print("unparsed: \(String(data: data, encoding: .utf8), default: "non readable data")")
+                    print("server-response: received reponse for unknown id \(response.id)")
                 }
+            } else if let request = try? decoder.decode(AppServerModels.ServerRequest.self, from: data) {
+                print("server-request: \(request)")
+            } else if let notification = try? decoder.decode(AppServerModels.ServerNotification.self, from: data) {
+                print("server-notification: \(notification)")
+            } else if let pretty = Self.prettyPrintedJSON(data) {
+                print("json: \(pretty)")
+            } else {
+                print("unparsed: \(String(data: data, encoding: .utf8), default: "non readable data")")
             }
         }
-
-        let response = try await self.sendInitialize()
-        print("Init response = \(response)")
     }
 }

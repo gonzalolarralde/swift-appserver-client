@@ -2,7 +2,7 @@
 
 import OpenAPIRuntime
 
-extension AppServerModels.ClientRequest {
+public extension AppServerModels.ClientRequest {
     typealias Initialize = Components.Schemas.ClientRequestInitializeRequest
     typealias ThreadStart = Components.Schemas.ClientRequestThreadStartRequest
     typealias ThreadResume = Components.Schemas.ClientRequestThreadResumeRequest
@@ -124,125 +124,125 @@ extension AppServerModels.ClientRequest {
     typealias FuzzyFileSearchSessionStop = Components.Schemas.ClientRequestFuzzyFileSearchSessionStopRequest
 
     enum Response {
-        typealias Initialize = Components.Schemas.InitializeResponse
-        typealias ThreadStart = Components.Schemas.ThreadStartResponse
-        typealias ThreadResume = Components.Schemas.ThreadResumeResponse
-        typealias ThreadFork = Components.Schemas.ThreadForkResponse
-        typealias ThreadArchive = Components.Schemas.ThreadArchiveResponse
-        typealias ThreadDelete = Components.Schemas.ThreadDeleteResponse
-        typealias ThreadUnsubscribe = Components.Schemas.ThreadUnsubscribeResponse
-        typealias ThreadIncrementElicitation = Components.Schemas.ThreadIncrementElicitationResponse
-        typealias ThreadDecrementElicitation = Components.Schemas.ThreadDecrementElicitationResponse
-        typealias ThreadNameSet = Components.Schemas.ThreadSetNameResponse
-        typealias ThreadGoalSet = Components.Schemas.ThreadGoalSetResponse
-        typealias ThreadGoalGet = Components.Schemas.ThreadGoalGetResponse
-        typealias ThreadGoalClear = Components.Schemas.ThreadGoalClearResponse
-        typealias ThreadMetadataUpdate = Components.Schemas.ThreadMetadataUpdateResponse
-        typealias ThreadSettingsUpdate = Components.Schemas.ThreadSettingsUpdateResponse
-        typealias ThreadMemoryModeSet = Components.Schemas.ThreadMemoryModeSetResponse
-        typealias MemoryReset = Components.Schemas.MemoryResetResponse
-        typealias ThreadUnarchive = Components.Schemas.ThreadUnarchiveResponse
-        typealias ThreadCompactStart = Components.Schemas.ThreadCompactStartResponse
-        typealias ThreadShellCommand = Components.Schemas.ThreadShellCommandResponse
-        typealias ThreadApproveGuardianDeniedAction = Components.Schemas.ThreadApproveGuardianDeniedActionResponse
-        typealias ThreadBackgroundTerminalsClean = Components.Schemas.ThreadBackgroundTerminalsCleanResponse
-        typealias ThreadBackgroundTerminalsList = Components.Schemas.ThreadBackgroundTerminalsListResponse
-        typealias ThreadBackgroundTerminalsTerminate = Components.Schemas.ThreadBackgroundTerminalsTerminateResponse
-        typealias ThreadRollback = Components.Schemas.ThreadRollbackResponse
-        typealias ThreadList = Components.Schemas.ThreadListResponse
-        typealias ThreadSearch = Components.Schemas.ThreadSearchResponse
-        typealias ThreadLoadedList = Components.Schemas.ThreadLoadedListResponse
-        typealias ThreadRead = Components.Schemas.ThreadReadResponse
-        typealias ThreadTurnsList = Components.Schemas.ThreadTurnsListResponse
-        typealias ThreadTurnsItemsList = Components.Schemas.ThreadTurnsItemsListResponse
-        typealias ThreadInjectItems = Components.Schemas.ThreadInjectItemsResponse
-        typealias SkillsList = Components.Schemas.SkillsListResponse
-        typealias SkillsExtraRootsSet = Components.Schemas.SkillsExtraRootsSetResponse
-        typealias HooksList = Components.Schemas.HooksListResponse
-        typealias MarketplaceAdd = Components.Schemas.MarketplaceAddResponse
-        typealias MarketplaceRemove = Components.Schemas.MarketplaceRemoveResponse
-        typealias MarketplaceUpgrade = Components.Schemas.MarketplaceUpgradeResponse
-        typealias PluginList = Components.Schemas.PluginListResponse
-        typealias PluginInstalled = Components.Schemas.PluginInstalledResponse
-        typealias PluginRead = Components.Schemas.PluginReadResponse
-        typealias PluginSkillRead = Components.Schemas.PluginSkillReadResponse
-        typealias PluginShareSave = Components.Schemas.PluginShareSaveResponse
-        typealias PluginShareUpdateTargets = Components.Schemas.PluginShareUpdateTargetsResponse
-        typealias PluginShareList = Components.Schemas.PluginShareListResponse
-        typealias PluginShareCheckout = Components.Schemas.PluginShareCheckoutResponse
-        typealias PluginShareDelete = Components.Schemas.PluginShareDeleteResponse
-        typealias AppList = Components.Schemas.AppsListResponse
-        typealias FsReadFile = Components.Schemas.FsReadFileResponse
-        typealias FsWriteFile = Components.Schemas.FsWriteFileResponse
-        typealias FsCreateDirectory = Components.Schemas.FsCreateDirectoryResponse
-        typealias FsGetMetadata = Components.Schemas.FsGetMetadataResponse
-        typealias FsReadDirectory = Components.Schemas.FsReadDirectoryResponse
-        typealias FsRemove = Components.Schemas.FsRemoveResponse
-        typealias FsCopy = Components.Schemas.FsCopyResponse
-        typealias FsWatch = Components.Schemas.FsWatchResponse
-        typealias FsUnwatch = Components.Schemas.FsUnwatchResponse
-        typealias SkillsConfigWrite = Components.Schemas.SkillsConfigWriteResponse
-        typealias PluginInstall = Components.Schemas.PluginInstallResponse
-        typealias PluginUninstall = Components.Schemas.PluginUninstallResponse
-        typealias TurnStart = Components.Schemas.TurnStartResponse
-        typealias TurnSteer = Components.Schemas.TurnSteerResponse
-        typealias TurnInterrupt = Components.Schemas.TurnInterruptResponse
-        typealias ThreadRealtimeStart = Components.Schemas.ThreadRealtimeStartResponse
-        typealias ThreadRealtimeAppendAudio = Components.Schemas.ThreadRealtimeAppendAudioResponse
-        typealias ThreadRealtimeAppendText = Components.Schemas.ThreadRealtimeAppendTextResponse
-        typealias ThreadRealtimeAppendSpeech = Components.Schemas.ThreadRealtimeAppendSpeechResponse
-        typealias ThreadRealtimeStop = Components.Schemas.ThreadRealtimeStopResponse
-        typealias ThreadRealtimeListVoices = Components.Schemas.ThreadRealtimeListVoicesResponse
-        typealias ReviewStart = Components.Schemas.ReviewStartResponse
-        typealias ModelList = Components.Schemas.ModelListResponse
-        typealias ModelProviderCapabilitiesRead = Components.Schemas.ModelProviderCapabilitiesReadResponse
-        typealias ExperimentalFeatureList = Components.Schemas.ExperimentalFeatureListResponse
-        typealias PermissionProfileList = Components.Schemas.PermissionProfileListResponse
-        typealias ExperimentalFeatureEnablementSet = Components.Schemas.ExperimentalFeatureEnablementSetResponse
-        typealias RemoteControlEnable = Components.Schemas.RemoteControlEnableResponse
-        typealias RemoteControlDisable = Components.Schemas.RemoteControlDisableResponse
-        typealias RemoteControlStatusRead = Components.Schemas.RemoteControlStatusReadResponse
-        typealias RemoteControlPairingStart = Components.Schemas.RemoteControlPairingStartResponse
-        typealias RemoteControlPairingStatus = Components.Schemas.RemoteControlPairingStatusResponse
-        typealias RemoteControlClientList = Components.Schemas.RemoteControlClientsListResponse
-        typealias RemoteControlClientRevoke = Components.Schemas.RemoteControlClientsRevokeResponse
-        typealias CollaborationModeList = Components.Schemas.CollaborationModeListResponse
-        typealias MockExperimentalMethod = Components.Schemas.MockExperimentalMethodResponse
-        typealias EnvironmentAdd = Components.Schemas.EnvironmentAddResponse
-        typealias McpServerOauthLogin = Components.Schemas.McpServerOauthLoginResponse
-        typealias ConfigMcpServerReload = Components.Schemas.McpServerRefreshResponse
-        typealias McpServerStatusList = Components.Schemas.ListMcpServerStatusResponse
-        typealias McpServerResourceRead = Components.Schemas.McpResourceReadResponse
-        typealias McpServerToolCall = Components.Schemas.McpServerToolCallResponse
-        typealias WindowsSandboxSetupStart = Components.Schemas.WindowsSandboxSetupStartResponse
-        typealias WindowsSandboxReadiness = Components.Schemas.WindowsSandboxReadinessResponse
-        typealias AccountLoginStart = Components.Schemas.LoginAccountResponse
-        typealias AccountLoginCancel = Components.Schemas.CancelLoginAccountResponse
-        typealias AccountLogout = Components.Schemas.LogoutAccountResponse
-        typealias AccountRateLimitsRead = Components.Schemas.GetAccountRateLimitsResponse
-        typealias AccountRateLimitResetCreditConsume = Components.Schemas.ConsumeAccountRateLimitResetCreditResponse
-        typealias AccountUsageRead = Components.Schemas.GetAccountTokenUsageResponse
-        typealias AccountSendAddCreditsNudgeEmail = Components.Schemas.SendAddCreditsNudgeEmailResponse
-        typealias FeedbackUpload = Components.Schemas.FeedbackUploadResponse
-        typealias CommandExec = Components.Schemas.CommandExecResponse
-        typealias CommandExecWrite = Components.Schemas.CommandExecWriteResponse
-        typealias CommandExecTerminate = Components.Schemas.CommandExecTerminateResponse
-        typealias CommandExecResize = Components.Schemas.CommandExecResizeResponse
-        typealias ProcessSpawn = Components.Schemas.ProcessSpawnResponse
-        typealias ProcessWriteStdin = Components.Schemas.ProcessWriteStdinResponse
-        typealias ProcessKill = Components.Schemas.ProcessKillResponse
-        typealias ProcessResizePty = Components.Schemas.ProcessResizePtyResponse
-        typealias ConfigRead = Components.Schemas.ConfigReadResponse
-        typealias ExternalAgentConfigDetect = Components.Schemas.ExternalAgentConfigDetectResponse
-        typealias ExternalAgentConfigImport = Components.Schemas.ExternalAgentConfigImportResponse
-        typealias ConfigValueWrite = Components.Schemas.ConfigWriteResponse
-        typealias ConfigBatchWrite = Components.Schemas.ConfigWriteResponse
-        typealias ConfigRequirementsRead = Components.Schemas.ConfigRequirementsReadResponse
-        typealias AccountRead = Components.Schemas.GetAccountResponse
-        typealias FuzzyFileSearch = Components.Schemas.FuzzyFileSearchResponse
-        typealias FuzzyFileSearchSessionStart = Components.Schemas.FuzzyFileSearchSessionStartResponse
-        typealias FuzzyFileSearchSessionUpdate = Components.Schemas.FuzzyFileSearchSessionUpdateResponse
-        typealias FuzzyFileSearchSessionStop = Components.Schemas.FuzzyFileSearchSessionStopResponse
+        public typealias Initialize = Components.Schemas.InitializeResponse
+        public typealias ThreadStart = Components.Schemas.ThreadStartResponse
+        public typealias ThreadResume = Components.Schemas.ThreadResumeResponse
+        public typealias ThreadFork = Components.Schemas.ThreadForkResponse
+        public typealias ThreadArchive = Components.Schemas.ThreadArchiveResponse
+        public typealias ThreadDelete = Components.Schemas.ThreadDeleteResponse
+        public typealias ThreadUnsubscribe = Components.Schemas.ThreadUnsubscribeResponse
+        public typealias ThreadIncrementElicitation = Components.Schemas.ThreadIncrementElicitationResponse
+        public typealias ThreadDecrementElicitation = Components.Schemas.ThreadDecrementElicitationResponse
+        public typealias ThreadNameSet = Components.Schemas.ThreadSetNameResponse
+        public typealias ThreadGoalSet = Components.Schemas.ThreadGoalSetResponse
+        public typealias ThreadGoalGet = Components.Schemas.ThreadGoalGetResponse
+        public typealias ThreadGoalClear = Components.Schemas.ThreadGoalClearResponse
+        public typealias ThreadMetadataUpdate = Components.Schemas.ThreadMetadataUpdateResponse
+        public typealias ThreadSettingsUpdate = Components.Schemas.ThreadSettingsUpdateResponse
+        public typealias ThreadMemoryModeSet = Components.Schemas.ThreadMemoryModeSetResponse
+        public typealias MemoryReset = Components.Schemas.MemoryResetResponse
+        public typealias ThreadUnarchive = Components.Schemas.ThreadUnarchiveResponse
+        public typealias ThreadCompactStart = Components.Schemas.ThreadCompactStartResponse
+        public typealias ThreadShellCommand = Components.Schemas.ThreadShellCommandResponse
+        public typealias ThreadApproveGuardianDeniedAction = Components.Schemas.ThreadApproveGuardianDeniedActionResponse
+        public typealias ThreadBackgroundTerminalsClean = Components.Schemas.ThreadBackgroundTerminalsCleanResponse
+        public typealias ThreadBackgroundTerminalsList = Components.Schemas.ThreadBackgroundTerminalsListResponse
+        public typealias ThreadBackgroundTerminalsTerminate = Components.Schemas.ThreadBackgroundTerminalsTerminateResponse
+        public typealias ThreadRollback = Components.Schemas.ThreadRollbackResponse
+        public typealias ThreadList = Components.Schemas.ThreadListResponse
+        public typealias ThreadSearch = Components.Schemas.ThreadSearchResponse
+        public typealias ThreadLoadedList = Components.Schemas.ThreadLoadedListResponse
+        public typealias ThreadRead = Components.Schemas.ThreadReadResponse
+        public typealias ThreadTurnsList = Components.Schemas.ThreadTurnsListResponse
+        public typealias ThreadTurnsItemsList = Components.Schemas.ThreadTurnsItemsListResponse
+        public typealias ThreadInjectItems = Components.Schemas.ThreadInjectItemsResponse
+        public typealias SkillsList = Components.Schemas.SkillsListResponse
+        public typealias SkillsExtraRootsSet = Components.Schemas.SkillsExtraRootsSetResponse
+        public typealias HooksList = Components.Schemas.HooksListResponse
+        public typealias MarketplaceAdd = Components.Schemas.MarketplaceAddResponse
+        public typealias MarketplaceRemove = Components.Schemas.MarketplaceRemoveResponse
+        public typealias MarketplaceUpgrade = Components.Schemas.MarketplaceUpgradeResponse
+        public typealias PluginList = Components.Schemas.PluginListResponse
+        public typealias PluginInstalled = Components.Schemas.PluginInstalledResponse
+        public typealias PluginRead = Components.Schemas.PluginReadResponse
+        public typealias PluginSkillRead = Components.Schemas.PluginSkillReadResponse
+        public typealias PluginShareSave = Components.Schemas.PluginShareSaveResponse
+        public typealias PluginShareUpdateTargets = Components.Schemas.PluginShareUpdateTargetsResponse
+        public typealias PluginShareList = Components.Schemas.PluginShareListResponse
+        public typealias PluginShareCheckout = Components.Schemas.PluginShareCheckoutResponse
+        public typealias PluginShareDelete = Components.Schemas.PluginShareDeleteResponse
+        public typealias AppList = Components.Schemas.AppsListResponse
+        public typealias FsReadFile = Components.Schemas.FsReadFileResponse
+        public typealias FsWriteFile = Components.Schemas.FsWriteFileResponse
+        public typealias FsCreateDirectory = Components.Schemas.FsCreateDirectoryResponse
+        public typealias FsGetMetadata = Components.Schemas.FsGetMetadataResponse
+        public typealias FsReadDirectory = Components.Schemas.FsReadDirectoryResponse
+        public typealias FsRemove = Components.Schemas.FsRemoveResponse
+        public typealias FsCopy = Components.Schemas.FsCopyResponse
+        public typealias FsWatch = Components.Schemas.FsWatchResponse
+        public typealias FsUnwatch = Components.Schemas.FsUnwatchResponse
+        public typealias SkillsConfigWrite = Components.Schemas.SkillsConfigWriteResponse
+        public typealias PluginInstall = Components.Schemas.PluginInstallResponse
+        public typealias PluginUninstall = Components.Schemas.PluginUninstallResponse
+        public typealias TurnStart = Components.Schemas.TurnStartResponse
+        public typealias TurnSteer = Components.Schemas.TurnSteerResponse
+        public typealias TurnInterrupt = Components.Schemas.TurnInterruptResponse
+        public typealias ThreadRealtimeStart = Components.Schemas.ThreadRealtimeStartResponse
+        public typealias ThreadRealtimeAppendAudio = Components.Schemas.ThreadRealtimeAppendAudioResponse
+        public typealias ThreadRealtimeAppendText = Components.Schemas.ThreadRealtimeAppendTextResponse
+        public typealias ThreadRealtimeAppendSpeech = Components.Schemas.ThreadRealtimeAppendSpeechResponse
+        public typealias ThreadRealtimeStop = Components.Schemas.ThreadRealtimeStopResponse
+        public typealias ThreadRealtimeListVoices = Components.Schemas.ThreadRealtimeListVoicesResponse
+        public typealias ReviewStart = Components.Schemas.ReviewStartResponse
+        public typealias ModelList = Components.Schemas.ModelListResponse
+        public typealias ModelProviderCapabilitiesRead = Components.Schemas.ModelProviderCapabilitiesReadResponse
+        public typealias ExperimentalFeatureList = Components.Schemas.ExperimentalFeatureListResponse
+        public typealias PermissionProfileList = Components.Schemas.PermissionProfileListResponse
+        public typealias ExperimentalFeatureEnablementSet = Components.Schemas.ExperimentalFeatureEnablementSetResponse
+        public typealias RemoteControlEnable = Components.Schemas.RemoteControlEnableResponse
+        public typealias RemoteControlDisable = Components.Schemas.RemoteControlDisableResponse
+        public typealias RemoteControlStatusRead = Components.Schemas.RemoteControlStatusReadResponse
+        public typealias RemoteControlPairingStart = Components.Schemas.RemoteControlPairingStartResponse
+        public typealias RemoteControlPairingStatus = Components.Schemas.RemoteControlPairingStatusResponse
+        public typealias RemoteControlClientList = Components.Schemas.RemoteControlClientsListResponse
+        public typealias RemoteControlClientRevoke = Components.Schemas.RemoteControlClientsRevokeResponse
+        public typealias CollaborationModeList = Components.Schemas.CollaborationModeListResponse
+        public typealias MockExperimentalMethod = Components.Schemas.MockExperimentalMethodResponse
+        public typealias EnvironmentAdd = Components.Schemas.EnvironmentAddResponse
+        public typealias McpServerOauthLogin = Components.Schemas.McpServerOauthLoginResponse
+        public typealias ConfigMcpServerReload = Components.Schemas.McpServerRefreshResponse
+        public typealias McpServerStatusList = Components.Schemas.ListMcpServerStatusResponse
+        public typealias McpServerResourceRead = Components.Schemas.McpResourceReadResponse
+        public typealias McpServerToolCall = Components.Schemas.McpServerToolCallResponse
+        public typealias WindowsSandboxSetupStart = Components.Schemas.WindowsSandboxSetupStartResponse
+        public typealias WindowsSandboxReadiness = Components.Schemas.WindowsSandboxReadinessResponse
+        public typealias AccountLoginStart = Components.Schemas.LoginAccountResponse
+        public typealias AccountLoginCancel = Components.Schemas.CancelLoginAccountResponse
+        public typealias AccountLogout = Components.Schemas.LogoutAccountResponse
+        public typealias AccountRateLimitsRead = Components.Schemas.GetAccountRateLimitsResponse
+        public typealias AccountRateLimitResetCreditConsume = Components.Schemas.ConsumeAccountRateLimitResetCreditResponse
+        public typealias AccountUsageRead = Components.Schemas.GetAccountTokenUsageResponse
+        public typealias AccountSendAddCreditsNudgeEmail = Components.Schemas.SendAddCreditsNudgeEmailResponse
+        public typealias FeedbackUpload = Components.Schemas.FeedbackUploadResponse
+        public typealias CommandExec = Components.Schemas.CommandExecResponse
+        public typealias CommandExecWrite = Components.Schemas.CommandExecWriteResponse
+        public typealias CommandExecTerminate = Components.Schemas.CommandExecTerminateResponse
+        public typealias CommandExecResize = Components.Schemas.CommandExecResizeResponse
+        public typealias ProcessSpawn = Components.Schemas.ProcessSpawnResponse
+        public typealias ProcessWriteStdin = Components.Schemas.ProcessWriteStdinResponse
+        public typealias ProcessKill = Components.Schemas.ProcessKillResponse
+        public typealias ProcessResizePty = Components.Schemas.ProcessResizePtyResponse
+        public typealias ConfigRead = Components.Schemas.ConfigReadResponse
+        public typealias ExternalAgentConfigDetect = Components.Schemas.ExternalAgentConfigDetectResponse
+        public typealias ExternalAgentConfigImport = Components.Schemas.ExternalAgentConfigImportResponse
+        public typealias ConfigValueWrite = Components.Schemas.ConfigWriteResponse
+        public typealias ConfigBatchWrite = Components.Schemas.ConfigWriteResponse
+        public typealias ConfigRequirementsRead = Components.Schemas.ConfigRequirementsReadResponse
+        public typealias AccountRead = Components.Schemas.GetAccountResponse
+        public typealias FuzzyFileSearch = Components.Schemas.FuzzyFileSearchResponse
+        public typealias FuzzyFileSearchSessionStart = Components.Schemas.FuzzyFileSearchSessionStartResponse
+        public typealias FuzzyFileSearchSessionUpdate = Components.Schemas.FuzzyFileSearchSessionUpdateResponse
+        public typealias FuzzyFileSearchSessionStop = Components.Schemas.FuzzyFileSearchSessionStopResponse
     }
 
     var asClientRequest: any ClientRequestable {
@@ -371,958 +371,958 @@ extension AppServerModels.ClientRequest {
 }
 
 extension Components.Schemas.ClientRequestInitializeRequest: ClientRequestable {
-    typealias Params = Components.Schemas.InitializeParams
-    typealias Response = AppServerModels.ClientRequest.Response.Initialize
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.InitializeParams
+    public typealias Response = AppServerModels.ClientRequest.Response.Initialize
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .initialize(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadStartRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadStartParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadStart
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadStartParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadStart
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadStart(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadResumeRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadResumeParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadResume
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadResumeParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadResume
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadResume(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadForkRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadForkParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadFork
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadForkParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadFork
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadFork(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadArchiveRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadArchiveParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadArchive
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadArchiveParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadArchive
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadArchive(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadDeleteRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadDeleteParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadDelete
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadDeleteParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadDelete
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadDelete(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadUnsubscribeRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadUnsubscribeParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadUnsubscribe
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadUnsubscribeParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadUnsubscribe
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadUnsubscribe(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadIncrementElicitationRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadIncrementElicitationParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadIncrementElicitation
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadIncrementElicitationParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadIncrementElicitation
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadIncrementElicitation(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadDecrementElicitationRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadDecrementElicitationParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadDecrementElicitation
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadDecrementElicitationParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadDecrementElicitation
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadDecrementElicitation(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadNameSetRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadSetNameParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadNameSet
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadSetNameParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadNameSet
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadNameSet(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadGoalSetRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadGoalSetParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadGoalSet
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadGoalSetParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadGoalSet
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadGoalSet(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadGoalGetRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadGoalGetParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadGoalGet
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadGoalGetParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadGoalGet
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadGoalGet(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadGoalClearRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadGoalClearParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadGoalClear
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadGoalClearParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadGoalClear
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadGoalClear(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadMetadataUpdateRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadMetadataUpdateParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadMetadataUpdate
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadMetadataUpdateParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadMetadataUpdate
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadMetadataUpdate(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadSettingsUpdateRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadSettingsUpdateParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadSettingsUpdate
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadSettingsUpdateParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadSettingsUpdate
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadSettingsUpdate(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadMemoryModeSetRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadMemoryModeSetParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadMemoryModeSet
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadMemoryModeSetParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadMemoryModeSet
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadMemoryModeSet(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestMemoryResetRequest: ClientRequestable {
-    typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
-    typealias Response = AppServerModels.ClientRequest.Response.MemoryReset
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
+    public typealias Response = AppServerModels.ClientRequest.Response.MemoryReset
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .memoryReset(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadUnarchiveRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadUnarchiveParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadUnarchive
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadUnarchiveParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadUnarchive
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadUnarchive(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadCompactStartRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadCompactStartParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadCompactStart
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadCompactStartParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadCompactStart
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadCompactStart(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadShellCommandRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadShellCommandParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadShellCommand
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadShellCommandParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadShellCommand
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadShellCommand(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadApproveGuardianDeniedActionRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadApproveGuardianDeniedActionParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadApproveGuardianDeniedAction
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadApproveGuardianDeniedActionParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadApproveGuardianDeniedAction
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadApproveGuardianDeniedAction(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadBackgroundTerminalsCleanRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadBackgroundTerminalsCleanParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadBackgroundTerminalsClean
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadBackgroundTerminalsCleanParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadBackgroundTerminalsClean
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadBackgroundTerminalsClean(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadBackgroundTerminalsListRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadBackgroundTerminalsListParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadBackgroundTerminalsList
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadBackgroundTerminalsListParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadBackgroundTerminalsList
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadBackgroundTerminalsList(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadBackgroundTerminalsTerminateRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadBackgroundTerminalsTerminateParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadBackgroundTerminalsTerminate
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadBackgroundTerminalsTerminateParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadBackgroundTerminalsTerminate
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadBackgroundTerminalsTerminate(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadRollbackRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadRollbackParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadRollback
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadRollbackParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadRollback
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadRollback(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadListRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadListParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadList
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadListParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadList
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadList(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadSearchRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadSearchParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadSearch
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadSearchParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadSearch
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadSearch(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadLoadedListRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadLoadedListParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadLoadedList
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadLoadedListParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadLoadedList
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadLoadedList(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadReadRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadReadParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadRead
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadReadParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadRead
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadRead(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadTurnsListRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadTurnsListParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadTurnsList
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadTurnsListParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadTurnsList
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadTurnsList(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadTurnsItemsListRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadTurnsItemsListParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadTurnsItemsList
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadTurnsItemsListParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadTurnsItemsList
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadTurnsItemsList(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadInjectItemsRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadInjectItemsParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadInjectItems
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadInjectItemsParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadInjectItems
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadInjectItems(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestSkillsListRequest: ClientRequestable {
-    typealias Params = Components.Schemas.SkillsListParams
-    typealias Response = AppServerModels.ClientRequest.Response.SkillsList
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.SkillsListParams
+    public typealias Response = AppServerModels.ClientRequest.Response.SkillsList
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .skillsList(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestSkillsExtraRootsSetRequest: ClientRequestable {
-    typealias Params = Components.Schemas.SkillsExtraRootsSetParams
-    typealias Response = AppServerModels.ClientRequest.Response.SkillsExtraRootsSet
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.SkillsExtraRootsSetParams
+    public typealias Response = AppServerModels.ClientRequest.Response.SkillsExtraRootsSet
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .skillsExtraRootsSet(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestHooksListRequest: ClientRequestable {
-    typealias Params = Components.Schemas.HooksListParams
-    typealias Response = AppServerModels.ClientRequest.Response.HooksList
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.HooksListParams
+    public typealias Response = AppServerModels.ClientRequest.Response.HooksList
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .hooksList(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestMarketplaceAddRequest: ClientRequestable {
-    typealias Params = Components.Schemas.MarketplaceAddParams
-    typealias Response = AppServerModels.ClientRequest.Response.MarketplaceAdd
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.MarketplaceAddParams
+    public typealias Response = AppServerModels.ClientRequest.Response.MarketplaceAdd
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .marketplaceAdd(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestMarketplaceRemoveRequest: ClientRequestable {
-    typealias Params = Components.Schemas.MarketplaceRemoveParams
-    typealias Response = AppServerModels.ClientRequest.Response.MarketplaceRemove
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.MarketplaceRemoveParams
+    public typealias Response = AppServerModels.ClientRequest.Response.MarketplaceRemove
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .marketplaceRemove(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestMarketplaceUpgradeRequest: ClientRequestable {
-    typealias Params = Components.Schemas.MarketplaceUpgradeParams
-    typealias Response = AppServerModels.ClientRequest.Response.MarketplaceUpgrade
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.MarketplaceUpgradeParams
+    public typealias Response = AppServerModels.ClientRequest.Response.MarketplaceUpgrade
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .marketplaceUpgrade(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestPluginListRequest: ClientRequestable {
-    typealias Params = Components.Schemas.PluginListParams
-    typealias Response = AppServerModels.ClientRequest.Response.PluginList
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.PluginListParams
+    public typealias Response = AppServerModels.ClientRequest.Response.PluginList
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .pluginList(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestPluginInstalledRequest: ClientRequestable {
-    typealias Params = Components.Schemas.PluginInstalledParams
-    typealias Response = AppServerModels.ClientRequest.Response.PluginInstalled
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.PluginInstalledParams
+    public typealias Response = AppServerModels.ClientRequest.Response.PluginInstalled
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .pluginInstalled(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestPluginReadRequest: ClientRequestable {
-    typealias Params = Components.Schemas.PluginReadParams
-    typealias Response = AppServerModels.ClientRequest.Response.PluginRead
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.PluginReadParams
+    public typealias Response = AppServerModels.ClientRequest.Response.PluginRead
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .pluginRead(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestPluginSkillReadRequest: ClientRequestable {
-    typealias Params = Components.Schemas.PluginSkillReadParams
-    typealias Response = AppServerModels.ClientRequest.Response.PluginSkillRead
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.PluginSkillReadParams
+    public typealias Response = AppServerModels.ClientRequest.Response.PluginSkillRead
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .pluginSkillRead(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestPluginShareSaveRequest: ClientRequestable {
-    typealias Params = Components.Schemas.PluginShareSaveParams
-    typealias Response = AppServerModels.ClientRequest.Response.PluginShareSave
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.PluginShareSaveParams
+    public typealias Response = AppServerModels.ClientRequest.Response.PluginShareSave
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .pluginShareSave(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestPluginShareUpdateTargetsRequest: ClientRequestable {
-    typealias Params = Components.Schemas.PluginShareUpdateTargetsParams
-    typealias Response = AppServerModels.ClientRequest.Response.PluginShareUpdateTargets
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.PluginShareUpdateTargetsParams
+    public typealias Response = AppServerModels.ClientRequest.Response.PluginShareUpdateTargets
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .pluginShareUpdateTargets(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestPluginShareListRequest: ClientRequestable {
-    typealias Params = Components.Schemas.PluginShareListParams
-    typealias Response = AppServerModels.ClientRequest.Response.PluginShareList
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.PluginShareListParams
+    public typealias Response = AppServerModels.ClientRequest.Response.PluginShareList
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .pluginShareList(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestPluginShareCheckoutRequest: ClientRequestable {
-    typealias Params = Components.Schemas.PluginShareCheckoutParams
-    typealias Response = AppServerModels.ClientRequest.Response.PluginShareCheckout
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.PluginShareCheckoutParams
+    public typealias Response = AppServerModels.ClientRequest.Response.PluginShareCheckout
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .pluginShareCheckout(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestPluginShareDeleteRequest: ClientRequestable {
-    typealias Params = Components.Schemas.PluginShareDeleteParams
-    typealias Response = AppServerModels.ClientRequest.Response.PluginShareDelete
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.PluginShareDeleteParams
+    public typealias Response = AppServerModels.ClientRequest.Response.PluginShareDelete
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .pluginShareDelete(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestAppListRequest: ClientRequestable {
-    typealias Params = Components.Schemas.AppsListParams
-    typealias Response = AppServerModels.ClientRequest.Response.AppList
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.AppsListParams
+    public typealias Response = AppServerModels.ClientRequest.Response.AppList
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .appList(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestFsReadFileRequest: ClientRequestable {
-    typealias Params = Components.Schemas.FsReadFileParams
-    typealias Response = AppServerModels.ClientRequest.Response.FsReadFile
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.FsReadFileParams
+    public typealias Response = AppServerModels.ClientRequest.Response.FsReadFile
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .fsReadFile(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestFsWriteFileRequest: ClientRequestable {
-    typealias Params = Components.Schemas.FsWriteFileParams
-    typealias Response = AppServerModels.ClientRequest.Response.FsWriteFile
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.FsWriteFileParams
+    public typealias Response = AppServerModels.ClientRequest.Response.FsWriteFile
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .fsWriteFile(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestFsCreateDirectoryRequest: ClientRequestable {
-    typealias Params = Components.Schemas.FsCreateDirectoryParams
-    typealias Response = AppServerModels.ClientRequest.Response.FsCreateDirectory
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.FsCreateDirectoryParams
+    public typealias Response = AppServerModels.ClientRequest.Response.FsCreateDirectory
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .fsCreateDirectory(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestFsGetMetadataRequest: ClientRequestable {
-    typealias Params = Components.Schemas.FsGetMetadataParams
-    typealias Response = AppServerModels.ClientRequest.Response.FsGetMetadata
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.FsGetMetadataParams
+    public typealias Response = AppServerModels.ClientRequest.Response.FsGetMetadata
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .fsGetMetadata(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestFsReadDirectoryRequest: ClientRequestable {
-    typealias Params = Components.Schemas.FsReadDirectoryParams
-    typealias Response = AppServerModels.ClientRequest.Response.FsReadDirectory
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.FsReadDirectoryParams
+    public typealias Response = AppServerModels.ClientRequest.Response.FsReadDirectory
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .fsReadDirectory(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestFsRemoveRequest: ClientRequestable {
-    typealias Params = Components.Schemas.FsRemoveParams
-    typealias Response = AppServerModels.ClientRequest.Response.FsRemove
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.FsRemoveParams
+    public typealias Response = AppServerModels.ClientRequest.Response.FsRemove
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .fsRemove(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestFsCopyRequest: ClientRequestable {
-    typealias Params = Components.Schemas.FsCopyParams
-    typealias Response = AppServerModels.ClientRequest.Response.FsCopy
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.FsCopyParams
+    public typealias Response = AppServerModels.ClientRequest.Response.FsCopy
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .fsCopy(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestFsWatchRequest: ClientRequestable {
-    typealias Params = Components.Schemas.FsWatchParams
-    typealias Response = AppServerModels.ClientRequest.Response.FsWatch
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.FsWatchParams
+    public typealias Response = AppServerModels.ClientRequest.Response.FsWatch
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .fsWatch(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestFsUnwatchRequest: ClientRequestable {
-    typealias Params = Components.Schemas.FsUnwatchParams
-    typealias Response = AppServerModels.ClientRequest.Response.FsUnwatch
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.FsUnwatchParams
+    public typealias Response = AppServerModels.ClientRequest.Response.FsUnwatch
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .fsUnwatch(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestSkillsConfigWriteRequest: ClientRequestable {
-    typealias Params = Components.Schemas.SkillsConfigWriteParams
-    typealias Response = AppServerModels.ClientRequest.Response.SkillsConfigWrite
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.SkillsConfigWriteParams
+    public typealias Response = AppServerModels.ClientRequest.Response.SkillsConfigWrite
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .skillsConfigWrite(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestPluginInstallRequest: ClientRequestable {
-    typealias Params = Components.Schemas.PluginInstallParams
-    typealias Response = AppServerModels.ClientRequest.Response.PluginInstall
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.PluginInstallParams
+    public typealias Response = AppServerModels.ClientRequest.Response.PluginInstall
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .pluginInstall(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestPluginUninstallRequest: ClientRequestable {
-    typealias Params = Components.Schemas.PluginUninstallParams
-    typealias Response = AppServerModels.ClientRequest.Response.PluginUninstall
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.PluginUninstallParams
+    public typealias Response = AppServerModels.ClientRequest.Response.PluginUninstall
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .pluginUninstall(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestTurnStartRequest: ClientRequestable {
-    typealias Params = Components.Schemas.TurnStartParams
-    typealias Response = AppServerModels.ClientRequest.Response.TurnStart
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.TurnStartParams
+    public typealias Response = AppServerModels.ClientRequest.Response.TurnStart
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .turnStart(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestTurnSteerRequest: ClientRequestable {
-    typealias Params = Components.Schemas.TurnSteerParams
-    typealias Response = AppServerModels.ClientRequest.Response.TurnSteer
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.TurnSteerParams
+    public typealias Response = AppServerModels.ClientRequest.Response.TurnSteer
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .turnSteer(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestTurnInterruptRequest: ClientRequestable {
-    typealias Params = Components.Schemas.TurnInterruptParams
-    typealias Response = AppServerModels.ClientRequest.Response.TurnInterrupt
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.TurnInterruptParams
+    public typealias Response = AppServerModels.ClientRequest.Response.TurnInterrupt
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .turnInterrupt(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadRealtimeStartRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadRealtimeStartParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadRealtimeStart
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadRealtimeStartParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadRealtimeStart
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadRealtimeStart(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadRealtimeAppendAudioRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadRealtimeAppendAudioParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadRealtimeAppendAudio
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadRealtimeAppendAudioParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadRealtimeAppendAudio
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadRealtimeAppendAudio(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadRealtimeAppendTextRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadRealtimeAppendTextParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadRealtimeAppendText
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadRealtimeAppendTextParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadRealtimeAppendText
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadRealtimeAppendText(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadRealtimeAppendSpeechRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadRealtimeAppendSpeechParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadRealtimeAppendSpeech
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadRealtimeAppendSpeechParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadRealtimeAppendSpeech
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadRealtimeAppendSpeech(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadRealtimeStopRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadRealtimeStopParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadRealtimeStop
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadRealtimeStopParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadRealtimeStop
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadRealtimeStop(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestThreadRealtimeListVoicesRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ThreadRealtimeListVoicesParams
-    typealias Response = AppServerModels.ClientRequest.Response.ThreadRealtimeListVoices
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ThreadRealtimeListVoicesParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadRealtimeListVoices
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadRealtimeListVoices(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestReviewStartRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ReviewStartParams
-    typealias Response = AppServerModels.ClientRequest.Response.ReviewStart
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ReviewStartParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ReviewStart
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .reviewStart(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestModelListRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ModelListParams
-    typealias Response = AppServerModels.ClientRequest.Response.ModelList
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ModelListParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ModelList
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .modelList(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestModelProviderCapabilitiesReadRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ModelProviderCapabilitiesReadParams
-    typealias Response = AppServerModels.ClientRequest.Response.ModelProviderCapabilitiesRead
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ModelProviderCapabilitiesReadParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ModelProviderCapabilitiesRead
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .modelProviderCapabilitiesRead(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestExperimentalFeatureListRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ExperimentalFeatureListParams
-    typealias Response = AppServerModels.ClientRequest.Response.ExperimentalFeatureList
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ExperimentalFeatureListParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ExperimentalFeatureList
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .experimentalFeatureList(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestPermissionProfileListRequest: ClientRequestable {
-    typealias Params = Components.Schemas.PermissionProfileListParams
-    typealias Response = AppServerModels.ClientRequest.Response.PermissionProfileList
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.PermissionProfileListParams
+    public typealias Response = AppServerModels.ClientRequest.Response.PermissionProfileList
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .permissionProfileList(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestExperimentalFeatureEnablementSetRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ExperimentalFeatureEnablementSetParams
-    typealias Response = AppServerModels.ClientRequest.Response.ExperimentalFeatureEnablementSet
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ExperimentalFeatureEnablementSetParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ExperimentalFeatureEnablementSet
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .experimentalFeatureEnablementSet(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestRemoteControlEnableRequest: ClientRequestable {
-    typealias Params = Components.Schemas.RemoteControlEnableParams?
-    typealias Response = AppServerModels.ClientRequest.Response.RemoteControlEnable
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.RemoteControlEnableParams?
+    public typealias Response = AppServerModels.ClientRequest.Response.RemoteControlEnable
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .remoteControlEnable(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestRemoteControlDisableRequest: ClientRequestable {
-    typealias Params = Components.Schemas.RemoteControlDisableParams?
-    typealias Response = AppServerModels.ClientRequest.Response.RemoteControlDisable
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.RemoteControlDisableParams?
+    public typealias Response = AppServerModels.ClientRequest.Response.RemoteControlDisable
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .remoteControlDisable(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestRemoteControlStatusReadRequest: ClientRequestable {
-    typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
-    typealias Response = AppServerModels.ClientRequest.Response.RemoteControlStatusRead
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
+    public typealias Response = AppServerModels.ClientRequest.Response.RemoteControlStatusRead
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .remoteControlStatusRead(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestRemoteControlPairingStartRequest: ClientRequestable {
-    typealias Params = Components.Schemas.RemoteControlPairingStartParams
-    typealias Response = AppServerModels.ClientRequest.Response.RemoteControlPairingStart
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.RemoteControlPairingStartParams
+    public typealias Response = AppServerModels.ClientRequest.Response.RemoteControlPairingStart
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .remoteControlPairingStart(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestRemoteControlPairingStatusRequest: ClientRequestable {
-    typealias Params = Components.Schemas.RemoteControlPairingStatusParams
-    typealias Response = AppServerModels.ClientRequest.Response.RemoteControlPairingStatus
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.RemoteControlPairingStatusParams
+    public typealias Response = AppServerModels.ClientRequest.Response.RemoteControlPairingStatus
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .remoteControlPairingStatus(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestRemoteControlClientListRequest: ClientRequestable {
-    typealias Params = Components.Schemas.RemoteControlClientsListParams
-    typealias Response = AppServerModels.ClientRequest.Response.RemoteControlClientList
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.RemoteControlClientsListParams
+    public typealias Response = AppServerModels.ClientRequest.Response.RemoteControlClientList
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .remoteControlClientList(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestRemoteControlClientRevokeRequest: ClientRequestable {
-    typealias Params = Components.Schemas.RemoteControlClientsRevokeParams
-    typealias Response = AppServerModels.ClientRequest.Response.RemoteControlClientRevoke
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.RemoteControlClientsRevokeParams
+    public typealias Response = AppServerModels.ClientRequest.Response.RemoteControlClientRevoke
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .remoteControlClientRevoke(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestCollaborationModeListRequest: ClientRequestable {
-    typealias Params = Components.Schemas.CollaborationModeListParams
-    typealias Response = AppServerModels.ClientRequest.Response.CollaborationModeList
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.CollaborationModeListParams
+    public typealias Response = AppServerModels.ClientRequest.Response.CollaborationModeList
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .collaborationModeList(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestMockExperimentalMethodRequest: ClientRequestable {
-    typealias Params = Components.Schemas.MockExperimentalMethodParams
-    typealias Response = AppServerModels.ClientRequest.Response.MockExperimentalMethod
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.MockExperimentalMethodParams
+    public typealias Response = AppServerModels.ClientRequest.Response.MockExperimentalMethod
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .mockExperimentalMethod(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestEnvironmentAddRequest: ClientRequestable {
-    typealias Params = Components.Schemas.EnvironmentAddParams
-    typealias Response = AppServerModels.ClientRequest.Response.EnvironmentAdd
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.EnvironmentAddParams
+    public typealias Response = AppServerModels.ClientRequest.Response.EnvironmentAdd
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .environmentAdd(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestMcpServerOauthLoginRequest: ClientRequestable {
-    typealias Params = Components.Schemas.McpServerOauthLoginParams
-    typealias Response = AppServerModels.ClientRequest.Response.McpServerOauthLogin
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.McpServerOauthLoginParams
+    public typealias Response = AppServerModels.ClientRequest.Response.McpServerOauthLogin
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .mcpServerOauthLogin(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestConfigMcpServerReloadRequest: ClientRequestable {
-    typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
-    typealias Response = AppServerModels.ClientRequest.Response.ConfigMcpServerReload
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
+    public typealias Response = AppServerModels.ClientRequest.Response.ConfigMcpServerReload
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .configMcpServerReload(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestMcpServerStatusListRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ListMcpServerStatusParams
-    typealias Response = AppServerModels.ClientRequest.Response.McpServerStatusList
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ListMcpServerStatusParams
+    public typealias Response = AppServerModels.ClientRequest.Response.McpServerStatusList
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .mcpServerStatusList(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestMcpServerResourceReadRequest: ClientRequestable {
-    typealias Params = Components.Schemas.McpResourceReadParams
-    typealias Response = AppServerModels.ClientRequest.Response.McpServerResourceRead
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.McpResourceReadParams
+    public typealias Response = AppServerModels.ClientRequest.Response.McpServerResourceRead
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .mcpServerResourceRead(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestMcpServerToolCallRequest: ClientRequestable {
-    typealias Params = Components.Schemas.McpServerToolCallParams
-    typealias Response = AppServerModels.ClientRequest.Response.McpServerToolCall
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.McpServerToolCallParams
+    public typealias Response = AppServerModels.ClientRequest.Response.McpServerToolCall
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .mcpServerToolCall(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestWindowsSandboxSetupStartRequest: ClientRequestable {
-    typealias Params = Components.Schemas.WindowsSandboxSetupStartParams
-    typealias Response = AppServerModels.ClientRequest.Response.WindowsSandboxSetupStart
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.WindowsSandboxSetupStartParams
+    public typealias Response = AppServerModels.ClientRequest.Response.WindowsSandboxSetupStart
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .windowsSandboxSetupStart(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestWindowsSandboxReadinessRequest: ClientRequestable {
-    typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
-    typealias Response = AppServerModels.ClientRequest.Response.WindowsSandboxReadiness
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
+    public typealias Response = AppServerModels.ClientRequest.Response.WindowsSandboxReadiness
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .windowsSandboxReadiness(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestAccountLoginStartRequest: ClientRequestable {
-    typealias Params = Components.Schemas.LoginAccountParams
-    typealias Response = AppServerModels.ClientRequest.Response.AccountLoginStart
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.LoginAccountParams
+    public typealias Response = AppServerModels.ClientRequest.Response.AccountLoginStart
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .accountLoginStart(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestAccountLoginCancelRequest: ClientRequestable {
-    typealias Params = Components.Schemas.CancelLoginAccountParams
-    typealias Response = AppServerModels.ClientRequest.Response.AccountLoginCancel
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.CancelLoginAccountParams
+    public typealias Response = AppServerModels.ClientRequest.Response.AccountLoginCancel
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .accountLoginCancel(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestAccountLogoutRequest: ClientRequestable {
-    typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
-    typealias Response = AppServerModels.ClientRequest.Response.AccountLogout
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
+    public typealias Response = AppServerModels.ClientRequest.Response.AccountLogout
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .accountLogout(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestAccountRateLimitsReadRequest: ClientRequestable {
-    typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
-    typealias Response = AppServerModels.ClientRequest.Response.AccountRateLimitsRead
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
+    public typealias Response = AppServerModels.ClientRequest.Response.AccountRateLimitsRead
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .accountRateLimitsRead(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestAccountRateLimitResetCreditConsumeRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ConsumeAccountRateLimitResetCreditParams
-    typealias Response = AppServerModels.ClientRequest.Response.AccountRateLimitResetCreditConsume
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ConsumeAccountRateLimitResetCreditParams
+    public typealias Response = AppServerModels.ClientRequest.Response.AccountRateLimitResetCreditConsume
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .accountRateLimitResetCreditConsume(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestAccountUsageReadRequest: ClientRequestable {
-    typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
-    typealias Response = AppServerModels.ClientRequest.Response.AccountUsageRead
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
+    public typealias Response = AppServerModels.ClientRequest.Response.AccountUsageRead
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .accountUsageRead(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestAccountSendAddCreditsNudgeEmailRequest: ClientRequestable {
-    typealias Params = Components.Schemas.SendAddCreditsNudgeEmailParams
-    typealias Response = AppServerModels.ClientRequest.Response.AccountSendAddCreditsNudgeEmail
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.SendAddCreditsNudgeEmailParams
+    public typealias Response = AppServerModels.ClientRequest.Response.AccountSendAddCreditsNudgeEmail
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .accountSendAddCreditsNudgeEmail(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestFeedbackUploadRequest: ClientRequestable {
-    typealias Params = Components.Schemas.FeedbackUploadParams
-    typealias Response = AppServerModels.ClientRequest.Response.FeedbackUpload
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.FeedbackUploadParams
+    public typealias Response = AppServerModels.ClientRequest.Response.FeedbackUpload
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .feedbackUpload(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestCommandExecRequest: ClientRequestable {
-    typealias Params = Components.Schemas.CommandExecParams
-    typealias Response = AppServerModels.ClientRequest.Response.CommandExec
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.CommandExecParams
+    public typealias Response = AppServerModels.ClientRequest.Response.CommandExec
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .commandExec(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestCommandExecWriteRequest: ClientRequestable {
-    typealias Params = Components.Schemas.CommandExecWriteParams
-    typealias Response = AppServerModels.ClientRequest.Response.CommandExecWrite
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.CommandExecWriteParams
+    public typealias Response = AppServerModels.ClientRequest.Response.CommandExecWrite
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .commandExecWrite(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestCommandExecTerminateRequest: ClientRequestable {
-    typealias Params = Components.Schemas.CommandExecTerminateParams
-    typealias Response = AppServerModels.ClientRequest.Response.CommandExecTerminate
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.CommandExecTerminateParams
+    public typealias Response = AppServerModels.ClientRequest.Response.CommandExecTerminate
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .commandExecTerminate(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestCommandExecResizeRequest: ClientRequestable {
-    typealias Params = Components.Schemas.CommandExecResizeParams
-    typealias Response = AppServerModels.ClientRequest.Response.CommandExecResize
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.CommandExecResizeParams
+    public typealias Response = AppServerModels.ClientRequest.Response.CommandExecResize
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .commandExecResize(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestProcessSpawnRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ProcessSpawnParams
-    typealias Response = AppServerModels.ClientRequest.Response.ProcessSpawn
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ProcessSpawnParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ProcessSpawn
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .processSpawn(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestProcessWriteStdinRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ProcessWriteStdinParams
-    typealias Response = AppServerModels.ClientRequest.Response.ProcessWriteStdin
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ProcessWriteStdinParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ProcessWriteStdin
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .processWriteStdin(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestProcessKillRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ProcessKillParams
-    typealias Response = AppServerModels.ClientRequest.Response.ProcessKill
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ProcessKillParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ProcessKill
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .processKill(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestProcessResizePtyRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ProcessResizePtyParams
-    typealias Response = AppServerModels.ClientRequest.Response.ProcessResizePty
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ProcessResizePtyParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ProcessResizePty
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .processResizePty(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestConfigReadRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ConfigReadParams
-    typealias Response = AppServerModels.ClientRequest.Response.ConfigRead
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ConfigReadParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ConfigRead
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .configRead(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestExternalAgentConfigDetectRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ExternalAgentConfigDetectParams
-    typealias Response = AppServerModels.ClientRequest.Response.ExternalAgentConfigDetect
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ExternalAgentConfigDetectParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ExternalAgentConfigDetect
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .externalAgentConfigDetect(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestExternalAgentConfigImportRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ExternalAgentConfigImportParams
-    typealias Response = AppServerModels.ClientRequest.Response.ExternalAgentConfigImport
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ExternalAgentConfigImportParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ExternalAgentConfigImport
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .externalAgentConfigImport(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestConfigValueWriteRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ConfigValueWriteParams
-    typealias Response = AppServerModels.ClientRequest.Response.ConfigValueWrite
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ConfigValueWriteParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ConfigValueWrite
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .configValueWrite(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestConfigBatchWriteRequest: ClientRequestable {
-    typealias Params = Components.Schemas.ConfigBatchWriteParams
-    typealias Response = AppServerModels.ClientRequest.Response.ConfigBatchWrite
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.ConfigBatchWriteParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ConfigBatchWrite
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .configBatchWrite(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestConfigRequirementsReadRequest: ClientRequestable {
-    typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
-    typealias Response = AppServerModels.ClientRequest.Response.ConfigRequirementsRead
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
+    public typealias Response = AppServerModels.ClientRequest.Response.ConfigRequirementsRead
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .configRequirementsRead(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestAccountReadRequest: ClientRequestable {
-    typealias Params = Components.Schemas.GetAccountParams
-    typealias Response = AppServerModels.ClientRequest.Response.AccountRead
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.GetAccountParams
+    public typealias Response = AppServerModels.ClientRequest.Response.AccountRead
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .accountRead(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestFuzzyFileSearchRequest: ClientRequestable {
-    typealias Params = Components.Schemas.FuzzyFileSearchParams
-    typealias Response = AppServerModels.ClientRequest.Response.FuzzyFileSearch
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.FuzzyFileSearchParams
+    public typealias Response = AppServerModels.ClientRequest.Response.FuzzyFileSearch
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .fuzzyFileSearch(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestFuzzyFileSearchSessionStartRequest: ClientRequestable {
-    typealias Params = Components.Schemas.FuzzyFileSearchSessionStartParams
-    typealias Response = AppServerModels.ClientRequest.Response.FuzzyFileSearchSessionStart
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.FuzzyFileSearchSessionStartParams
+    public typealias Response = AppServerModels.ClientRequest.Response.FuzzyFileSearchSessionStart
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .fuzzyFileSearchSessionStart(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestFuzzyFileSearchSessionUpdateRequest: ClientRequestable {
-    typealias Params = Components.Schemas.FuzzyFileSearchSessionUpdateParams
-    typealias Response = AppServerModels.ClientRequest.Response.FuzzyFileSearchSessionUpdate
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.FuzzyFileSearchSessionUpdateParams
+    public typealias Response = AppServerModels.ClientRequest.Response.FuzzyFileSearchSessionUpdate
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .fuzzyFileSearchSessionUpdate(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ClientRequestFuzzyFileSearchSessionStopRequest: ClientRequestable {
-    typealias Params = Components.Schemas.FuzzyFileSearchSessionStopParams
-    typealias Response = AppServerModels.ClientRequest.Response.FuzzyFileSearchSessionStop
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+    public typealias Params = Components.Schemas.FuzzyFileSearchSessionStopParams
+    public typealias Response = AppServerModels.ClientRequest.Response.FuzzyFileSearchSessionStop
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .fuzzyFileSearchSessionStop(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
-extension AppServerModels.ServerRequest {
+public extension AppServerModels.ServerRequest {
     typealias ItemCommandExecutionRequestApproval = Components.Schemas.ServerRequestItemCommandExecutionRequestApprovalRequest
     typealias ItemFileChangeRequestApproval = Components.Schemas.ServerRequestItemFileChangeRequestApprovalRequest
     typealias ItemToolRequestUserInput = Components.Schemas.ServerRequestItemToolRequestUserInputRequest
@@ -1335,16 +1335,16 @@ extension AppServerModels.ServerRequest {
     typealias ExecCommandApproval = Components.Schemas.ServerRequestExecCommandApprovalRequest
 
     enum Response {
-        typealias ItemCommandExecutionRequestApproval = Components.Schemas.CommandExecutionRequestApprovalResponse
-        typealias ItemFileChangeRequestApproval = Components.Schemas.FileChangeRequestApprovalResponse
-        typealias ItemToolRequestUserInput = Components.Schemas.ToolRequestUserInputResponse
-        typealias McpServerElicitationRequest = Components.Schemas.McpServerElicitationRequestResponse
-        typealias ItemPermissionsRequestApproval = Components.Schemas.PermissionsRequestApprovalResponse
-        typealias ItemToolCall = Components.Schemas.DynamicToolCallResponse
-        typealias AccountChatgptAuthTokensRefresh = Components.Schemas.ChatgptAuthTokensRefreshResponse
-        typealias AttestationGenerate = Components.Schemas.AttestationGenerateResponse
-        typealias ApplyPatchApproval = Components.Schemas.ApplyPatchApprovalResponse
-        typealias ExecCommandApproval = Components.Schemas.ExecCommandApprovalResponse
+        public typealias ItemCommandExecutionRequestApproval = Components.Schemas.CommandExecutionRequestApprovalResponse
+        public typealias ItemFileChangeRequestApproval = Components.Schemas.FileChangeRequestApprovalResponse
+        public typealias ItemToolRequestUserInput = Components.Schemas.ToolRequestUserInputResponse
+        public typealias McpServerElicitationRequest = Components.Schemas.McpServerElicitationRequestResponse
+        public typealias ItemPermissionsRequestApproval = Components.Schemas.PermissionsRequestApprovalResponse
+        public typealias ItemToolCall = Components.Schemas.DynamicToolCallResponse
+        public typealias AccountChatgptAuthTokensRefresh = Components.Schemas.ChatgptAuthTokensRefreshResponse
+        public typealias AttestationGenerate = Components.Schemas.AttestationGenerateResponse
+        public typealias ApplyPatchApproval = Components.Schemas.ApplyPatchApprovalResponse
+        public typealias ExecCommandApproval = Components.Schemas.ExecCommandApprovalResponse
     }
 
     var asServerRequest: any ServerRequestable {
@@ -1364,86 +1364,86 @@ extension AppServerModels.ServerRequest {
 }
 
 extension Components.Schemas.ServerRequestItemCommandExecutionRequestApprovalRequest: ServerRequestable {
-    typealias Params = Components.Schemas.CommandExecutionRequestApprovalParams
-    typealias Response = AppServerModels.ServerRequest.Response.ItemCommandExecutionRequestApproval
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
+    public typealias Params = Components.Schemas.CommandExecutionRequestApprovalParams
+    public typealias Response = AppServerModels.ServerRequest.Response.ItemCommandExecutionRequestApproval
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
         .itemCommandExecutionRequestApproval(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerRequestItemFileChangeRequestApprovalRequest: ServerRequestable {
-    typealias Params = Components.Schemas.FileChangeRequestApprovalParams
-    typealias Response = AppServerModels.ServerRequest.Response.ItemFileChangeRequestApproval
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
+    public typealias Params = Components.Schemas.FileChangeRequestApprovalParams
+    public typealias Response = AppServerModels.ServerRequest.Response.ItemFileChangeRequestApproval
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
         .itemFileChangeRequestApproval(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerRequestItemToolRequestUserInputRequest: ServerRequestable {
-    typealias Params = Components.Schemas.ToolRequestUserInputParams
-    typealias Response = AppServerModels.ServerRequest.Response.ItemToolRequestUserInput
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
+    public typealias Params = Components.Schemas.ToolRequestUserInputParams
+    public typealias Response = AppServerModels.ServerRequest.Response.ItemToolRequestUserInput
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
         .itemToolRequestUserInput(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerRequestMcpServerElicitationRequestRequest: ServerRequestable {
-    typealias Params = Components.Schemas.McpServerElicitationRequestParams
-    typealias Response = AppServerModels.ServerRequest.Response.McpServerElicitationRequest
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
+    public typealias Params = Components.Schemas.McpServerElicitationRequestParams
+    public typealias Response = AppServerModels.ServerRequest.Response.McpServerElicitationRequest
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
         .mcpServerElicitationRequest(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerRequestItemPermissionsRequestApprovalRequest: ServerRequestable {
-    typealias Params = Components.Schemas.PermissionsRequestApprovalParams
-    typealias Response = AppServerModels.ServerRequest.Response.ItemPermissionsRequestApproval
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
+    public typealias Params = Components.Schemas.PermissionsRequestApprovalParams
+    public typealias Response = AppServerModels.ServerRequest.Response.ItemPermissionsRequestApproval
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
         .itemPermissionsRequestApproval(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerRequestItemToolCallRequest: ServerRequestable {
-    typealias Params = Components.Schemas.DynamicToolCallParams
-    typealias Response = AppServerModels.ServerRequest.Response.ItemToolCall
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
+    public typealias Params = Components.Schemas.DynamicToolCallParams
+    public typealias Response = AppServerModels.ServerRequest.Response.ItemToolCall
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
         .itemToolCall(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerRequestAccountChatgptAuthTokensRefreshRequest: ServerRequestable {
-    typealias Params = Components.Schemas.ChatgptAuthTokensRefreshParams
-    typealias Response = AppServerModels.ServerRequest.Response.AccountChatgptAuthTokensRefresh
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
+    public typealias Params = Components.Schemas.ChatgptAuthTokensRefreshParams
+    public typealias Response = AppServerModels.ServerRequest.Response.AccountChatgptAuthTokensRefresh
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
         .accountChatgptAuthTokensRefresh(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerRequestAttestationGenerateRequest: ServerRequestable {
-    typealias Params = Components.Schemas.AttestationGenerateParams
-    typealias Response = AppServerModels.ServerRequest.Response.AttestationGenerate
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
+    public typealias Params = Components.Schemas.AttestationGenerateParams
+    public typealias Response = AppServerModels.ServerRequest.Response.AttestationGenerate
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
         .attestationGenerate(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerRequestApplyPatchApprovalRequest: ServerRequestable {
-    typealias Params = Components.Schemas.ApplyPatchApprovalParams
-    typealias Response = AppServerModels.ServerRequest.Response.ApplyPatchApproval
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
+    public typealias Params = Components.Schemas.ApplyPatchApprovalParams
+    public typealias Response = AppServerModels.ServerRequest.Response.ApplyPatchApproval
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
         .applyPatchApproval(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerRequestExecCommandApprovalRequest: ServerRequestable {
-    typealias Params = Components.Schemas.ExecCommandApprovalParams
-    typealias Response = AppServerModels.ServerRequest.Response.ExecCommandApproval
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
+    public typealias Params = Components.Schemas.ExecCommandApprovalParams
+    public typealias Response = AppServerModels.ServerRequest.Response.ExecCommandApproval
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
         .execCommandApproval(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
-extension AppServerModels.ServerNotification {
+public extension AppServerModels.ServerNotification {
     typealias Error = Components.Schemas.ServerNotificationErrorNotification
     typealias ThreadStarted = Components.Schemas.ServerNotificationThreadStartedNotification
     typealias ThreadStatusChanged = Components.Schemas.ServerNotificationThreadStatusChangedNotification
@@ -1584,463 +1584,463 @@ extension AppServerModels.ServerNotification {
 }
 
 extension Components.Schemas.ServerNotificationErrorNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ErrorNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ErrorNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .error(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationThreadStartedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ThreadStartedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ThreadStartedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .threadStarted(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationThreadStatusChangedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ThreadStatusChangedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ThreadStatusChangedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .threadStatusChanged(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationThreadArchivedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ThreadArchivedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ThreadArchivedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .threadArchived(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationThreadDeletedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ThreadDeletedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ThreadDeletedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .threadDeleted(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationThreadUnarchivedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ThreadUnarchivedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ThreadUnarchivedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .threadUnarchived(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationThreadClosedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ThreadClosedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ThreadClosedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .threadClosed(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationSkillsChangedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.SkillsChangedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.SkillsChangedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .skillsChanged(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationThreadNameUpdatedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ThreadNameUpdatedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ThreadNameUpdatedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .threadNameUpdated(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationThreadGoalUpdatedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ThreadGoalUpdatedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ThreadGoalUpdatedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .threadGoalUpdated(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationThreadGoalClearedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ThreadGoalClearedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ThreadGoalClearedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .threadGoalCleared(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationThreadSettingsUpdatedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ThreadSettingsUpdatedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ThreadSettingsUpdatedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .threadSettingsUpdated(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationThreadTokenUsageUpdatedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ThreadTokenUsageUpdatedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ThreadTokenUsageUpdatedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .threadTokenUsageUpdated(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationTurnStartedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.TurnStartedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.TurnStartedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .turnStarted(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationHookStartedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.HookStartedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.HookStartedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .hookStarted(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationTurnCompletedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.TurnCompletedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.TurnCompletedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .turnCompleted(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationHookCompletedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.HookCompletedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.HookCompletedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .hookCompleted(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationTurnDiffUpdatedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.TurnDiffUpdatedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.TurnDiffUpdatedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .turnDiffUpdated(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationTurnPlanUpdatedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.TurnPlanUpdatedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.TurnPlanUpdatedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .turnPlanUpdated(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationItemStartedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ItemStartedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ItemStartedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .itemStarted(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationItemAutoApprovalReviewStartedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ItemGuardianApprovalReviewStartedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ItemGuardianApprovalReviewStartedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .itemAutoApprovalReviewStarted(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationItemAutoApprovalReviewCompletedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ItemGuardianApprovalReviewCompletedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ItemGuardianApprovalReviewCompletedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .itemAutoApprovalReviewCompleted(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationItemCompletedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ItemCompletedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ItemCompletedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .itemCompleted(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationItemAgentMessageDeltaNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.AgentMessageDeltaNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.AgentMessageDeltaNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .itemAgentMessageDelta(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationItemPlanDeltaNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.PlanDeltaNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.PlanDeltaNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .itemPlanDelta(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationCommandExecOutputDeltaNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.CommandExecOutputDeltaNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.CommandExecOutputDeltaNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .commandExecOutputDelta(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationProcessOutputDeltaNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ProcessOutputDeltaNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ProcessOutputDeltaNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .processOutputDelta(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationProcessExitedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ProcessExitedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ProcessExitedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .processExited(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationItemCommandExecutionOutputDeltaNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.CommandExecutionOutputDeltaNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.CommandExecutionOutputDeltaNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .itemCommandExecutionOutputDelta(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationItemCommandExecutionTerminalInteractionNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.TerminalInteractionNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.TerminalInteractionNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .itemCommandExecutionTerminalInteraction(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationItemFileChangeOutputDeltaNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.FileChangeOutputDeltaNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.FileChangeOutputDeltaNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .itemFileChangeOutputDelta(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationItemFileChangePatchUpdatedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.FileChangePatchUpdatedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.FileChangePatchUpdatedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .itemFileChangePatchUpdated(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationServerRequestResolvedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ServerRequestResolvedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ServerRequestResolvedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .serverRequestResolved(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationItemMcpToolCallProgressNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.McpToolCallProgressNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.McpToolCallProgressNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .itemMcpToolCallProgress(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationMcpServerOauthLoginCompletedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.McpServerOauthLoginCompletedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.McpServerOauthLoginCompletedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .mcpServerOauthLoginCompleted(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationMcpServerStartupStatusUpdatedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.McpServerStatusUpdatedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.McpServerStatusUpdatedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .mcpServerStartupStatusUpdated(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationAccountUpdatedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.AccountUpdatedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.AccountUpdatedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .accountUpdated(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationAccountRateLimitsUpdatedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.AccountRateLimitsUpdatedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.AccountRateLimitsUpdatedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .accountRateLimitsUpdated(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationAppListUpdatedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.AppListUpdatedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.AppListUpdatedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .appListUpdated(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationRemoteControlStatusChangedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.RemoteControlStatusChangedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.RemoteControlStatusChangedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .remoteControlStatusChanged(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationExternalAgentConfigImportCompletedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ExternalAgentConfigImportCompletedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ExternalAgentConfigImportCompletedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .externalAgentConfigImportCompleted(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationFsChangedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.FsChangedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.FsChangedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .fsChanged(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationItemReasoningSummaryTextDeltaNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ReasoningSummaryTextDeltaNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ReasoningSummaryTextDeltaNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .itemReasoningSummaryTextDelta(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationItemReasoningSummaryPartAddedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ReasoningSummaryPartAddedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ReasoningSummaryPartAddedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .itemReasoningSummaryPartAdded(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationItemReasoningTextDeltaNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ReasoningTextDeltaNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ReasoningTextDeltaNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .itemReasoningTextDelta(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationThreadCompactedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ContextCompactedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ContextCompactedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .threadCompacted(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationModelReroutedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ModelReroutedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ModelReroutedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .modelRerouted(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationModelVerificationNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ModelVerificationNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ModelVerificationNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .modelVerification(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationTurnModerationMetadataNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.TurnModerationMetadataNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.TurnModerationMetadataNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .turnModerationMetadata(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationWarningNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.WarningNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.WarningNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .warning(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationGuardianWarningNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.GuardianWarningNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.GuardianWarningNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .guardianWarning(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationDeprecationNoticeNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.DeprecationNoticeNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.DeprecationNoticeNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .deprecationNotice(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationConfigWarningNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ConfigWarningNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ConfigWarningNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .configWarning(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationFuzzyFileSearchSessionUpdatedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.FuzzyFileSearchSessionUpdatedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.FuzzyFileSearchSessionUpdatedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .fuzzyFileSearchSessionUpdated(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationFuzzyFileSearchSessionCompletedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.FuzzyFileSearchSessionCompletedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.FuzzyFileSearchSessionCompletedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .fuzzyFileSearchSessionCompleted(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationThreadRealtimeStartedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ThreadRealtimeStartedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ThreadRealtimeStartedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .threadRealtimeStarted(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationThreadRealtimeItemAddedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ThreadRealtimeItemAddedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ThreadRealtimeItemAddedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .threadRealtimeItemAdded(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationThreadRealtimeTranscriptDeltaNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ThreadRealtimeTranscriptDeltaNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ThreadRealtimeTranscriptDeltaNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .threadRealtimeTranscriptDelta(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationThreadRealtimeTranscriptDoneNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ThreadRealtimeTranscriptDoneNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ThreadRealtimeTranscriptDoneNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .threadRealtimeTranscriptDone(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationThreadRealtimeOutputAudioDeltaNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ThreadRealtimeOutputAudioDeltaNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ThreadRealtimeOutputAudioDeltaNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .threadRealtimeOutputAudioDelta(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationThreadRealtimeSdpNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ThreadRealtimeSdpNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ThreadRealtimeSdpNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .threadRealtimeSdp(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationThreadRealtimeErrorNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ThreadRealtimeErrorNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ThreadRealtimeErrorNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .threadRealtimeError(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationThreadRealtimeClosedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.ThreadRealtimeClosedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.ThreadRealtimeClosedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .threadRealtimeClosed(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationWindowsWorldWritableWarningNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.WindowsWorldWritableWarningNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.WindowsWorldWritableWarningNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .windowsWorldWritableWarning(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationWindowsSandboxSetupCompletedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.WindowsSandboxSetupCompletedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.WindowsSandboxSetupCompletedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .windowsSandboxSetupCompleted(.init(method: .allCases.first!, params: params))
     }
 }
 
 extension Components.Schemas.ServerNotificationAccountLoginCompletedNotification: ServerNotificationPayload {
-    typealias Params = Components.Schemas.AccountLoginCompletedNotification
-    static func build(params: Params) -> AppServerModels.ServerNotification {
+    public typealias Params = Components.Schemas.AccountLoginCompletedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
         .accountLoginCompleted(.init(method: .allCases.first!, params: params))
     }
 }

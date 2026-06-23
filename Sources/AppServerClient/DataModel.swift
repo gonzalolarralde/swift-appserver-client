@@ -9,14 +9,14 @@ public enum DataModelError: Error {
     case requestIdDoesntMatch
 }
 
-enum AppServerModels {
-    typealias ID = Components.Schemas.RequestId
-    typealias ClientRequest = Components.Schemas.ClientRequest
-    typealias ServerRequest = Components.Schemas.ServerRequest
-    typealias ServerNotification = Components.Schemas.ServerNotification
+public enum AppServerModels {
+    public typealias ID = Components.Schemas.RequestId
+    public typealias ClientRequest = Components.Schemas.ClientRequest
+    public typealias ServerRequest = Components.Schemas.ServerRequest
+    public typealias ServerNotification = Components.Schemas.ServerNotification
 }
 
-protocol ClientRequestable: Identifiable {
+public protocol ClientRequestable: Identifiable {
     associatedtype Params: Codable
     associatedtype Response: Codable & Sendable
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest
@@ -35,7 +35,7 @@ extension ClientRequestable {
     }
 }
 
-protocol ServerRequestable: Identifiable {
+public protocol ServerRequestable: Identifiable {
     associatedtype Params: Codable
     associatedtype Response: Codable
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest
@@ -50,7 +50,7 @@ extension ServerRequestable {
     }
 }
 
-protocol ServerNotificationPayload {
+public protocol ServerNotificationPayload {
     associatedtype Params
     static func build(params: Params) -> AppServerModels.ServerNotification
     var params: Params { get }

@@ -1,4 +1,4 @@
 generate:
   - types
-accessModifier: internal
+accessModifier: public
 namingStrategy: idiomatic

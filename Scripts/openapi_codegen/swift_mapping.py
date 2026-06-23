@@ -178,7 +178,7 @@ class SwiftMappingGenerator:
         return "\n".join(lines).rstrip() + "\n"
 
     def union_extension(self, mapping: UnionMapping) -> list[str]:
-        lines = [f"extension AppServerModels.{mapping.schema_name} {{"]
+        lines = [f"public extension AppServerModels.{mapping.schema_name} {{"]
         for case in mapping.cases:
             lines.append(
                 f"    typealias {case.alias_name} = Components.Schemas.{case.component_name}"
@@ -187,7 +187,7 @@ class SwiftMappingGenerator:
         if response_cases:
             lines.extend(["", "    enum Response {"])
             for case in response_cases:
-                lines.append(f"        typealias {case.alias_name} = {case.response_type}")
+                lines.append(f"        public typealias {case.alias_name} = {case.response_type}")
             lines.append("    }")
         lines.extend([
             "",
@@ -214,21 +214,21 @@ class SwiftMappingGenerator:
         component_type = f"Components.Schemas.{case.component_name}"
         lines = [
             f"extension {component_type}: {mapping.protocol_name} {{",
-            f"    typealias Params = {case.params_type}",
+            f"    public typealias Params = {case.params_type}",
         ]
         if case.response_type is not None:
             lines.append(
-                f"    typealias Response = AppServerModels.{mapping.schema_name}.Response.{case.alias_name}"
+                f"    public typealias Response = AppServerModels.{mapping.schema_name}.Response.{case.alias_name}"
             )
         if mapping.has_id:
             lines.extend([
-                f"    static func build(id: Components.Schemas.RequestId, params: Params) -> {mapping.build_return_type} {{",
+                f"    public static func build(id: Components.Schemas.RequestId, params: Params) -> {mapping.build_return_type} {{",
                 f"        .{case.case_name}(.init({self.initializer_arguments(case, include_id=True)}))",
                 "    }",
             ])
         else:
             lines.extend([
-                f"    static func build(params: Params) -> {mapping.build_return_type} {{",
+                f"    public static func build(params: Params) -> {mapping.build_return_type} {{",
                 f"        .{case.case_name}(.init({self.initializer_arguments(case, include_id=False)}))",
                 "    }",
             ])
