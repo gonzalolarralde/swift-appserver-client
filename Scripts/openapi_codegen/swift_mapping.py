@@ -171,44 +171,11 @@ class SwiftMappingGenerator:
             "",
             "import OpenAPIRuntime",
             "",
-            "enum AppServerModels {",
-            "    typealias ClientRequest = Components.Schemas.ClientRequest",
-            "    typealias ServerRequest = Components.Schemas.ServerRequest",
-            "    typealias ServerNotification = Components.Schemas.ServerNotification",
-            "}",
-            "",
         ]
-        lines.extend(self.protocols())
         for mapping in self.mappings:
             lines.extend(self.union_extension(mapping))
             lines.extend(self.case_conformances(mapping))
         return "\n".join(lines).rstrip() + "\n"
-
-    def protocols(self) -> list[str]:
-        return [
-            "protocol ClientRequestable {",
-            "    associatedtype Params",
-            "    associatedtype Response",
-            "    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest",
-            "    var id: Components.Schemas.RequestId { get }",
-            "    var params: Params { get }",
-            "}",
-            "",
-            "protocol ServerRequestable {",
-            "    associatedtype Params",
-            "    associatedtype Response",
-            "    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest",
-            "    var id: Components.Schemas.RequestId { get }",
-            "    var params: Params { get }",
-            "}",
-            "",
-            "protocol ServerNotificationPayload {",
-            "    associatedtype Params",
-            "    static func build(params: Params) -> AppServerModels.ServerNotification",
-            "    var params: Params { get }",
-            "}",
-            "",
-        ]
 
     def union_extension(self, mapping: UnionMapping) -> list[str]:
         lines = [f"extension AppServerModels.{mapping.schema_name} {{"]

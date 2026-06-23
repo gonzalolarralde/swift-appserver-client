@@ -2,34 +2,6 @@
 
 import OpenAPIRuntime
 
-enum AppServerModels {
-    typealias ClientRequest = Components.Schemas.ClientRequest
-    typealias ServerRequest = Components.Schemas.ServerRequest
-    typealias ServerNotification = Components.Schemas.ServerNotification
-}
-
-protocol ClientRequestable {
-    associatedtype Params
-    associatedtype Response
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest
-    var id: Components.Schemas.RequestId { get }
-    var params: Params { get }
-}
-
-protocol ServerRequestable {
-    associatedtype Params
-    associatedtype Response
-    static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest
-    var id: Components.Schemas.RequestId { get }
-    var params: Params { get }
-}
-
-protocol ServerNotificationPayload {
-    associatedtype Params
-    static func build(params: Params) -> AppServerModels.ServerNotification
-    var params: Params { get }
-}
-
 extension AppServerModels.ClientRequest {
     typealias Initialize = Components.Schemas.ClientRequestInitializeRequest
     typealias ThreadStart = Components.Schemas.ClientRequestThreadStartRequest
