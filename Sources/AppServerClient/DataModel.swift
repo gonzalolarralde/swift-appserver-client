@@ -18,7 +18,7 @@ enum AppServerModels {
 
 protocol ClientRequestable: Identifiable {
     associatedtype Params: Codable
-    associatedtype Response: Codable
+    associatedtype Response: Codable & Sendable
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest
     var id: Components.Schemas.RequestId { get }
     var params: Params { get }
