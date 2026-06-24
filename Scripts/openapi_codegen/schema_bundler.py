@@ -210,9 +210,7 @@ class Bundler:
                 (
                     index
                     for index, variant in enumerate(variants)
-                    if isinstance(variant, dict)
-                    and variant.get("type") == "null"
-                    and len(variant) == 1
+                    if self.is_null_schema(variant)
                 ),
                 None,
             )
@@ -284,9 +282,7 @@ class Bundler:
                 (
                     index
                     for index, variant in enumerate(variants)
-                    if isinstance(variant, dict)
-                    and variant.get("type") == "null"
-                    and len(variant) == 1
+                    if self.is_null_schema(variant)
                 ),
                 None,
             )
@@ -299,6 +295,12 @@ class Bundler:
             schema["nullable"] = True
 
         return schema
+
+    def is_null_schema(self, schema: Any) -> bool:
+        return isinstance(schema, dict) and (
+            (schema.get("type") == "null" and len(schema) == 1)
+            or (schema.get("nullable") is True and len(schema) == 1)
+        )
 
     def normalize_composition(self, schema: dict[str, Any]) -> dict[str, Any]:
         self.flatten_single_ref_all_of(schema)
