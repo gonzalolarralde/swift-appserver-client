@@ -185,7 +185,7 @@ class Bundler:
             output,
             optionalized_properties,
         )
-        return self.normalize_nullable(output)
+        return self.normalize_nullable(self.normalize_composition(output))
 
     def optionalized_nullable_property_schema(
         self,
@@ -299,6 +299,59 @@ class Bundler:
             schema["nullable"] = True
 
         return schema
+
+    def normalize_composition(self, schema: dict[str, Any]) -> dict[str, Any]:
+        self.flatten_single_ref_all_of(schema)
+        self.flatten_singleton_string_one_of(schema)
+        return schema
+
+    def flatten_single_ref_all_of(self, schema: dict[str, Any]) -> None:
+        all_of = schema.get("allOf")
+        if not isinstance(all_of, list) or len(all_of) != 1:
+            return
+
+        variant = all_of[0]
+        if not isinstance(variant, dict) or "$ref" not in variant:
+            return
+
+        schema.pop("allOf")
+        existing_items = list(schema.items())
+        schema.clear()
+        schema.update(variant)
+        for key, value in existing_items:
+            if key != "allOf":
+                schema[key] = value
+
+    def flatten_singleton_string_one_of(self, schema: dict[str, Any]) -> None:
+        one_of = schema.get("oneOf")
+        if not isinstance(one_of, list) or len(one_of) < 2:
+            return
+
+        values: list[str] = []
+        for variant in one_of:
+            value = self.singleton_string_schema_value(variant)
+            if value is None:
+                return
+            values.append(value)
+
+        schema.pop("oneOf")
+        schema["type"] = "string"
+        schema["enum"] = values
+
+    def singleton_string_schema_value(self, schema: Any) -> str | None:
+        if not isinstance(schema, dict):
+            return None
+        if schema.get("type") not in {None, "string"}:
+            return None
+
+        enum_values = schema.get("enum")
+        if (
+            isinstance(enum_values, list)
+            and len(enum_values) == 1
+            and isinstance(enum_values[0], str)
+        ):
+            return enum_values[0]
+        return None
 
     def rewrite_ref(
         self,
