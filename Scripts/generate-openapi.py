@@ -14,7 +14,7 @@ from openapi_codegen.swift_mapping import SwiftMappingGenerator
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_TEMPLATE = REPO_ROOT / "Sources/AppServerClient/openapi.json.template"
 DEFAULT_OUTPUT = REPO_ROOT / "Sources/AppServerClient/openapi.json"
-DEFAULT_MAPPING_OUTPUT = REPO_ROOT / "Sources/AppServerClient/DataModelMapping.swift"
+DEFAULT_MAPPING_OUTPUT = REPO_ROOT / "Sources/AppServerClient/Models/DataModelMapping.swift"
 
 
 def main() -> None:

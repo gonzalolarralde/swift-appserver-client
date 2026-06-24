@@ -44,7 +44,7 @@ public actor AppServerClient<Connection: AppServerConnection> {
     public func send<Requestable: ClientRequestable>(request: Requestable.Type, with params: Requestable.Params) async throws -> Requestable.Response {
         let decoder = JSONDecoder()
 
-        let id = AppServerModels.ID(value2: nextRequestID)
+        let id = AppServerModels.ID.integer(nextRequestID)
         nextRequestID += 1
 
         return try await withCheckedThrowingContinuation { continuation in

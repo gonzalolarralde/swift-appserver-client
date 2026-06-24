@@ -2,3 +2,14 @@ generate:
   - types
 accessModifier: public
 namingStrategy: idiomatic
+typeOverrides:
+  schemas:
+    RequestId: RequestIdValue
+    FunctionCallOutputBody: FunctionCallOutputBodyValue
+    ThreadListCwdFilter: ThreadListCwdFilterValue
+    ForcedChatgptWorkspaceIds: ForcedChatgptWorkspaceIdsValue
+    ResourceContent: ResourceContentValue
+    McpElicitationSingleSelectEnumSchema: McpElicitationSingleSelectEnumSchemaValue
+    McpElicitationMultiSelectEnumSchema: McpElicitationMultiSelectEnumSchemaValue
+    McpElicitationEnumSchema: McpElicitationEnumSchemaValue
+    McpElicitationPrimitiveSchema: McpElicitationPrimitiveSchemaValue
