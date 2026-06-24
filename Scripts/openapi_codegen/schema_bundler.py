@@ -302,7 +302,8 @@ class Bundler:
 
     def normalize_composition(self, schema: dict[str, Any]) -> dict[str, Any]:
         self.flatten_single_ref_all_of(schema)
-        self.flatten_singleton_string_one_of(schema)
+        self.flatten_single_variant_one_of(schema)
+        self.flatten_string_enum_one_of(schema)
         return schema
 
     def flatten_single_ref_all_of(self, schema: dict[str, Any]) -> None:
@@ -322,23 +323,40 @@ class Bundler:
             if key != "allOf":
                 schema[key] = value
 
-    def flatten_singleton_string_one_of(self, schema: dict[str, Any]) -> None:
+    def flatten_single_variant_one_of(self, schema: dict[str, Any]) -> None:
+        one_of = schema.get("oneOf")
+        if not isinstance(one_of, list) or len(one_of) != 1:
+            return
+
+        variant = one_of[0]
+        if not isinstance(variant, dict):
+            return
+
+        schema.pop("oneOf")
+        existing_items = list(schema.items())
+        schema.clear()
+        schema.update(variant)
+        for key, value in existing_items:
+            if key != "oneOf":
+                schema[key] = value
+
+    def flatten_string_enum_one_of(self, schema: dict[str, Any]) -> None:
         one_of = schema.get("oneOf")
         if not isinstance(one_of, list) or len(one_of) < 2:
             return
 
         values: list[str] = []
         for variant in one_of:
-            value = self.singleton_string_schema_value(variant)
-            if value is None:
+            variant_values = self.string_enum_schema_values(variant)
+            if variant_values is None:
                 return
-            values.append(value)
+            values.extend(variant_values)
 
         schema.pop("oneOf")
         schema["type"] = "string"
-        schema["enum"] = values
+        schema["enum"] = list(dict.fromkeys(values))
 
-    def singleton_string_schema_value(self, schema: Any) -> str | None:
+    def string_enum_schema_values(self, schema: Any) -> list[str] | None:
         if not isinstance(schema, dict):
             return None
         if schema.get("type") not in {None, "string"}:
@@ -347,10 +365,10 @@ class Bundler:
         enum_values = schema.get("enum")
         if (
             isinstance(enum_values, list)
-            and len(enum_values) == 1
-            and isinstance(enum_values[0], str)
+            and enum_values
+            and all(isinstance(value, str) for value in enum_values)
         ):
-            return enum_values[0]
+            return enum_values
         return None
 
     def rewrite_ref(
