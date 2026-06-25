@@ -65,24 +65,30 @@ public actor AppServerClient<Connection: AppServerConnection> {
         }
     }
 
-    public func handleEvents() async {
+    public func handleEvents(logMessages: Bool = true) async {
         let decoder = JSONDecoder()
 
         for await data in await connection.reader {
             if let response = try? decoder.decode(CallResult<VoidCodable>.self, from: data) {
                 if let pendingRequest = pendingClientRequests.removeValue(forKey: response.id) {
                     pendingRequest(data)
-                } else {
+                } else if logMessages {
                     print("server-response: received reponse for unknown id \(response.id)")
                 }
             } else if let request = try? decoder.decode(AppServerModels.ServerRequest.self, from: data) {
-                print("server-request: \(request)")
+                if logMessages {
+                    print("server-request: \(request)")
+                }
             } else if let notification = try? decoder.decode(AppServerModels.ServerNotification.self, from: data) {
-                print("server-notification: \(notification)")
+                if logMessages {
+                    print("server-notification: \(notification)")
+                }
             } else if let pretty = Self.prettyPrintedJSON(data) {
-                print("json: \(pretty)")
-            } else {
-                print("unparsed: \(String(data: data, encoding: .utf8), default: "non readable data")")
+                if logMessages {
+                    print("json: \(pretty)")
+                }
+            } else if logMessages {
+                print("unparsed: \(String(data: data, encoding: .utf8) ?? "non readable data")")
             }
         }
     }
