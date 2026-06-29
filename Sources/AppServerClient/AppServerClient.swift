@@ -1,6 +1,13 @@
 import Foundation
 
+private struct InitializedNotification: Encodable {
+    let method = "initialized"
+}
+
 public actor AppServerClient<Connection: AppServerConnection> {
+    public typealias ServerNotificationHandler = @MainActor @Sendable (AppServerModels.ServerNotification) async -> Void
+    public typealias ServerRequestHandler = @MainActor @Sendable (AppServerModels.ServerRequest) async -> Void
+
     struct VoidCodable: Codable {
         init(from decoder: any Decoder) throws {}
     }
@@ -20,15 +27,31 @@ public actor AppServerClient<Connection: AppServerConnection> {
     }
 
     private var connection: Connection
-    var pendingClientRequests: [AppServerModels.ID: (Data) -> Void] = [:]
+    private var serverNotificationHandler: ServerNotificationHandler?
+    private var serverRequestHandler: ServerRequestHandler?
+    var pendingClientRequests: [AppServerModels.ID: (Result<Data, Error>) -> Void] = [:]
     var nextRequestID: Int64 = 1
 
-    public init(connection: Connection) {
+    public init(
+        connection: Connection,
+        onServerNotification: ServerNotificationHandler? = nil,
+        onServerRequest: ServerRequestHandler? = nil
+    ) {
         self.connection = connection
+        self.serverNotificationHandler = onServerNotification
+        self.serverRequestHandler = onServerRequest
+    }
+
+    public func setServerNotificationHandler(_ handler: ServerNotificationHandler?) {
+        serverNotificationHandler = handler
+    }
+
+    public func setServerRequestHandler(_ handler: ServerRequestHandler?) {
+        serverRequestHandler = handler
     }
 
     public func sendInitialize() async throws -> AppServerModels.ClientRequest.Initialize.Response {
-        try await send(
+        let response = try await send(
             request: AppServerModels.ClientRequest.Initialize.self,
             with: .init(
                 capabilities: .init(experimentalApi: true),
@@ -39,6 +62,12 @@ public actor AppServerClient<Connection: AppServerConnection> {
                 )
             )
         )
+        try await sendInitialized()
+        return response
+    }
+
+    public func sendInitialized() async throws {
+        try await connection.write(JSONEncoder().encode(InitializedNotification()))
     }
 
     public func send<Requestable: ClientRequestable>(request: Requestable.Type, with params: Requestable.Params) async throws -> Requestable.Response {
@@ -50,10 +79,15 @@ public actor AppServerClient<Connection: AppServerConnection> {
         return try await withCheckedThrowingContinuation { continuation in
             let request = Requestable.build(id: id, params: params)
             pendingClientRequests[id] = { response in
-                do {
-                    let callResult = try decoder.decode(CallResult<Requestable.Response>.self, from: response)
-                    continuation.resume(returning: callResult.result)
-                } catch {
+                switch response {
+                case let .success(data):
+                    do {
+                        let callResult = try decoder.decode(CallResult<Requestable.Response>.self, from: data)
+                        continuation.resume(returning: callResult.result)
+                    } catch {
+                        continuation.resume(throwing: error)
+                    }
+                case let .failure(error):
                     continuation.resume(throwing: error)
                 }
             }
@@ -65,21 +99,33 @@ public actor AppServerClient<Connection: AppServerConnection> {
         }
     }
 
+    public func respond<Requestable: ServerRequestable>(to request: Requestable, with response: Requestable.Response) async throws {
+        try await connection.write(try request.build(response: response))
+    }
+
     public func handleEvents(logMessages: Bool = true) async {
         let decoder = JSONDecoder()
 
         for await data in await connection.reader {
             if let response = try? decoder.decode(CallResult<VoidCodable>.self, from: data) {
                 if let pendingRequest = pendingClientRequests.removeValue(forKey: response.id) {
-                    pendingRequest(data)
+                    pendingRequest(.success(data))
+                } else if logMessages {
+                    print("server-response: received reponse for unknown id \(response.id)")
+                }
+            } else if let response = try? decoder.decode(CallError.self, from: data) {
+                if let pendingRequest = pendingClientRequests.removeValue(forKey: response.id) {
+                    pendingRequest(.failure(response.error))
                 } else if logMessages {
                     print("server-response: received reponse for unknown id \(response.id)")
                 }
             } else if let request = try? decoder.decode(AppServerModels.ServerRequest.self, from: data) {
+                await serverRequestHandler?(request)
                 if logMessages {
                     print("server-request: \(request)")
                 }
             } else if let notification = try? decoder.decode(AppServerModels.ServerNotification.self, from: data) {
+                await serverNotificationHandler?(notification)
                 if logMessages {
                     print("server-notification: \(notification)")
                 }

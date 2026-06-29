@@ -1,11 +1,11 @@
 import Foundation
 
+#if os(macOS) || os(Linux)
+
 #if os(macOS)
 import Darwin
-#elseif os(Linux)
-import Linux
 #else
-#error("Unsupported platform")
+import Linux
 #endif
 
 public final actor StdIOAppServerConnection: AppServerConnection {
@@ -122,3 +122,5 @@ public final actor StdIOAppServerConnection: AppServerConnection {
         writeFileHandle.write(Data([0x0A]))
     }
 }
+
+#endif

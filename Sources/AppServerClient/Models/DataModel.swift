@@ -5,6 +5,20 @@ struct CallResult<Response: Codable>: Codable {
     let result: Response
 }
 
+public struct JSONRPCErrorMessage: Codable, Error, LocalizedError, Sendable {
+    public let code: Int64
+    public let message: String
+
+    public var errorDescription: String? {
+        message
+    }
+}
+
+struct CallError: Codable {
+    let id: Components.Schemas.RequestId
+    let error: JSONRPCErrorMessage
+}
+
 public enum DataModelError: Error {
     case requestIdDoesntMatch
 }
