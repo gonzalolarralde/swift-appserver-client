@@ -162,3 +162,63 @@ import Testing
     }
     #expect(localImage.path == "/workspace/Attachments/photo.jpg")
 }
+
+@Test func clientRequestPropagatesTransportWriteFailure() async throws {
+    let connection = TestConnection(writeFailure: TestTransportError.writeFailed)
+    let client = AppServerClient(connection: connection)
+
+    await #expect(throws: TestTransportError.writeFailed) {
+        _ = try await client.send(
+            request: AppServerModels.ClientRequest.ThreadList.self,
+            with: .init(limit: 1)
+        )
+    }
+}
+
+@Test func closingConnectionFailsPendingClientRequests() async throws {
+    let connection = TestConnection(finishAfterWrite: true)
+    let client = AppServerClient(connection: connection)
+    let eventTask = Task {
+        await client.handleEvents(logMessages: false)
+    }
+
+    await #expect(throws: AppServerClientError.connectionClosed) {
+        _ = try await client.send(
+            request: AppServerModels.ClientRequest.ThreadList.self,
+            with: .init(limit: 1)
+        )
+    }
+    await eventTask.value
+}
+
+private enum TestTransportError: Error, Equatable {
+    case writeFailed
+}
+
+private actor TestConnection: AppServerConnection {
+    nonisolated let reader: AsyncStream<Data>
+
+    private let continuation: AsyncStream<Data>.Continuation
+    private let writeFailure: TestTransportError?
+    private let finishAfterWrite: Bool
+
+    init(
+        writeFailure: TestTransportError? = nil,
+        finishAfterWrite: Bool = false
+    ) {
+        let stream = AsyncStream<Data>.makeStream(bufferingPolicy: .unbounded)
+        reader = stream.stream
+        continuation = stream.continuation
+        self.writeFailure = writeFailure
+        self.finishAfterWrite = finishAfterWrite
+    }
+
+    func write(_ data: Data) async throws {
+        if let writeFailure {
+            throw writeFailure
+        }
+        if finishAfterWrite {
+            continuation.finish()
+        }
+    }
+}

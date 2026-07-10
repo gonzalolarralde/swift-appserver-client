@@ -4,6 +4,14 @@ private struct InitializedNotification: Encodable {
     let method = "initialized"
 }
 
+public enum AppServerClientError: Error, LocalizedError, Sendable {
+    case connectionClosed
+
+    public var errorDescription: String? {
+        "The app-server connection closed"
+    }
+}
+
 public actor AppServerClient<Connection: AppServerConnection> {
     public typealias ServerNotificationHandler = @MainActor @Sendable (AppServerModels.ServerNotification) async -> Void
     public typealias ServerRequestHandler = @MainActor @Sendable (AppServerModels.ServerRequest) async -> Void
@@ -51,15 +59,24 @@ public actor AppServerClient<Connection: AppServerConnection> {
     }
 
     public func sendInitialize() async throws -> AppServerModels.ClientRequest.Initialize.Response {
+        try await sendInitialize(
+            clientInfo: .init(
+                name: "swift-appserver-client",
+                title: "Swift AppServer Client",
+                version: "0.0.1"
+            )
+        )
+    }
+
+    public func sendInitialize(
+        clientInfo: Components.Schemas.ClientInfo,
+        capabilities: Components.Schemas.InitializeCapabilities? = .init(experimentalApi: true)
+    ) async throws -> AppServerModels.ClientRequest.Initialize.Response {
         let response = try await send(
             request: AppServerModels.ClientRequest.Initialize.self,
             with: .init(
-                capabilities: .init(experimentalApi: true),
-                clientInfo: .init(
-                    name: "swift-appserver-client",
-                    title: "Swift AppServer Client",
-                    version: "0.0.1"
-                )
+                capabilities: capabilities,
+                clientInfo: clientInfo
             )
         )
         try await sendInitialized()
@@ -93,8 +110,14 @@ public actor AppServerClient<Connection: AppServerConnection> {
             }
 
             Task {
-                let encoded = try JSONEncoder().encode(request)
-                try await self.connection.write(encoded)
+                do {
+                    let encoded = try JSONEncoder().encode(request)
+                    try await self.connection.write(encoded)
+                } catch {
+                    if let pendingRequest = self.pendingClientRequests.removeValue(forKey: id) {
+                        pendingRequest(.failure(error))
+                    }
+                }
             }
         }
     }
@@ -136,6 +159,12 @@ public actor AppServerClient<Connection: AppServerConnection> {
             } else if logMessages {
                 print("unparsed: \(String(data: data, encoding: .utf8) ?? "non readable data")")
             }
+        }
+
+        let pendingRequests = Array(pendingClientRequests.values)
+        pendingClientRequests.removeAll()
+        for pendingRequest in pendingRequests {
+            pendingRequest(.failure(AppServerClientError.connectionClosed))
         }
     }
 }
