@@ -172,6 +172,39 @@ if let firstThread = threads.data.first {
 }
 ```
 
+## Staging Attachments
+
+The app-server accepts local image paths, while other local files are made
+available to Codex through workspace paths. `AppServerFileUploader` copies a
+selected file into an app-server-visible directory and reports waiting,
+byte-progress, and completion states:
+
+```swift
+let uploader = AppServerFileUploader(
+    destinationDirectory: workspace.appendingPathComponent("Attachments"),
+    referenceRoot: workspace,
+    maximumByteCount: 250 * 1024 * 1024
+)
+
+var uploaded: AppServerUploadedFile?
+for try await state in uploader.uploadFile(at: selectedURL) {
+    switch state {
+    case .waiting:
+        break
+    case let .uploading(copied, total):
+        print("Upload progress:", copied, "/", total)
+    case let .completed(file):
+        uploaded = file
+    }
+}
+```
+
+Build the corresponding `turn/start` input with
+`AppServerTurnInputBuilder.make(text:attachments:)`. Images become typed
+`localImage` inputs. Other files are listed by their workspace-relative paths
+in the text input because the current app-server protocol has no general file
+input variant.
+
 ## Event Handling
 
 `AppServerClient.handleEvents()` reads messages from the app server. It resolves
