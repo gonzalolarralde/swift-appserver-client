@@ -51,6 +51,43 @@ import Testing
     #expect(body == .text("done"))
 }
 
+@Test func multiAgentModeUsesNamedSwiftCases() throws {
+    let encoder = JSONEncoder()
+    let decoder = JSONDecoder()
+
+    let explicit = try encoder.encode(Components.Schemas.MultiAgentMode.explicitRequestOnly)
+    #expect(String(data: explicit, encoding: .utf8) == "\"explicitRequestOnly\"")
+    #expect(
+        try decoder.decode(Components.Schemas.MultiAgentMode.self, from: explicit)
+            == .explicitRequestOnly
+    )
+
+    let proactive = try encoder.encode(Components.Schemas.MultiAgentMode.proactive)
+    #expect(String(data: proactive, encoding: .utf8) == "\"proactive\"")
+    #expect(
+        try decoder.decode(Components.Schemas.MultiAgentMode.self, from: proactive) == .proactive
+    )
+
+    let custom = try encoder.encode(Components.Schemas.MultiAgentMode.custom("delegate carefully"))
+    let customObject = try #require(JSONSerialization.jsonObject(with: custom) as? [String: String])
+    #expect(customObject == ["custom": "delegate carefully"])
+    #expect(
+        try decoder.decode(Components.Schemas.MultiAgentMode.self, from: custom)
+            == .custom("delegate carefully")
+    )
+}
+
+@Test func clientCanSendRequestWithoutParams() async throws {
+    let connection = TestConnection(writeFailure: TestTransportError.writeFailed)
+    let client = AppServerClient(connection: connection)
+
+    await #expect(throws: TestTransportError.writeFailed) {
+        _ = try await client.send(
+            request: AppServerModels.ClientRequest.AccountWorkspaceMessagesRead.self
+        )
+    }
+}
+
 @Test func fileUploaderCopiesDataAndReportsProgress() async throws {
     let root = FileManager.default.temporaryDirectory
         .appendingPathComponent(UUID().uuidString, isDirectory: true)

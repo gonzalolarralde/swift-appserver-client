@@ -20,10 +20,18 @@ The generated Swift types come from `swift-openapi-generator`. A small set of
 schema shapes that generate awkward Swift are overridden with hand-written
 models under `Sources/AppServerClient/Models/TypeOverrides`.
 
+## Compatibility
+
+Release `0.144.1` is generated from the experimental app-server schema exposed
+by Codex `rust-v0.144.1`, including the iOS platform-support branch. App-server
+experimental APIs can change between Codex releases, so matching these versions
+is recommended.
+
 ## Requirements
 
 - Swift 6.2 or newer.
-- The `codex` CLI must be available on `PATH`.
+- Codex `0.144.1` must be available on `PATH` for the stdio connection and smoke
+  executable.
 - `codex app-server` must be supported by the installed Codex CLI.
 
 ## Building
@@ -68,13 +76,13 @@ targets: [
 ]
 ```
 
-Once the package has version tags, prefer a version requirement instead:
+Prefer the matching tagged release:
 
 ```swift
 dependencies: [
     .package(
         url: "https://github.com/gonzalolarralde/swift-appserver-client.git",
-        from: "0.1.0"
+        exact: "0.144.1"
     ),
 ],
 ```
@@ -107,7 +115,7 @@ struct Main {
 
         switch account.account {
         case let .chatgpt(chatGPT):
-            print("Signed in as:", chatGPT.email)
+            print("Signed in as:", chatGPT.email ?? "email unavailable")
         case .apiKey:
             print("Using an API key account")
         case .amazonBedrock:
@@ -225,9 +233,22 @@ The app-server protocol schemas are JSON Schema files. The Swift OpenAPI
 generator is useful for models, but the package needs a reproducible OpenAPI
 document and extra mapping glue for JSON-RPC requests and responses.
 
-Run:
+First generate the experimental schema from the matching Codex checkout:
 
 ```sh
+cd /path/to/codex/codex-rs
+cargo run -p codex-cli --bin codex -- \
+  app-server generate-json-schema \
+  --out /tmp/codex-app-server-schema \
+  --experimental
+```
+
+Then replace the checked-in schema and regenerate the Swift inputs:
+
+```sh
+rsync -a --delete \
+  /tmp/codex-app-server-schema/ \
+  Sources/AppServerClient/JSONSchema/
 python3 Scripts/generate-openapi.py
 ```
 
@@ -250,3 +271,8 @@ swift build --target AppServerClient
   schema files. Edit the schema generation script instead of hand-editing
   generated output.
 - Generated OpenAPI plugin output lives under `.build` and is not checked in.
+- Requests whose protocol `params` are null support `send(request:)` without a
+  `with:` argument.
+- The generated `multiAgentMode` fields are retained for wire compatibility,
+  but Codex `0.144.1` ignores them and derives proactive delegation from Ultra
+  reasoning effort.

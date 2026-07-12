@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Codex App Server Protocol",
-    "version": "0.0.0"
+    "version": "0.144.1"
   },
   "paths": {},
   "components": {
@@ -25,6 +25,10 @@
           "experimentalApi": {
             "description": "Opt into receiving experimental API methods and fields.",
             "default": false,
+            "type": "boolean"
+          },
+          "mcpServerOpenaiFormElicitation": {
+            "description": "Allow downstream MCP servers to request OpenAI extended form elicitations.",
             "type": "boolean"
           },
           "optOutNotificationMethods": {
@@ -104,7 +108,6 @@
             "type": "string",
             "enum": [
               "untrusted",
-              "on-failure",
               "on-request",
               "never"
             ]
@@ -263,8 +266,7 @@
           }
         }
       },
-      "AbsolutePathBuf": {
-        "description": "A path that is guaranteed to be absolute and normalized (though it is not guaranteed to be canonicalized or exist on the filesystem).\n\nIMPORTANT: When deserializing an `AbsolutePathBuf`, a base path must be set using [AbsolutePathBufGuard::new]. If no base path is set, the deserialization will fail unless the path being deserialized is already absolute.",
+      "LegacyAppPathString": {
         "type": "string"
       },
       "TurnEnvironmentParams": {
@@ -275,12 +277,44 @@
         ],
         "properties": {
           "cwd": {
-            "$ref": "#/components/schemas/AbsolutePathBuf"
+            "$ref": "#/components/schemas/LegacyAppPathString"
           },
           "environmentId": {
             "type": "string"
           }
         }
+      },
+      "ThreadHistoryMode": {
+        "type": "string",
+        "enum": [
+          "legacy",
+          "paginated"
+        ]
+      },
+      "MultiAgentMode": {
+        "description": "Controls the effective multi-agent delegation instructions for a turn. `custom` means the configured mode hint defines the policy instead of a built-in policy.",
+        "oneOf": [
+          {
+            "type": "string",
+            "enum": [
+              "explicitRequestOnly",
+              "proactive"
+            ]
+          },
+          {
+            "type": "object",
+            "required": [
+              "custom"
+            ],
+            "properties": {
+              "custom": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false,
+            "title": "CustomMultiAgentMode"
+          }
+        ]
       },
       "Personality": {
         "type": "string",
@@ -289,6 +323,10 @@
           "friendly",
           "pragmatic"
         ]
+      },
+      "AbsolutePathBuf": {
+        "description": "A path that is guaranteed to be absolute and normalized (though it is not guaranteed to be canonicalized or exist on the filesystem).\n\nIMPORTANT: When deserializing an `AbsolutePathBuf`, a base path must be set using [AbsolutePathBufGuard::new]. If no base path is set, the deserialization will fail unless the path being deserialized is already absolute.",
+        "type": "string"
       },
       "SandboxMode": {
         "type": "string",
@@ -311,6 +349,7 @@
             "type": "string"
           },
           "path": {
+            "description": "Absolute path for the root in the selected environment.",
             "type": "string"
           },
           "type": {
@@ -354,6 +393,10 @@
       "ThreadStartParams": {
         "type": "object",
         "properties": {
+          "allowProviderModelFallback": {
+            "description": "Allow a provider with an authoritative static model catalog to replace an unavailable requested model with its default.",
+            "type": "boolean"
+          },
           "approvalPolicy": {
             "$ref": "#/components/schemas/AskForApproval"
           },
@@ -398,6 +441,9 @@
             "description": "If true, opt into emitting raw Responses API items on the event stream. This is for internal use only (e.g. Codex Cloud).",
             "type": "boolean"
           },
+          "historyMode": {
+            "$ref": "#/components/schemas/ThreadHistoryMode"
+          },
           "mockExperimentalField": {
             "description": "Test-only experimental field used to validate experimental gating and schema filtering behavior in a stable way.",
             "type": "string",
@@ -410,6 +456,9 @@
           "modelProvider": {
             "type": "string",
             "nullable": true
+          },
+          "multiAgentMode": {
+            "$ref": "#/components/schemas/MultiAgentMode"
           },
           "permissions": {
             "description": "Named profile id for this thread. Cannot be combined with `sandbox`.",
@@ -570,7 +619,8 @@
           }
         }
       },
-      "ResponseItemMetadata": {
+      "InternalChatMessageMetadataPassthrough": {
+        "description": "Internal Responses API passthrough metadata copied into underlying chat messages.\n\nResponses API strongly types this payload. Do not modify it without first getting API approval and making the corresponding Responses API change.",
         "type": "object",
         "properties": {
           "turn_id": {
@@ -602,12 +652,11 @@
             }
           },
           "id": {
-            "writeOnly": true,
             "type": "string",
             "nullable": true
           },
-          "metadata": {
-            "$ref": "#/components/schemas/ResponseItemMetadata"
+          "internal_chat_message_metadata_passthrough": {
+            "$ref": "#/components/schemas/InternalChatMessageMetadataPassthrough"
           },
           "phase": {
             "$ref": "#/components/schemas/MessagePhase"
@@ -700,8 +749,12 @@
               "$ref": "#/components/schemas/AgentMessageInputContent"
             }
           },
-          "metadata": {
-            "$ref": "#/components/schemas/ResponseItemMetadata"
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "internal_chat_message_metadata_passthrough": {
+            "$ref": "#/components/schemas/InternalChatMessageMetadataPassthrough"
           },
           "recipient": {
             "type": "string"
@@ -811,8 +864,12 @@
             "type": "string",
             "nullable": true
           },
-          "metadata": {
-            "$ref": "#/components/schemas/ResponseItemMetadata"
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "internal_chat_message_metadata_passthrough": {
+            "$ref": "#/components/schemas/InternalChatMessageMetadataPassthrough"
           },
           "summary": {
             "type": "array",
@@ -899,12 +956,11 @@
           },
           "id": {
             "description": "Legacy id field retained for compatibility with older payloads.",
-            "writeOnly": true,
             "type": "string",
             "nullable": true
           },
-          "metadata": {
-            "$ref": "#/components/schemas/ResponseItemMetadata"
+          "internal_chat_message_metadata_passthrough": {
+            "$ref": "#/components/schemas/InternalChatMessageMetadataPassthrough"
           },
           "status": {
             "$ref": "#/components/schemas/LocalShellStatus"
@@ -935,12 +991,11 @@
             "type": "string"
           },
           "id": {
-            "writeOnly": true,
             "type": "string",
             "nullable": true
           },
-          "metadata": {
-            "$ref": "#/components/schemas/ResponseItemMetadata"
+          "internal_chat_message_metadata_passthrough": {
+            "$ref": "#/components/schemas/InternalChatMessageMetadataPassthrough"
           },
           "name": {
             "type": "string"
@@ -976,12 +1031,11 @@
             "type": "string"
           },
           "id": {
-            "writeOnly": true,
             "type": "string",
             "nullable": true
           },
-          "metadata": {
-            "$ref": "#/components/schemas/ResponseItemMetadata"
+          "internal_chat_message_metadata_passthrough": {
+            "$ref": "#/components/schemas/InternalChatMessageMetadataPassthrough"
           },
           "status": {
             "type": "string",
@@ -1106,8 +1160,12 @@
           "call_id": {
             "type": "string"
           },
-          "metadata": {
-            "$ref": "#/components/schemas/ResponseItemMetadata"
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "internal_chat_message_metadata_passthrough": {
+            "$ref": "#/components/schemas/InternalChatMessageMetadataPassthrough"
           },
           "output": {
             "$ref": "#/components/schemas/FunctionCallOutputBody"
@@ -1135,18 +1193,21 @@
             "type": "string"
           },
           "id": {
-            "writeOnly": true,
             "type": "string",
             "nullable": true
           },
           "input": {
             "type": "string"
           },
-          "metadata": {
-            "$ref": "#/components/schemas/ResponseItemMetadata"
+          "internal_chat_message_metadata_passthrough": {
+            "$ref": "#/components/schemas/InternalChatMessageMetadataPassthrough"
           },
           "name": {
             "type": "string"
+          },
+          "namespace": {
+            "type": "string",
+            "nullable": true
           },
           "status": {
             "type": "string",
@@ -1173,8 +1234,12 @@
           "call_id": {
             "type": "string"
           },
-          "metadata": {
-            "$ref": "#/components/schemas/ResponseItemMetadata"
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "internal_chat_message_metadata_passthrough": {
+            "$ref": "#/components/schemas/InternalChatMessageMetadataPassthrough"
           },
           "name": {
             "type": "string",
@@ -1209,8 +1274,12 @@
           "execution": {
             "type": "string"
           },
-          "metadata": {
-            "$ref": "#/components/schemas/ResponseItemMetadata"
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "internal_chat_message_metadata_passthrough": {
+            "$ref": "#/components/schemas/InternalChatMessageMetadataPassthrough"
           },
           "status": {
             "type": "string"
@@ -1350,12 +1419,11 @@
             "$ref": "#/components/schemas/ResponsesApiWebSearchAction"
           },
           "id": {
-            "writeOnly": true,
             "type": "string",
             "nullable": true
           },
-          "metadata": {
-            "$ref": "#/components/schemas/ResponseItemMetadata"
+          "internal_chat_message_metadata_passthrough": {
+            "$ref": "#/components/schemas/InternalChatMessageMetadataPassthrough"
           },
           "status": {
             "type": "string",
@@ -1374,17 +1442,17 @@
       "ResponseItemImageGenerationCallResponseItem": {
         "type": "object",
         "required": [
-          "id",
           "result",
           "status",
           "type"
         ],
         "properties": {
           "id": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
-          "metadata": {
-            "$ref": "#/components/schemas/ResponseItemMetadata"
+          "internal_chat_message_metadata_passthrough": {
+            "$ref": "#/components/schemas/InternalChatMessageMetadataPassthrough"
           },
           "result": {
             "type": "string"
@@ -1416,8 +1484,12 @@
           "encrypted_content": {
             "type": "string"
           },
-          "metadata": {
-            "$ref": "#/components/schemas/ResponseItemMetadata"
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "internal_chat_message_metadata_passthrough": {
+            "$ref": "#/components/schemas/InternalChatMessageMetadataPassthrough"
           },
           "type": {
             "type": "string",
@@ -1435,9 +1507,6 @@
           "type"
         ],
         "properties": {
-          "metadata": {
-            "$ref": "#/components/schemas/ResponseItemMetadata"
-          },
           "type": {
             "type": "string",
             "enum": [
@@ -1458,8 +1527,12 @@
             "type": "string",
             "nullable": true
           },
-          "metadata": {
-            "$ref": "#/components/schemas/ResponseItemMetadata"
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "internal_chat_message_metadata_passthrough": {
+            "$ref": "#/components/schemas/InternalChatMessageMetadataPassthrough"
           },
           "type": {
             "type": "string",
@@ -1737,6 +1810,11 @@
           "excludeTurns": {
             "description": "When true, return only thread metadata and live fork state without populating `thread.turns`. This is useful when the client plans to call `thread/turns/list` immediately after forking.",
             "type": "boolean"
+          },
+          "lastTurnId": {
+            "description": "Optional last turn id to fork through, inclusive.\n\nWhen specified, turns after `last_turn_id` are omitted from the fork. The referenced turn cannot be in progress.",
+            "type": "string",
+            "nullable": true
           },
           "model": {
             "description": "Configuration overrides for the forked thread, if any.",
@@ -2419,6 +2497,9 @@
             "type": "string",
             "nullable": true
           },
+          "multiAgentMode": {
+            "$ref": "#/components/schemas/MultiAgentMode"
+          },
           "permissions": {
             "description": "Select a named permissions profile id for subsequent turns. Cannot be combined with `sandboxPolicy`.",
             "type": "string",
@@ -2807,6 +2888,7 @@
         "title": "Thread/backgroundTerminals/terminateRequest"
       },
       "ThreadRollbackParams": {
+        "description": "DEPRECATED: `thread/rollback` will be removed soon.",
         "type": "object",
         "required": [
           "numTurns",
@@ -2865,7 +2947,8 @@
         "type": "string",
         "enum": [
           "created_at",
-          "updated_at"
+          "updated_at",
+          "recency_at"
         ]
       },
       "ThreadSourceKind": {
@@ -2886,6 +2969,11 @@
       "ThreadListParams": {
         "type": "object",
         "properties": {
+          "ancestorThreadId": {
+            "description": "Optional ancestor thread filter. Returns spawned descendants at any depth, excluding the ancestor itself. Mutually exclusive with `parentThreadId`.",
+            "type": "string",
+            "nullable": true
+          },
           "archived": {
             "description": "Optional archived filter; when set to true, only archived threads are returned. If false or null, only non-archived threads are returned.",
             "type": "boolean",
@@ -2914,7 +3002,7 @@
             }
           },
           "parentThreadId": {
-            "description": "Optional direct parent thread filter.",
+            "description": "Optional direct parent thread filter. Mutually exclusive with `ancestorThreadId`.",
             "type": "string",
             "nullable": true
           },
@@ -3165,11 +3253,10 @@
         },
         "title": "Thread/turns/listRequest"
       },
-      "ThreadTurnsItemsListParams": {
+      "ThreadItemsListParams": {
         "type": "object",
         "required": [
-          "threadId",
-          "turnId"
+          "threadId"
         ],
         "properties": {
           "cursor": {
@@ -3191,11 +3278,13 @@
             "type": "string"
           },
           "turnId": {
-            "type": "string"
+            "description": "Optional turn id to filter by. When omitted, returns items across the thread.",
+            "type": "string",
+            "nullable": true
           }
         }
       },
-      "ClientRequestThreadTurnsItemsListRequest": {
+      "ClientRequestThreadItemsListRequest": {
         "type": "object",
         "required": [
           "id",
@@ -3209,15 +3298,15 @@
           "method": {
             "type": "string",
             "enum": [
-              "thread/turns/items/list"
+              "thread/items/list"
             ],
-            "title": "Thread/turns/items/listRequestMethod"
+            "title": "Thread/items/listRequestMethod"
           },
           "params": {
-            "$ref": "#/components/schemas/ThreadTurnsItemsListParams"
+            "$ref": "#/components/schemas/ThreadItemsListParams"
           }
         },
-        "title": "Thread/turns/items/listRequest"
+        "title": "Thread/items/listRequest"
       },
       "ThreadInjectItemsParams": {
         "type": "object",
@@ -4709,6 +4798,9 @@
             "type": "string",
             "nullable": true
           },
+          "multiAgentMode": {
+            "$ref": "#/components/schemas/MultiAgentMode"
+          },
           "outputSchema": {
             "description": "Optional JSON Schema used to constrain the final assistant message for this turn."
           },
@@ -4878,13 +4970,6 @@
         },
         "title": "Turn/interruptRequest"
       },
-      "RealtimeConversationArchitecture": {
-        "type": "string",
-        "enum": [
-          "realtimeapi",
-          "avas"
-        ]
-      },
       "RealtimeOutputModality": {
         "type": "string",
         "enum": [
@@ -4986,8 +5071,15 @@
           "threadId"
         ],
         "properties": {
-          "architecture": {
-            "$ref": "#/components/schemas/RealtimeConversationArchitecture"
+          "clientManagedHandoffs": {
+            "description": "Leaves Codex response handoffs to the client's explicit append calls instead of forwarding them automatically. Defaults to false.",
+            "type": "boolean",
+            "nullable": true
+          },
+          "codexResponseHandoffPrefix": {
+            "description": "Optional prefix added to automatic V1 Codex commentary sent with `conversation.handoff.append` when `codexResponsesAsItems` is not true. Final answers are sent without the prefix.",
+            "type": "string",
+            "nullable": true
           },
           "codexResponseItemPrefix": {
             "description": "Optional prefix added to automatic Codex response items when `codexResponsesAsItems` is true.",
@@ -4996,6 +5088,11 @@
           },
           "codexResponsesAsItems": {
             "description": "Sends automatic Codex responses as realtime conversation items instead of handoff appends.",
+            "type": "boolean",
+            "nullable": true
+          },
+          "flushTranscriptTailOnSessionEnd": {
+            "description": "Routes any transcript tail remaining at session end through Codex. Defaults to false. TODO: Remove this rollout knob once transcript-tail flushing is always enabled.",
             "type": "boolean",
             "nullable": true
           },
@@ -5137,7 +5234,8 @@
         "type": "string",
         "enum": [
           "user",
-          "developer"
+          "developer",
+          "assistant"
         ]
       },
       "ThreadRealtimeAppendTextParams": {
@@ -5970,6 +6068,13 @@
           "execServerUrl"
         ],
         "properties": {
+          "connectTimeoutMs": {
+            "description": "Optional WebSocket connection timeout. The server default applies when omitted.",
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0.0,
+            "nullable": true
+          },
           "environmentId": {
             "type": "string"
           },
@@ -6003,6 +6108,42 @@
         },
         "title": "Environment/addRequest"
       },
+      "EnvironmentInfoParams": {
+        "type": "object",
+        "required": [
+          "environmentId"
+        ],
+        "properties": {
+          "environmentId": {
+            "type": "string"
+          }
+        }
+      },
+      "ClientRequestEnvironmentInfoRequest": {
+        "description": "Reads information from a configured execution environment.",
+        "type": "object",
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "environment/info"
+            ],
+            "title": "Environment/infoRequestMethod"
+          },
+          "params": {
+            "$ref": "#/components/schemas/EnvironmentInfoParams"
+          }
+        },
+        "title": "Environment/infoRequest"
+      },
       "McpServerOauthLoginParams": {
         "type": "object",
         "required": [
@@ -6017,6 +6158,10 @@
             "items": {
               "type": "string"
             }
+          },
+          "threadId": {
+            "type": "string",
+            "nullable": true
           },
           "timeoutSecs": {
             "type": "integer",
@@ -6303,12 +6448,22 @@
         },
         "title": "ApiKeyLoginAccountParams"
       },
+      "LoginAppBrand": {
+        "type": "string",
+        "enum": [
+          "codex",
+          "chatgpt"
+        ]
+      },
       "LoginAccountParamsChatgptLoginAccountParams": {
         "type": "object",
         "required": [
           "type"
         ],
         "properties": {
+          "appBrand": {
+            "$ref": "#/components/schemas/LoginAppBrand"
+          },
           "codexStreamlinedLogin": {
             "type": "boolean"
           },
@@ -6318,6 +6473,9 @@
               "chatgpt"
             ],
             "title": "ChatgptLoginAccountParamsType"
+          },
+          "useHostedLoginSuccessPage": {
+            "type": "boolean"
           }
         },
         "title": "ChatgptLoginAccountParams"
@@ -6506,6 +6664,11 @@
           "idempotencyKey"
         ],
         "properties": {
+          "creditId": {
+            "description": "Opaque reset-credit identifier to redeem. When omitted, the backend selects the next available credit.",
+            "type": "string",
+            "nullable": true
+          },
           "idempotencyKey": {
             "description": "Identifies one logical reset attempt. A UUID is recommended; reuse the same value when retrying that attempt.",
             "type": "string"
@@ -6558,6 +6721,29 @@
           }
         },
         "title": "Account/usage/readRequest"
+      },
+      "ClientRequestAccountWorkspaceMessagesReadRequest": {
+        "type": "object",
+        "required": [
+          "id",
+          "method"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "account/workspaceMessages/read"
+            ],
+            "title": "Account/workspaceMessages/readRequestMethod"
+          },
+          "params": {
+            "nullable": true
+          }
+        },
+        "title": "Account/workspaceMessages/readRequest"
       },
       "AddCreditsNudgeCreditType": {
         "type": "string",
@@ -7197,7 +7383,7 @@
             }
           },
           "includeHome": {
-            "description": "If true, include detection under the user's home (~/.claude, ~/.codex, etc.).",
+            "description": "If true, include detection under the user's home directory.",
             "type": "boolean"
           }
         }
@@ -7296,6 +7482,17 @@
           }
         }
       },
+      "SkillMigration": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      },
       "SubagentMigration": {
         "type": "object",
         "required": [
@@ -7343,6 +7540,13 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/SessionMigration"
+            }
+          },
+          "skills": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SkillMigration"
             }
           },
           "subagents": {
@@ -7402,6 +7606,11 @@
             "items": {
               "$ref": "#/components/schemas/ExternalAgentConfigMigrationItem"
             }
+          },
+          "source": {
+            "description": "Source product that produced the migration items. Missing means unspecified.",
+            "type": "string",
+            "nullable": true
           }
         }
       },
@@ -7428,6 +7637,29 @@
           }
         },
         "title": "ExternalAgentConfig/importRequest"
+      },
+      "ClientRequestExternalAgentConfigImportReadHistoriesRequest": {
+        "type": "object",
+        "required": [
+          "id",
+          "method"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "externalAgentConfig/import/readHistories"
+            ],
+            "title": "ExternalAgentConfig/import/readHistoriesRequestMethod"
+          },
+          "params": {
+            "nullable": true
+          }
+        },
+        "title": "ExternalAgentConfig/import/readHistoriesRequest"
       },
       "MergeStrategy": {
         "type": "string",
@@ -7867,7 +8099,7 @@
             "$ref": "#/components/schemas/ClientRequestThreadTurnsListRequest"
           },
           {
-            "$ref": "#/components/schemas/ClientRequestThreadTurnsItemsListRequest"
+            "$ref": "#/components/schemas/ClientRequestThreadItemsListRequest"
           },
           {
             "$ref": "#/components/schemas/ClientRequestThreadInjectItemsRequest"
@@ -8032,6 +8264,9 @@
             "$ref": "#/components/schemas/ClientRequestEnvironmentAddRequest"
           },
           {
+            "$ref": "#/components/schemas/ClientRequestEnvironmentInfoRequest"
+          },
+          {
             "$ref": "#/components/schemas/ClientRequestMcpServerOauthLoginRequest"
           },
           {
@@ -8071,6 +8306,9 @@
             "$ref": "#/components/schemas/ClientRequestAccountUsageReadRequest"
           },
           {
+            "$ref": "#/components/schemas/ClientRequestAccountWorkspaceMessagesReadRequest"
+          },
+          {
             "$ref": "#/components/schemas/ClientRequestAccountSendAddCreditsNudgeEmailRequest"
           },
           {
@@ -8108,6 +8346,9 @@
           },
           {
             "$ref": "#/components/schemas/ClientRequestExternalAgentConfigImportRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ClientRequestExternalAgentConfigImportReadHistoriesRequest"
           },
           {
             "$ref": "#/components/schemas/ClientRequestConfigValueWriteRequest"
@@ -8167,7 +8408,7 @@
             "thread/loaded/list": "#/components/schemas/ClientRequestThreadLoadedListRequest",
             "thread/read": "#/components/schemas/ClientRequestThreadReadRequest",
             "thread/turns/list": "#/components/schemas/ClientRequestThreadTurnsListRequest",
-            "thread/turns/items/list": "#/components/schemas/ClientRequestThreadTurnsItemsListRequest",
+            "thread/items/list": "#/components/schemas/ClientRequestThreadItemsListRequest",
             "thread/inject_items": "#/components/schemas/ClientRequestThreadInjectItemsRequest",
             "skills/list": "#/components/schemas/ClientRequestSkillsListRequest",
             "skills/extraRoots/set": "#/components/schemas/ClientRequestSkillsExtraRootsSetRequest",
@@ -8222,6 +8463,7 @@
             "collaborationMode/list": "#/components/schemas/ClientRequestCollaborationModeListRequest",
             "mock/experimentalMethod": "#/components/schemas/ClientRequestMockExperimentalMethodRequest",
             "environment/add": "#/components/schemas/ClientRequestEnvironmentAddRequest",
+            "environment/info": "#/components/schemas/ClientRequestEnvironmentInfoRequest",
             "mcpServer/oauth/login": "#/components/schemas/ClientRequestMcpServerOauthLoginRequest",
             "config/mcpServer/reload": "#/components/schemas/ClientRequestConfigMcpServerReloadRequest",
             "mcpServerStatus/list": "#/components/schemas/ClientRequestMcpServerStatusListRequest",
@@ -8235,6 +8477,7 @@
             "account/rateLimits/read": "#/components/schemas/ClientRequestAccountRateLimitsReadRequest",
             "account/rateLimitResetCredit/consume": "#/components/schemas/ClientRequestAccountRateLimitResetCreditConsumeRequest",
             "account/usage/read": "#/components/schemas/ClientRequestAccountUsageReadRequest",
+            "account/workspaceMessages/read": "#/components/schemas/ClientRequestAccountWorkspaceMessagesReadRequest",
             "account/sendAddCreditsNudgeEmail": "#/components/schemas/ClientRequestAccountSendAddCreditsNudgeEmailRequest",
             "feedback/upload": "#/components/schemas/ClientRequestFeedbackUploadRequest",
             "command/exec": "#/components/schemas/ClientRequestCommandExecRequest",
@@ -8248,6 +8491,7 @@
             "config/read": "#/components/schemas/ClientRequestConfigReadRequest",
             "externalAgentConfig/detect": "#/components/schemas/ClientRequestExternalAgentConfigDetectRequest",
             "externalAgentConfig/import": "#/components/schemas/ClientRequestExternalAgentConfigImportRequest",
+            "externalAgentConfig/import/readHistories": "#/components/schemas/ClientRequestExternalAgentConfigImportReadHistoriesRequest",
             "config/value/write": "#/components/schemas/ClientRequestConfigValueWriteRequest",
             "config/batchWrite": "#/components/schemas/ClientRequestConfigBatchWriteRequest",
             "configRequirements/read": "#/components/schemas/ClientRequestConfigRequirementsReadRequest",
@@ -8267,9 +8511,6 @@
           "deny"
         ]
       },
-      "ApiPathString": {
-        "type": "string"
-      },
       "FileSystemPathPathFileSystemPath": {
         "type": "object",
         "required": [
@@ -8278,7 +8519,7 @@
         ],
         "properties": {
           "path": {
-            "$ref": "#/components/schemas/ApiPathString"
+            "$ref": "#/components/schemas/LegacyAppPathString"
           },
           "type": {
             "type": "string",
@@ -8519,14 +8760,14 @@
             "description": "This will be removed in favor of `entries`.",
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ApiPathString"
+              "$ref": "#/components/schemas/LegacyAppPathString"
             }
           },
           "write": {
             "description": "This will be removed in favor of `entries`.",
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ApiPathString"
+              "$ref": "#/components/schemas/LegacyAppPathString"
             }
           }
         }
@@ -8838,7 +9079,13 @@
             }
           },
           "cwd": {
-            "$ref": "#/components/schemas/AbsolutePathBuf"
+            "$ref": "#/components/schemas/LegacyAppPathString"
+          },
+          "environmentId": {
+            "description": "Environment in which the command will run.",
+            "default": null,
+            "type": "string",
+            "nullable": true
           },
           "itemId": {
             "type": "string"
@@ -9545,6 +9792,27 @@
           }
         }
       },
+      "McpServerElicitationRequestParamsOpenaiForm": {
+        "type": "object",
+        "required": [
+          "message",
+          "mode",
+          "requestedSchema"
+        ],
+        "properties": {
+          "_meta": {},
+          "message": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "openai/form"
+            ]
+          },
+          "requestedSchema": {}
+        }
+      },
       "McpServerElicitationRequestParamsUrl": {
         "type": "object",
         "required": [
@@ -9596,6 +9864,9 @@
             "$ref": "#/components/schemas/McpServerElicitationRequestParamsForm"
           },
           {
+            "$ref": "#/components/schemas/McpServerElicitationRequestParamsOpenaiForm"
+          },
+          {
             "$ref": "#/components/schemas/McpServerElicitationRequestParamsUrl"
           }
         ],
@@ -9603,6 +9874,7 @@
           "propertyName": "mode",
           "mapping": {
             "form": "#/components/schemas/McpServerElicitationRequestParamsForm",
+            "openai/form": "#/components/schemas/McpServerElicitationRequestParamsOpenaiForm",
             "url": "#/components/schemas/McpServerElicitationRequestParamsUrl"
           }
         }
@@ -9839,6 +10111,42 @@
           }
         },
         "title": "Attestation/generateRequest"
+      },
+      "CurrentTimeReadParams": {
+        "type": "object",
+        "required": [
+          "threadId"
+        ],
+        "properties": {
+          "threadId": {
+            "type": "string"
+          }
+        }
+      },
+      "ServerRequestCurrentTimeReadRequest": {
+        "description": "Read the current time from an external clock owned by the client.",
+        "type": "object",
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "currentTime/read"
+            ],
+            "title": "CurrentTime/readRequestMethod"
+          },
+          "params": {
+            "$ref": "#/components/schemas/CurrentTimeReadParams"
+          }
+        },
+        "title": "CurrentTime/readRequest"
       },
       "ThreadId": {
         "type": "string"
@@ -10209,6 +10517,9 @@
             "$ref": "#/components/schemas/ServerRequestAttestationGenerateRequest"
           },
           {
+            "$ref": "#/components/schemas/ServerRequestCurrentTimeReadRequest"
+          },
+          {
             "$ref": "#/components/schemas/ServerRequestApplyPatchApprovalRequest"
           },
           {
@@ -10226,6 +10537,7 @@
             "item/tool/call": "#/components/schemas/ServerRequestItemToolCallRequest",
             "account/chatgptAuthTokens/refresh": "#/components/schemas/ServerRequestAccountChatgptAuthTokensRefreshRequest",
             "attestation/generate": "#/components/schemas/ServerRequestAttestationGenerateRequest",
+            "currentTime/read": "#/components/schemas/ServerRequestCurrentTimeReadRequest",
             "applyPatchApproval": "#/components/schemas/ServerRequestApplyPatchApprovalRequest",
             "execCommandApproval": "#/components/schemas/ServerRequestExecCommandApprovalRequest"
           }
@@ -10245,6 +10557,7 @@
             "type": "string",
             "enum": [
               "contextWindowExceeded",
+              "sessionBudgetExceeded",
               "usageLimitExceeded",
               "serverOverloaded",
               "cyberPolicy",
@@ -10429,6 +10742,10 @@
           }
         },
         "title": "ErrorNotification"
+      },
+      "ThreadExtra": {
+        "description": "Extra app-server data for a thread.",
+        "type": "object"
       },
       "GitInfo": {
         "type": "object",
@@ -10913,7 +11230,7 @@
             }
           },
           "cwd": {
-            "$ref": "#/components/schemas/AbsolutePathBuf",
+            "$ref": "#/components/schemas/LegacyAppPathString",
             "description": "The command's working directory."
           },
           "durationMs": {
@@ -11085,6 +11402,37 @@
         },
         "title": "FileChangeThreadItem"
       },
+      "McpToolCallAppContext": {
+        "type": "object",
+        "required": [
+          "connectorId"
+        ],
+        "properties": {
+          "actionName": {
+            "type": "string",
+            "nullable": true
+          },
+          "appName": {
+            "type": "string",
+            "nullable": true
+          },
+          "connectorId": {
+            "type": "string"
+          },
+          "linkId": {
+            "type": "string",
+            "nullable": true
+          },
+          "resourceUri": {
+            "type": "string",
+            "nullable": true
+          },
+          "templateId": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
       "McpToolCallError": {
         "type": "object",
         "required": [
@@ -11129,6 +11477,9 @@
           "type"
         ],
         "properties": {
+          "appContext": {
+            "$ref": "#/components/schemas/McpToolCallAppContext"
+          },
           "arguments": {},
           "durationMs": {
             "description": "The duration of the MCP tool call in milliseconds.",
@@ -11143,6 +11494,7 @@
             "type": "string"
           },
           "mcpAppResourceUri": {
+            "description": "Deprecated: use `appContext.resourceUri` instead.",
             "type": "string",
             "nullable": true
           },
@@ -11587,7 +11939,7 @@
             "type": "string"
           },
           "path": {
-            "$ref": "#/components/schemas/AbsolutePathBuf"
+            "$ref": "#/components/schemas/LegacyAppPathString"
           },
           "type": {
             "type": "string",
@@ -11842,6 +12194,7 @@
             "$ref": "#/components/schemas/TurnError"
           },
           "id": {
+            "description": "Identifier for this turn. Codex-generated turn IDs are UUIDv7.",
             "type": "string"
           },
           "items": {
@@ -11911,6 +12264,9 @@
             "description": "Whether the thread is ephemeral and should not be materialized on disk.",
             "type": "boolean"
           },
+          "extra": {
+            "$ref": "#/components/schemas/ThreadExtra"
+          },
           "forkedFromId": {
             "description": "Source thread id when this thread was created by forking another thread.",
             "type": "string",
@@ -11919,7 +12275,13 @@
           "gitInfo": {
             "$ref": "#/components/schemas/GitInfo"
           },
+          "historyMode": {
+            "$ref": "#/components/schemas/ThreadHistoryMode",
+            "description": "Persisted thread history contract selected when this thread was created.",
+            "default": "legacy"
+          },
           "id": {
+            "description": "Identifier for this thread. Codex-generated thread IDs are UUIDv7.",
             "type": "string"
           },
           "modelProvider": {
@@ -11944,6 +12306,12 @@
           "preview": {
             "description": "Usually the first user message in the thread, if available.",
             "type": "string"
+          },
+          "recencyAt": {
+            "description": "Unix timestamp (in seconds) used for thread recency ordering.",
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
           },
           "sessionId": {
             "description": "Session id shared by threads that belong to the same session tree.",
@@ -12390,6 +12758,11 @@
           },
           "modelProvider": {
             "type": "string"
+          },
+          "multiAgentMode": {
+            "$ref": "#/components/schemas/MultiAgentMode",
+            "description": "@deprecated Always `explicitRequestOnly`. Use `effort` for Ultra behavior.",
+            "default": "explicitRequestOnly"
           },
           "personality": {
             "$ref": "#/components/schemas/Personality"
@@ -13988,6 +14361,10 @@
           },
           "success": {
             "type": "boolean"
+          },
+          "threadId": {
+            "type": "string",
+            "nullable": true
           }
         }
       },
@@ -14011,6 +14388,12 @@
         },
         "title": "McpServer/oauthLogin/completedNotification"
       },
+      "McpServerStartupFailureReason": {
+        "type": "string",
+        "enum": [
+          "reauthenticationRequired"
+        ]
+      },
       "McpServerStartupState": {
         "type": "string",
         "enum": [
@@ -14030,6 +14413,9 @@
           "error": {
             "type": "string",
             "nullable": true
+          },
+          "failureReason": {
+            "$ref": "#/components/schemas/McpServerStartupFailureReason"
           },
           "name": {
             "type": "string"
@@ -14070,6 +14456,7 @@
           "apikey",
           "chatgpt",
           "chatgptAuthTokens",
+          "headers",
           "agentIdentity",
           "personalAccessToken",
           "bedrockApiKey"
@@ -14404,6 +14791,18 @@
             "type": "string",
             "nullable": true
           },
+          "iconAssets": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "iconDarkAssets": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
           "id": {
             "type": "string"
           },
@@ -14546,6 +14945,10 @@
             "type": "string",
             "nullable": true
           },
+          "errorType": {
+            "type": "string",
+            "nullable": true
+          },
           "failureStage": {
             "type": "string"
           },
@@ -14608,6 +15011,44 @@
             }
           }
         }
+      },
+      "ExternalAgentConfigImportProgressNotification": {
+        "type": "object",
+        "required": [
+          "importId",
+          "itemTypeResults"
+        ],
+        "properties": {
+          "importId": {
+            "type": "string"
+          },
+          "itemTypeResults": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExternalAgentConfigImportTypeResult"
+            }
+          }
+        }
+      },
+      "ServerNotificationExternalAgentConfigImportProgressNotification": {
+        "type": "object",
+        "required": [
+          "method",
+          "params"
+        ],
+        "properties": {
+          "method": {
+            "type": "string",
+            "enum": [
+              "externalAgentConfig/import/progress"
+            ],
+            "title": "ExternalAgentConfig/import/progressNotificationMethod"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ExternalAgentConfigImportProgressNotification"
+          }
+        },
+        "title": "ExternalAgentConfig/import/progressNotification"
       },
       "ExternalAgentConfigImportCompletedNotification": {
         "type": "object",
@@ -15002,6 +15443,67 @@
           }
         },
         "title": "Turn/moderationMetadataNotification"
+      },
+      "ModelSafetyBufferingUpdatedNotification": {
+        "type": "object",
+        "required": [
+          "model",
+          "reasons",
+          "showBufferingUi",
+          "threadId",
+          "turnId",
+          "useCases"
+        ],
+        "properties": {
+          "fasterModel": {
+            "type": "string",
+            "nullable": true
+          },
+          "model": {
+            "type": "string"
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "showBufferingUi": {
+            "type": "boolean"
+          },
+          "threadId": {
+            "type": "string"
+          },
+          "turnId": {
+            "type": "string"
+          },
+          "useCases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ServerNotificationModelSafetyBufferingUpdatedNotification": {
+        "type": "object",
+        "required": [
+          "method",
+          "params"
+        ],
+        "properties": {
+          "method": {
+            "type": "string",
+            "enum": [
+              "model/safetyBuffering/updated"
+            ],
+            "title": "Model/safetyBuffering/updatedNotificationMethod"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ModelSafetyBufferingUpdatedNotification"
+          }
+        },
+        "title": "Model/safetyBuffering/updatedNotification"
       },
       "WarningNotification": {
         "type": "object",
@@ -15861,6 +16363,9 @@
             "$ref": "#/components/schemas/ServerNotificationRemoteControlStatusChangedNotification"
           },
           {
+            "$ref": "#/components/schemas/ServerNotificationExternalAgentConfigImportProgressNotification"
+          },
+          {
             "$ref": "#/components/schemas/ServerNotificationExternalAgentConfigImportCompletedNotification"
           },
           {
@@ -15886,6 +16391,9 @@
           },
           {
             "$ref": "#/components/schemas/ServerNotificationTurnModerationMetadataNotification"
+          },
+          {
+            "$ref": "#/components/schemas/ServerNotificationModelSafetyBufferingUpdatedNotification"
           },
           {
             "$ref": "#/components/schemas/ServerNotificationWarningNotification"
@@ -15982,6 +16490,7 @@
             "account/rateLimits/updated": "#/components/schemas/ServerNotificationAccountRateLimitsUpdatedNotification",
             "app/list/updated": "#/components/schemas/ServerNotificationAppListUpdatedNotification",
             "remoteControl/status/changed": "#/components/schemas/ServerNotificationRemoteControlStatusChangedNotification",
+            "externalAgentConfig/import/progress": "#/components/schemas/ServerNotificationExternalAgentConfigImportProgressNotification",
             "externalAgentConfig/import/completed": "#/components/schemas/ServerNotificationExternalAgentConfigImportCompletedNotification",
             "fs/changed": "#/components/schemas/ServerNotificationFsChangedNotification",
             "item/reasoning/summaryTextDelta": "#/components/schemas/ServerNotificationItemReasoningSummaryTextDeltaNotification",
@@ -15991,6 +16500,7 @@
             "model/rerouted": "#/components/schemas/ServerNotificationModelReroutedNotification",
             "model/verification": "#/components/schemas/ServerNotificationModelVerificationNotification",
             "turn/moderationMetadata": "#/components/schemas/ServerNotificationTurnModerationMetadataNotification",
+            "model/safetyBuffering/updated": "#/components/schemas/ServerNotificationModelSafetyBufferingUpdatedNotification",
             "warning": "#/components/schemas/ServerNotificationWarningNotification",
             "guardianWarning": "#/components/schemas/ServerNotificationGuardianWarningNotification",
             "deprecationNotice": "#/components/schemas/ServerNotificationDeprecationNoticeNotification",
@@ -16152,6 +16662,20 @@
         "properties": {
           "decision": {
             "$ref": "#/components/schemas/CommandExecutionApprovalDecision"
+          }
+        }
+      },
+      "CurrentTimeReadResponse": {
+        "title": "CurrentTimeReadResponse",
+        "type": "object",
+        "required": [
+          "currentTimeAt"
+        ],
+        "properties": {
+          "currentTimeAt": {
+            "description": "Current time as whole Unix seconds.",
+            "type": "integer",
+            "format": "int64"
           }
         }
       },
@@ -16501,11 +17025,23 @@
         },
         "additionalProperties": true
       },
+      "AppToolApproval": {
+        "type": "string",
+        "enum": [
+          "auto",
+          "prompt",
+          "writes",
+          "approve"
+        ]
+      },
       "AppsDefaultConfig": {
         "type": "object",
         "properties": {
           "approvals_reviewer": {
             "$ref": "#/components/schemas/ApprovalsReviewer"
+          },
+          "default_tools_approval_mode": {
+            "$ref": "#/components/schemas/AppToolApproval"
           },
           "destructive_enabled": {
             "default": true,
@@ -16652,6 +17188,7 @@
         "enum": [
           "disabled",
           "cached",
+          "indexed",
           "live"
         ]
       },
@@ -17232,6 +17769,30 @@
           }
         }
       },
+      "NewThreadModelDefaults": {
+        "type": "object",
+        "properties": {
+          "model": {
+            "type": "string",
+            "nullable": true
+          },
+          "modelReasoningEffort": {
+            "$ref": "#/components/schemas/ReasoningEffort"
+          },
+          "serviceTier": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ModelsRequirements": {
+        "type": "object",
+        "properties": {
+          "newThread": {
+            "$ref": "#/components/schemas/NewThreadModelDefaults"
+          }
+        }
+      },
       "NetworkDomainPermission": {
         "type": "string",
         "enum": [
@@ -17393,6 +17954,9 @@
           "hooks": {
             "$ref": "#/components/schemas/ManagedHooksRequirements"
           },
+          "models": {
+            "$ref": "#/components/schemas/ModelsRequirements"
+          },
           "network": {
             "$ref": "#/components/schemas/NetworkRequirements"
           }
@@ -17479,6 +18043,41 @@
       "EnvironmentAddResponse": {
         "title": "EnvironmentAddResponse",
         "type": "object"
+      },
+      "PathUri": {
+        "type": "string"
+      },
+      "EnvironmentShellInfo": {
+        "type": "object",
+        "required": [
+          "name",
+          "path"
+        ],
+        "properties": {
+          "name": {
+            "description": "Stable shell name, for example `zsh`, `bash`, `powershell`, `sh`, or `cmd`.",
+            "type": "string"
+          },
+          "path": {
+            "description": "Target-native shell executable path or command name.",
+            "type": "string"
+          }
+        }
+      },
+      "EnvironmentInfoResponse": {
+        "title": "EnvironmentInfoResponse",
+        "type": "object",
+        "required": [
+          "shell"
+        ],
+        "properties": {
+          "cwd": {
+            "$ref": "#/components/schemas/PathUri"
+          },
+          "shell": {
+            "$ref": "#/components/schemas/EnvironmentShellInfo"
+          }
+        }
       },
       "ExperimentalFeatureEnablementSetResponse": {
         "title": "ExperimentalFeatureEnablementSetResponse",
@@ -17579,6 +18178,51 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ExternalAgentConfigMigrationItem"
+            }
+          }
+        }
+      },
+      "ExternalAgentConfigImportHistory": {
+        "type": "object",
+        "required": [
+          "completedAtMs",
+          "failures",
+          "importId",
+          "successes"
+        ],
+        "properties": {
+          "completedAtMs": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "failures": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExternalAgentConfigImportItemTypeFailure"
+            }
+          },
+          "importId": {
+            "type": "string"
+          },
+          "successes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExternalAgentConfigImportItemTypeSuccess"
+            }
+          }
+        }
+      },
+      "ExternalAgentConfigImportHistoriesReadResponse": {
+        "title": "ExternalAgentConfigImportHistoriesReadResponse",
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExternalAgentConfigImportHistory"
             }
           }
         }
@@ -17736,6 +18380,64 @@
         "description": "Successful response for `fs/writeFile`.",
         "type": "object"
       },
+      "RateLimitResetType": {
+        "type": "string",
+        "enum": [
+          "codexRateLimits",
+          "unknown"
+        ]
+      },
+      "RateLimitResetCreditStatus": {
+        "type": "string",
+        "enum": [
+          "available",
+          "redeeming",
+          "redeemed",
+          "unknown"
+        ]
+      },
+      "RateLimitResetCredit": {
+        "type": "object",
+        "required": [
+          "grantedAt",
+          "id",
+          "resetType",
+          "status"
+        ],
+        "properties": {
+          "description": {
+            "description": "Backend-provided display description for this credit, or `null` when unavailable.",
+            "type": "string",
+            "nullable": true
+          },
+          "expiresAt": {
+            "description": "Unix timestamp in seconds when the credit expires, or `null` if it does not expire.",
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "grantedAt": {
+            "description": "Unix timestamp in seconds when the credit was granted.",
+            "type": "integer",
+            "format": "int64"
+          },
+          "id": {
+            "description": "Opaque backend identifier for this reset credit.",
+            "type": "string"
+          },
+          "resetType": {
+            "$ref": "#/components/schemas/RateLimitResetType"
+          },
+          "status": {
+            "$ref": "#/components/schemas/RateLimitResetCreditStatus"
+          },
+          "title": {
+            "description": "Backend-provided display title for this credit, or `null` when unavailable.",
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
       "RateLimitResetCreditsSummary": {
         "type": "object",
         "required": [
@@ -17745,6 +18447,13 @@
           "availableCount": {
             "type": "integer",
             "format": "int64"
+          },
+          "credits": {
+            "description": "Detail rows for available reset credits, when the backend provides them.\n\n`null` means only `availableCount` is known, while an empty array means details were fetched and no available credits were returned. The backend may cap this list, so its length can be less than `availableCount`.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RateLimitResetCredit"
+            }
           }
         }
       },
@@ -17796,7 +18505,8 @@
         ],
         "properties": {
           "email": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "planType": {
             "$ref": "#/components/schemas/PlanType"
@@ -17811,12 +18521,23 @@
         },
         "title": "ChatgptAccount"
       },
+      "AmazonBedrockCredentialSource": {
+        "type": "string",
+        "enum": [
+          "codexManaged",
+          "awsManaged"
+        ]
+      },
       "AccountAmazonBedrockAccount": {
         "type": "object",
         "required": [
           "type"
         ],
         "properties": {
+          "credentialSource": {
+            "$ref": "#/components/schemas/AmazonBedrockCredentialSource",
+            "default": "awsManaged"
+          },
           "type": {
             "type": "string",
             "enum": [
@@ -17924,6 +18645,66 @@
           },
           "summary": {
             "$ref": "#/components/schemas/AccountTokenUsageSummary"
+          }
+        }
+      },
+      "WorkspaceMessageType": {
+        "type": "string",
+        "enum": [
+          "headline",
+          "announcement",
+          "unknown"
+        ]
+      },
+      "WorkspaceMessage": {
+        "type": "object",
+        "required": [
+          "messageBody",
+          "messageId",
+          "messageType"
+        ],
+        "properties": {
+          "archivedAt": {
+            "description": "Unix timestamp (in seconds) when the message was archived.",
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "createdAt": {
+            "description": "Unix timestamp (in seconds) when the message was created.",
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "messageBody": {
+            "type": "string"
+          },
+          "messageId": {
+            "type": "string"
+          },
+          "messageType": {
+            "$ref": "#/components/schemas/WorkspaceMessageType"
+          }
+        }
+      },
+      "GetWorkspaceMessagesResponse": {
+        "title": "GetWorkspaceMessagesResponse",
+        "type": "object",
+        "required": [
+          "featureEnabled",
+          "messages"
+        ],
+        "properties": {
+          "featureEnabled": {
+            "description": "Whether the workspace-message backend route is available for this client.",
+            "type": "boolean"
+          },
+          "messages": {
+            "description": "Active workspace messages returned by the backend.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkspaceMessage"
+            }
           }
         }
       },
@@ -18779,9 +19560,14 @@
       "PermissionProfileSummary": {
         "type": "object",
         "required": [
+          "allowed",
           "id"
         ],
         "properties": {
+          "allowed": {
+            "description": "Whether the effective requirements allow selecting this profile.",
+            "type": "boolean"
+          },
           "description": {
             "description": "Optional user-facing description for display in clients.",
             "type": "string",
@@ -18906,6 +19692,13 @@
           "INSTALLED_BY_DEFAULT"
         ]
       },
+      "PluginInstallPolicySource": {
+        "type": "string",
+        "enum": [
+          "WORKSPACE_SETTING",
+          "IMPLICIT_CANONICAL_APP"
+        ]
+      },
       "PluginInterface": {
         "type": "object",
         "required": [
@@ -18954,8 +19747,16 @@
           "logo": {
             "$ref": "#/components/schemas/AbsolutePathBuf"
           },
+          "logoDark": {
+            "$ref": "#/components/schemas/AbsolutePathBuf"
+          },
           "logoUrl": {
             "description": "Remote logo URL from the plugin catalog.",
+            "type": "string",
+            "nullable": true
+          },
+          "logoUrlDark": {
+            "description": "Remote dark-mode logo URL from the plugin catalog.",
             "type": "string",
             "nullable": true
           },
@@ -19116,6 +19917,36 @@
         },
         "title": "GitPluginSource"
       },
+      "PluginSourceNpmPluginSource": {
+        "type": "object",
+        "required": [
+          "package",
+          "type"
+        ],
+        "properties": {
+          "package": {
+            "type": "string"
+          },
+          "registry": {
+            "description": "Optional HTTPS registry URL. Authentication stays in the user's npm config.",
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "npm"
+            ],
+            "title": "NpmPluginSourceType"
+          },
+          "version": {
+            "description": "Optional npm version or version range.",
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "title": "NpmPluginSource"
+      },
       "PluginSourceRemotePluginSource": {
         "description": "The plugin is available in the remote catalog. Download metadata is kept server-side and is not exposed through the app-server API.",
         "type": "object",
@@ -19142,6 +19973,9 @@
             "$ref": "#/components/schemas/PluginSourceGitPluginSource"
           },
           {
+            "$ref": "#/components/schemas/PluginSourceNpmPluginSource"
+          },
+          {
             "$ref": "#/components/schemas/PluginSourceRemotePluginSource"
           }
         ],
@@ -19150,6 +19984,7 @@
           "mapping": {
             "local": "#/components/schemas/PluginSourceLocalPluginSource",
             "git": "#/components/schemas/PluginSourceGitPluginSource",
+            "npm": "#/components/schemas/PluginSourceNpmPluginSource",
             "remote": "#/components/schemas/PluginSourceRemotePluginSource"
           }
         }
@@ -19183,6 +20018,9 @@
           "installPolicy": {
             "$ref": "#/components/schemas/PluginInstallPolicy"
           },
+          "installPolicySource": {
+            "$ref": "#/components/schemas/PluginInstallPolicySource"
+          },
           "installed": {
             "type": "boolean"
           },
@@ -19215,6 +20053,12 @@
           },
           "source": {
             "$ref": "#/components/schemas/PluginSource"
+          },
+          "version": {
+            "description": "Version advertised by the remote marketplace backend when available.",
+            "default": null,
+            "type": "string",
+            "nullable": true
           }
         }
       },
@@ -20098,8 +20942,7 @@
           "count": {
             "description": "Current out-of-band elicitation count after the decrement.",
             "type": "integer",
-            "format": "uint64",
-            "minimum": 0.0
+            "format": "int64"
           },
           "paused": {
             "description": "Whether timeout accounting remains paused after applying the decrement.",
@@ -20138,11 +20981,11 @@
             "$ref": "#/components/schemas/AbsolutePathBuf"
           },
           "instructionSources": {
-            "description": "Instruction source files currently loaded for this thread.",
+            "description": "Environment-native paths to instruction source files currently loaded for this thread.",
             "default": [],
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/AbsolutePathBuf"
+              "$ref": "#/components/schemas/LegacyAppPathString"
             }
           },
           "model": {
@@ -20150,6 +20993,11 @@
           },
           "modelProvider": {
             "type": "string"
+          },
+          "multiAgentMode": {
+            "$ref": "#/components/schemas/MultiAgentMode",
+            "description": "@deprecated Always `explicitRequestOnly`. Use `reasoningEffort` for Ultra behavior.",
+            "default": "explicitRequestOnly"
           },
           "reasoningEffort": {
             "$ref": "#/components/schemas/ReasoningEffort"
@@ -20220,8 +21068,7 @@
           "count": {
             "description": "Current out-of-band elicitation count after the increment.",
             "type": "integer",
-            "format": "uint64",
-            "minimum": 0.0
+            "format": "int64"
           },
           "paused": {
             "description": "Whether timeout accounting is paused after applying the increment.",
@@ -20232,6 +21079,31 @@
       "ThreadInjectItemsResponse": {
         "title": "ThreadInjectItemsResponse",
         "type": "object"
+      },
+      "ThreadItemsListResponse": {
+        "title": "ThreadItemsListResponse",
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "backwardsCursor": {
+            "description": "Opaque cursor to pass as `cursor` when reversing `sortDirection`. This is only populated when the page contains at least one item.",
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ThreadItem"
+            }
+          },
+          "nextCursor": {
+            "description": "Opaque cursor to pass to the next call to continue after the last item. if None, there are no more items to return.",
+            "type": "string",
+            "nullable": true
+          }
+        }
       },
       "ThreadListResponse": {
         "title": "ThreadListResponse",
@@ -20426,11 +21298,11 @@
             "$ref": "#/components/schemas/TurnsPage"
           },
           "instructionSources": {
-            "description": "Instruction source files currently loaded for this thread.",
+            "description": "Environment-native paths to instruction source files currently loaded for this thread.",
             "default": [],
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/AbsolutePathBuf"
+              "$ref": "#/components/schemas/LegacyAppPathString"
             }
           },
           "model": {
@@ -20438,6 +21310,11 @@
           },
           "modelProvider": {
             "type": "string"
+          },
+          "multiAgentMode": {
+            "$ref": "#/components/schemas/MultiAgentMode",
+            "description": "@deprecated Always `explicitRequestOnly`. Use `reasoningEffort` for Ultra behavior.",
+            "default": "explicitRequestOnly"
           },
           "reasoningEffort": {
             "$ref": "#/components/schemas/ReasoningEffort"
@@ -20555,11 +21432,11 @@
             "$ref": "#/components/schemas/AbsolutePathBuf"
           },
           "instructionSources": {
-            "description": "Instruction source files currently loaded for this thread.",
+            "description": "Environment-native paths to instruction source files currently loaded for this thread.",
             "default": [],
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/AbsolutePathBuf"
+              "$ref": "#/components/schemas/LegacyAppPathString"
             }
           },
           "model": {
@@ -20567,6 +21444,11 @@
           },
           "modelProvider": {
             "type": "string"
+          },
+          "multiAgentMode": {
+            "$ref": "#/components/schemas/MultiAgentMode",
+            "description": "@deprecated Always `explicitRequestOnly`. Use `reasoningEffort` for Ultra behavior.",
+            "default": "explicitRequestOnly"
           },
           "reasoningEffort": {
             "$ref": "#/components/schemas/ReasoningEffort"
@@ -20589,31 +21471,6 @@
           },
           "thread": {
             "$ref": "#/components/schemas/Thread"
-          }
-        }
-      },
-      "ThreadTurnsItemsListResponse": {
-        "title": "ThreadTurnsItemsListResponse",
-        "type": "object",
-        "required": [
-          "data"
-        ],
-        "properties": {
-          "backwardsCursor": {
-            "description": "Opaque cursor to pass as `cursor` when reversing `sortDirection`. This is only populated when the page contains at least one item.",
-            "type": "string",
-            "nullable": true
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ThreadItem"
-            }
-          },
-          "nextCursor": {
-            "description": "Opaque cursor to pass to the next call to continue after the last item. if None, there are no more items to return.",
-            "type": "string",
-            "nullable": true
           }
         }
       },

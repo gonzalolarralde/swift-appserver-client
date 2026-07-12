@@ -33,7 +33,7 @@ public extension AppServerModels.ClientRequest {
     typealias ThreadLoadedList = Components.Schemas.ClientRequestThreadLoadedListRequest
     typealias ThreadRead = Components.Schemas.ClientRequestThreadReadRequest
     typealias ThreadTurnsList = Components.Schemas.ClientRequestThreadTurnsListRequest
-    typealias ThreadTurnsItemsList = Components.Schemas.ClientRequestThreadTurnsItemsListRequest
+    typealias ThreadItemsList = Components.Schemas.ClientRequestThreadItemsListRequest
     typealias ThreadInjectItems = Components.Schemas.ClientRequestThreadInjectItemsRequest
     typealias SkillsList = Components.Schemas.ClientRequestSkillsListRequest
     typealias SkillsExtraRootsSet = Components.Schemas.ClientRequestSkillsExtraRootsSetRequest
@@ -88,6 +88,7 @@ public extension AppServerModels.ClientRequest {
     typealias CollaborationModeList = Components.Schemas.ClientRequestCollaborationModeListRequest
     typealias MockExperimentalMethod = Components.Schemas.ClientRequestMockExperimentalMethodRequest
     typealias EnvironmentAdd = Components.Schemas.ClientRequestEnvironmentAddRequest
+    typealias EnvironmentInfo = Components.Schemas.ClientRequestEnvironmentInfoRequest
     typealias McpServerOauthLogin = Components.Schemas.ClientRequestMcpServerOauthLoginRequest
     typealias ConfigMcpServerReload = Components.Schemas.ClientRequestConfigMcpServerReloadRequest
     typealias McpServerStatusList = Components.Schemas.ClientRequestMcpServerStatusListRequest
@@ -101,6 +102,7 @@ public extension AppServerModels.ClientRequest {
     typealias AccountRateLimitsRead = Components.Schemas.ClientRequestAccountRateLimitsReadRequest
     typealias AccountRateLimitResetCreditConsume = Components.Schemas.ClientRequestAccountRateLimitResetCreditConsumeRequest
     typealias AccountUsageRead = Components.Schemas.ClientRequestAccountUsageReadRequest
+    typealias AccountWorkspaceMessagesRead = Components.Schemas.ClientRequestAccountWorkspaceMessagesReadRequest
     typealias AccountSendAddCreditsNudgeEmail = Components.Schemas.ClientRequestAccountSendAddCreditsNudgeEmailRequest
     typealias FeedbackUpload = Components.Schemas.ClientRequestFeedbackUploadRequest
     typealias CommandExec = Components.Schemas.ClientRequestCommandExecRequest
@@ -114,6 +116,7 @@ public extension AppServerModels.ClientRequest {
     typealias ConfigRead = Components.Schemas.ClientRequestConfigReadRequest
     typealias ExternalAgentConfigDetect = Components.Schemas.ClientRequestExternalAgentConfigDetectRequest
     typealias ExternalAgentConfigImport = Components.Schemas.ClientRequestExternalAgentConfigImportRequest
+    typealias ExternalAgentConfigImportReadHistories = Components.Schemas.ClientRequestExternalAgentConfigImportReadHistoriesRequest
     typealias ConfigValueWrite = Components.Schemas.ClientRequestConfigValueWriteRequest
     typealias ConfigBatchWrite = Components.Schemas.ClientRequestConfigBatchWriteRequest
     typealias ConfigRequirementsRead = Components.Schemas.ClientRequestConfigRequirementsReadRequest
@@ -154,7 +157,7 @@ public extension AppServerModels.ClientRequest {
         public typealias ThreadLoadedList = Components.Schemas.ThreadLoadedListResponse
         public typealias ThreadRead = Components.Schemas.ThreadReadResponse
         public typealias ThreadTurnsList = Components.Schemas.ThreadTurnsListResponse
-        public typealias ThreadTurnsItemsList = Components.Schemas.ThreadTurnsItemsListResponse
+        public typealias ThreadItemsList = Components.Schemas.ThreadItemsListResponse
         public typealias ThreadInjectItems = Components.Schemas.ThreadInjectItemsResponse
         public typealias SkillsList = Components.Schemas.SkillsListResponse
         public typealias SkillsExtraRootsSet = Components.Schemas.SkillsExtraRootsSetResponse
@@ -209,6 +212,7 @@ public extension AppServerModels.ClientRequest {
         public typealias CollaborationModeList = Components.Schemas.CollaborationModeListResponse
         public typealias MockExperimentalMethod = Components.Schemas.MockExperimentalMethodResponse
         public typealias EnvironmentAdd = Components.Schemas.EnvironmentAddResponse
+        public typealias EnvironmentInfo = Components.Schemas.EnvironmentInfoResponse
         public typealias McpServerOauthLogin = Components.Schemas.McpServerOauthLoginResponse
         public typealias ConfigMcpServerReload = Components.Schemas.McpServerRefreshResponse
         public typealias McpServerStatusList = Components.Schemas.ListMcpServerStatusResponse
@@ -222,6 +226,7 @@ public extension AppServerModels.ClientRequest {
         public typealias AccountRateLimitsRead = Components.Schemas.GetAccountRateLimitsResponse
         public typealias AccountRateLimitResetCreditConsume = Components.Schemas.ConsumeAccountRateLimitResetCreditResponse
         public typealias AccountUsageRead = Components.Schemas.GetAccountTokenUsageResponse
+        public typealias AccountWorkspaceMessagesRead = Components.Schemas.GetWorkspaceMessagesResponse
         public typealias AccountSendAddCreditsNudgeEmail = Components.Schemas.SendAddCreditsNudgeEmailResponse
         public typealias FeedbackUpload = Components.Schemas.FeedbackUploadResponse
         public typealias CommandExec = Components.Schemas.CommandExecResponse
@@ -235,6 +240,7 @@ public extension AppServerModels.ClientRequest {
         public typealias ConfigRead = Components.Schemas.ConfigReadResponse
         public typealias ExternalAgentConfigDetect = Components.Schemas.ExternalAgentConfigDetectResponse
         public typealias ExternalAgentConfigImport = Components.Schemas.ExternalAgentConfigImportResponse
+        public typealias ExternalAgentConfigImportReadHistories = Components.Schemas.ExternalAgentConfigImportHistoriesReadResponse
         public typealias ConfigValueWrite = Components.Schemas.ConfigWriteResponse
         public typealias ConfigBatchWrite = Components.Schemas.ConfigWriteResponse
         public typealias ConfigRequirementsRead = Components.Schemas.ConfigRequirementsReadResponse
@@ -277,7 +283,7 @@ public extension AppServerModels.ClientRequest {
         case let .threadLoadedList(value): value
         case let .threadRead(value): value
         case let .threadTurnsList(value): value
-        case let .threadTurnsItemsList(value): value
+        case let .threadItemsList(value): value
         case let .threadInjectItems(value): value
         case let .skillsList(value): value
         case let .skillsExtraRootsSet(value): value
@@ -332,6 +338,7 @@ public extension AppServerModels.ClientRequest {
         case let .collaborationModeList(value): value
         case let .mockExperimentalMethod(value): value
         case let .environmentAdd(value): value
+        case let .environmentInfo(value): value
         case let .mcpServerOauthLogin(value): value
         case let .configMcpServerReload(value): value
         case let .mcpServerStatusList(value): value
@@ -345,6 +352,7 @@ public extension AppServerModels.ClientRequest {
         case let .accountRateLimitsRead(value): value
         case let .accountRateLimitResetCreditConsume(value): value
         case let .accountUsageRead(value): value
+        case let .accountWorkspaceMessagesRead(value): value
         case let .accountSendAddCreditsNudgeEmail(value): value
         case let .feedbackUpload(value): value
         case let .commandExec(value): value
@@ -358,6 +366,7 @@ public extension AppServerModels.ClientRequest {
         case let .configRead(value): value
         case let .externalAgentConfigDetect(value): value
         case let .externalAgentConfigImport(value): value
+        case let .externalAgentConfigImportReadHistories(value): value
         case let .configValueWrite(value): value
         case let .configBatchWrite(value): value
         case let .configRequirementsRead(value): value
@@ -610,11 +619,11 @@ extension Components.Schemas.ClientRequestThreadTurnsListRequest: ClientRequesta
     }
 }
 
-extension Components.Schemas.ClientRequestThreadTurnsItemsListRequest: ClientRequestable {
-    public typealias Params = Components.Schemas.ThreadTurnsItemsListParams
-    public typealias Response = AppServerModels.ClientRequest.Response.ThreadTurnsItemsList
+extension Components.Schemas.ClientRequestThreadItemsListRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ThreadItemsListParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadItemsList
     public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
-        .threadTurnsItemsList(.init(id: id, method: .allCases.first!, params: params))
+        .threadItemsList(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
@@ -1050,6 +1059,14 @@ extension Components.Schemas.ClientRequestEnvironmentAddRequest: ClientRequestab
     }
 }
 
+extension Components.Schemas.ClientRequestEnvironmentInfoRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.EnvironmentInfoParams
+    public typealias Response = AppServerModels.ClientRequest.Response.EnvironmentInfo
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .environmentInfo(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
 extension Components.Schemas.ClientRequestMcpServerOauthLoginRequest: ClientRequestable {
     public typealias Params = Components.Schemas.McpServerOauthLoginParams
     public typealias Response = AppServerModels.ClientRequest.Response.McpServerOauthLogin
@@ -1151,6 +1168,14 @@ extension Components.Schemas.ClientRequestAccountUsageReadRequest: ClientRequest
     public typealias Response = AppServerModels.ClientRequest.Response.AccountUsageRead
     public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .accountUsageRead(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestAccountWorkspaceMessagesReadRequest: ClientRequestable {
+    public typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
+    public typealias Response = AppServerModels.ClientRequest.Response.AccountWorkspaceMessagesRead
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .accountWorkspaceMessagesRead(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
@@ -1258,6 +1283,14 @@ extension Components.Schemas.ClientRequestExternalAgentConfigImportRequest: Clie
     }
 }
 
+extension Components.Schemas.ClientRequestExternalAgentConfigImportReadHistoriesRequest: ClientRequestable {
+    public typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
+    public typealias Response = AppServerModels.ClientRequest.Response.ExternalAgentConfigImportReadHistories
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .externalAgentConfigImportReadHistories(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
 extension Components.Schemas.ClientRequestConfigValueWriteRequest: ClientRequestable {
     public typealias Params = Components.Schemas.ConfigValueWriteParams
     public typealias Response = AppServerModels.ClientRequest.Response.ConfigValueWrite
@@ -1331,6 +1364,7 @@ public extension AppServerModels.ServerRequest {
     typealias ItemToolCall = Components.Schemas.ServerRequestItemToolCallRequest
     typealias AccountChatgptAuthTokensRefresh = Components.Schemas.ServerRequestAccountChatgptAuthTokensRefreshRequest
     typealias AttestationGenerate = Components.Schemas.ServerRequestAttestationGenerateRequest
+    typealias CurrentTimeRead = Components.Schemas.ServerRequestCurrentTimeReadRequest
     typealias ApplyPatchApproval = Components.Schemas.ServerRequestApplyPatchApprovalRequest
     typealias ExecCommandApproval = Components.Schemas.ServerRequestExecCommandApprovalRequest
 
@@ -1343,6 +1377,7 @@ public extension AppServerModels.ServerRequest {
         public typealias ItemToolCall = Components.Schemas.DynamicToolCallResponse
         public typealias AccountChatgptAuthTokensRefresh = Components.Schemas.ChatgptAuthTokensRefreshResponse
         public typealias AttestationGenerate = Components.Schemas.AttestationGenerateResponse
+        public typealias CurrentTimeRead = Components.Schemas.CurrentTimeReadResponse
         public typealias ApplyPatchApproval = Components.Schemas.ApplyPatchApprovalResponse
         public typealias ExecCommandApproval = Components.Schemas.ExecCommandApprovalResponse
     }
@@ -1357,6 +1392,7 @@ public extension AppServerModels.ServerRequest {
         case let .itemToolCall(value): value
         case let .accountChatgptAuthTokensRefresh(value): value
         case let .attestationGenerate(value): value
+        case let .currentTimeRead(value): value
         case let .applyPatchApproval(value): value
         case let .execCommandApproval(value): value
         }
@@ -1427,6 +1463,14 @@ extension Components.Schemas.ServerRequestAttestationGenerateRequest: ServerRequ
     }
 }
 
+extension Components.Schemas.ServerRequestCurrentTimeReadRequest: ServerRequestable {
+    public typealias Params = Components.Schemas.CurrentTimeReadParams
+    public typealias Response = AppServerModels.ServerRequest.Response.CurrentTimeRead
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
+        .currentTimeRead(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
 extension Components.Schemas.ServerRequestApplyPatchApprovalRequest: ServerRequestable {
     public typealias Params = Components.Schemas.ApplyPatchApprovalParams
     public typealias Response = AppServerModels.ServerRequest.Response.ApplyPatchApproval
@@ -1484,6 +1528,7 @@ public extension AppServerModels.ServerNotification {
     typealias AccountRateLimitsUpdated = Components.Schemas.ServerNotificationAccountRateLimitsUpdatedNotification
     typealias AppListUpdated = Components.Schemas.ServerNotificationAppListUpdatedNotification
     typealias RemoteControlStatusChanged = Components.Schemas.ServerNotificationRemoteControlStatusChangedNotification
+    typealias ExternalAgentConfigImportProgress = Components.Schemas.ServerNotificationExternalAgentConfigImportProgressNotification
     typealias ExternalAgentConfigImportCompleted = Components.Schemas.ServerNotificationExternalAgentConfigImportCompletedNotification
     typealias FsChanged = Components.Schemas.ServerNotificationFsChangedNotification
     typealias ItemReasoningSummaryTextDelta = Components.Schemas.ServerNotificationItemReasoningSummaryTextDeltaNotification
@@ -1493,6 +1538,7 @@ public extension AppServerModels.ServerNotification {
     typealias ModelRerouted = Components.Schemas.ServerNotificationModelReroutedNotification
     typealias ModelVerification = Components.Schemas.ServerNotificationModelVerificationNotification
     typealias TurnModerationMetadata = Components.Schemas.ServerNotificationTurnModerationMetadataNotification
+    typealias ModelSafetyBufferingUpdated = Components.Schemas.ServerNotificationModelSafetyBufferingUpdatedNotification
     typealias Warning = Components.Schemas.ServerNotificationWarningNotification
     typealias GuardianWarning = Components.Schemas.ServerNotificationGuardianWarningNotification
     typealias DeprecationNotice = Components.Schemas.ServerNotificationDeprecationNoticeNotification
@@ -1553,6 +1599,7 @@ public extension AppServerModels.ServerNotification {
         case let .accountRateLimitsUpdated(value): value
         case let .appListUpdated(value): value
         case let .remoteControlStatusChanged(value): value
+        case let .externalAgentConfigImportProgress(value): value
         case let .externalAgentConfigImportCompleted(value): value
         case let .fsChanged(value): value
         case let .itemReasoningSummaryTextDelta(value): value
@@ -1562,6 +1609,7 @@ public extension AppServerModels.ServerNotification {
         case let .modelRerouted(value): value
         case let .modelVerification(value): value
         case let .turnModerationMetadata(value): value
+        case let .modelSafetyBufferingUpdated(value): value
         case let .warning(value): value
         case let .guardianWarning(value): value
         case let .deprecationNotice(value): value
@@ -1863,6 +1911,13 @@ extension Components.Schemas.ServerNotificationRemoteControlStatusChangedNotific
     }
 }
 
+extension Components.Schemas.ServerNotificationExternalAgentConfigImportProgressNotification: ServerNotificationPayload {
+    public typealias Params = Components.Schemas.ExternalAgentConfigImportProgressNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
+        .externalAgentConfigImportProgress(.init(method: .allCases.first!, params: params))
+    }
+}
+
 extension Components.Schemas.ServerNotificationExternalAgentConfigImportCompletedNotification: ServerNotificationPayload {
     public typealias Params = Components.Schemas.ExternalAgentConfigImportCompletedNotification
     public static func build(params: Params) -> AppServerModels.ServerNotification {
@@ -1923,6 +1978,13 @@ extension Components.Schemas.ServerNotificationTurnModerationMetadataNotificatio
     public typealias Params = Components.Schemas.TurnModerationMetadataNotification
     public static func build(params: Params) -> AppServerModels.ServerNotification {
         .turnModerationMetadata(.init(method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ServerNotificationModelSafetyBufferingUpdatedNotification: ServerNotificationPayload {
+    public typealias Params = Components.Schemas.ModelSafetyBufferingUpdatedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
+        .modelSafetyBufferingUpdated(.init(method: .allCases.first!, params: params))
     }
 }
 

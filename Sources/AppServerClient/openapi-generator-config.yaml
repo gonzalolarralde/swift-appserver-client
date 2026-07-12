@@ -7,6 +7,7 @@ typeOverrides:
     RequestId: RequestIdValue
     FunctionCallOutputBody: FunctionCallOutputBodyValue
     ThreadListCwdFilter: ThreadListCwdFilterValue
+    MultiAgentMode: MultiAgentModeValue
     ForcedChatgptWorkspaceIds: ForcedChatgptWorkspaceIdsValue
     ResourceContent: ResourceContentValue
     McpElicitationSingleSelectEnumSchema: McpElicitationSingleSelectEnumSchemaValue

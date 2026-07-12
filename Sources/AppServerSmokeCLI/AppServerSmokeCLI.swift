@@ -29,8 +29,7 @@ struct Main {
         field("Requires OpenAI auth", account.requiresOpenaiAuth ? "yes" : "no")
 
         let usage = try await client.send(
-            request: AppServerModels.ClientRequest.AccountUsageRead.self,
-            with: .init()
+            request: AppServerModels.ClientRequest.AccountUsageRead.self
         )
         section("Usage")
         field("Lifetime tokens", usage.summary.lifetimeTokens.map(formatNumber) ?? "unknown")
@@ -104,7 +103,8 @@ private func describeAccount(_ account: Components.Schemas.Account?) -> String {
     case .apiKey:
         return "API key"
     case let .chatgpt(chatGPT):
-        return "ChatGPT (\(chatGPT.email), \(chatGPT.planType))"
+        let email = chatGPT.email ?? "email unavailable"
+        return "ChatGPT (\(email), \(chatGPT.planType))"
     case .none:
         return "not signed in"
     }

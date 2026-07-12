@@ -1,4 +1,5 @@
 import Foundation
+import OpenAPIRuntime
 
 private struct InitializedNotification: Encodable {
     let method = "initialized"
@@ -63,7 +64,7 @@ public actor AppServerClient<Connection: AppServerConnection> {
             clientInfo: .init(
                 name: "swift-appserver-client",
                 title: "Swift AppServer Client",
-                version: "0.0.1"
+                version: "0.144.1"
             )
         )
     }
@@ -87,7 +88,10 @@ public actor AppServerClient<Connection: AppServerConnection> {
         try await connection.write(JSONEncoder().encode(InitializedNotification()))
     }
 
-    public func send<Requestable: ClientRequestable>(request: Requestable.Type, with params: Requestable.Params) async throws -> Requestable.Response {
+    public func send<Requestable: ClientRequestable>(
+        request: Requestable.Type,
+        with params: Requestable.Params
+    ) async throws -> Requestable.Response {
         let decoder = JSONDecoder()
 
         let id = AppServerModels.ID.integer(nextRequestID)
@@ -120,6 +124,13 @@ public actor AppServerClient<Connection: AppServerConnection> {
                 }
             }
         }
+    }
+
+    public func send<Requestable: ClientRequestable>(
+        request: Requestable.Type
+    ) async throws -> Requestable.Response
+    where Requestable.Params == OpenAPIValueContainer? {
+        try await send(request: request, with: nil)
     }
 
     public func respond<Requestable: ServerRequestable>(to request: Requestable, with response: Requestable.Response) async throws {
