@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.146.1 — 2026-08-05
+
+- Schema provenance: regenerated and synchronized the exact experimental
+  (`--experimental`) export from stable public Codex tag `rust-v0.146.1`,
+  peeled commit
+  `79b4f03d35962b005b007a015113b38930711665`.
+- Contract: the export remains at 349 JSON Schema files, with no additions or
+  removals and 3 modified files. The only semantic change is a nullable
+  `modelSpecialty` field on `Model`, propagated through `ModelListResponse` and
+  the aggregate schema bundles.
+- Swift compatibility: no additional hand-written compatibility fix was
+  required.
+- Verification: the generator was idempotent; `swift build --target
+  AppServerClient`, all 14 `swift test` cases, `git diff --check`, and the
+  `Package.resolved` unchanged check passed. `swift run appserver-smoke`
+  passed initialize, account, usage, and empty thread-list calls against the
+  exact public `@openai/codex@0.146.1` CLI in an isolated authenticated Codex
+  home; no turn-list coverage is claimed because that home had no threads.
+
 ## 0.146.0 — 2026-07-29
 
 - Schema provenance: regenerated and synchronized the exact experimental
