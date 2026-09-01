@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Codex App Server Protocol",
-    "version": "0.150.1"
+    "version": "0.151.0"
   },
   "paths": {},
   "components": {
@@ -1799,7 +1799,7 @@
             "nullable": true
           },
           "excludeTurns": {
-            "description": "When true, return only thread metadata and live-resume state without populating `thread.turns`. This is useful when the client plans to call `thread/turns/list` immediately after resuming.",
+            "description": "When true, return only thread metadata and live-resume state without populating `thread.turns`. This is useful when the client plans to call `thread/turns/list` immediately after resuming. Full-history hydration is deprecated for paginated threads; use this with `thread/turns/list` and `thread/items/list` instead.",
             "type": "boolean"
           },
           "history": {
@@ -1920,7 +1920,7 @@
             "type": "boolean"
           },
           "excludeTurns": {
-            "description": "When true, return only thread metadata and live fork state without populating `thread.turns`. This is useful when the client plans to call `thread/turns/list` immediately after forking.",
+            "description": "When true, return only thread metadata and live fork state without populating `thread.turns`. This is useful when the client plans to call `thread/turns/list` immediately after forking. Full-history hydration is deprecated for paginated threads; use this with `thread/turns/list` and `thread/items/list` instead.",
             "type": "boolean"
           },
           "lastTurnId": {
@@ -4438,7 +4438,7 @@
       "ThreadReadParams": {
         "properties": {
           "includeTurns": {
-            "description": "When true, include turns and their items from rollout history.",
+            "description": "When true, include turns and their items from rollout history. Full-history hydration is deprecated for paginated threads; prefer a metadata-only read and page with `thread/turns/list` and `thread/items/list`.",
             "type": "boolean"
           },
           "threadId": {
@@ -5992,6 +5992,34 @@
         ],
         "type": "object"
       },
+      "CyberAccessProgram": {
+        "description": "Requested cyber treatment for a ChatGPT-authenticated Codex turn. Authorization and model-tier restrictions remain server-owned.",
+        "enum": [
+          "standard",
+          "daybreakBlue",
+          "daybreakRed"
+        ],
+        "type": "string"
+      },
+      "TurnToolOutput": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "namespace": {
+            "type": "string",
+            "nullable": true
+          },
+          "output": {
+            "$ref": "#/components/schemas/FunctionCallOutputBody"
+          }
+        },
+        "required": [
+          "name",
+          "output"
+        ],
+        "type": "object"
+      },
       "TurnStartParams": {
         "properties": {
           "additionalContext": {
@@ -6018,6 +6046,9 @@
             "description": "Override the working directory for this turn and subsequent turns.",
             "type": "string",
             "nullable": true
+          },
+          "cyberAccessProgram": {
+            "$ref": "#/components/schemas/CyberAccessProgram"
           },
           "effort": {
             "$ref": "#/components/schemas/ReasoningEffort"
@@ -6076,11 +6107,24 @@
             "type": "string",
             "nullable": true
           },
+          "serviceTierForTurn": {
+            "description": "Override the service tier only when this request starts a new turn. Use \"default\" for standard speed. Omitted or null inherits the thread's tier. Does not change the thread's tier or a turn being steered.",
+            "type": "string",
+            "nullable": true
+          },
           "summary": {
             "$ref": "#/components/schemas/ReasoningSummary"
           },
           "threadId": {
             "type": "string"
+          },
+          "toolOutput": {
+            "$ref": "#/components/schemas/TurnToolOutput"
+          },
+          "turnTrigger": {
+            "description": "Optional source classification for the caller that starts this turn. Ignored when this request steers an already-active turn.",
+            "type": "string",
+            "nullable": true
           }
         },
         "required": [
@@ -6111,6 +6155,63 @@
           "params"
         ],
         "title": "Turn/startRequest",
+        "type": "object"
+      },
+      "TurnSettingsUpdateParams": {
+        "additionalProperties": false,
+        "description": "Experimental settings changes for one running turn, not future turns. Unsupported fields are rejected rather than silently ignored. Any live task kind may accept publication. Child sessions and consumers of frozen initial settings are unchanged.",
+        "properties": {
+          "effort": {
+            "$ref": "#/components/schemas/ReasoningEffort"
+          },
+          "model": {
+            "description": "Omission or `null` leaves the model unchanged.",
+            "type": "string",
+            "nullable": true
+          },
+          "serviceTier": {
+            "description": "`null` clears the requested tier; omission leaves it unchanged.",
+            "type": "string",
+            "nullable": true
+          },
+          "summary": {
+            "$ref": "#/components/schemas/ReasoningSummary"
+          },
+          "threadId": {
+            "type": "string"
+          },
+          "turnId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "threadId",
+          "turnId"
+        ],
+        "type": "object"
+      },
+      "ClientRequestTurnSettingsUpdateRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "turn/settings/update"
+            ],
+            "title": "Turn/settings/updateRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/TurnSettingsUpdateParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "Turn/settings/updateRequest",
         "type": "object"
       },
       "TurnSteerParams": {
@@ -10142,6 +10243,9 @@
             "$ref": "#/components/schemas/ClientRequestTurnStartRequest"
           },
           {
+            "$ref": "#/components/schemas/ClientRequestTurnSettingsUpdateRequest"
+          },
+          {
             "$ref": "#/components/schemas/ClientRequestTurnSteerRequest"
           },
           {
@@ -10434,6 +10538,7 @@
             "plugin/install": "#/components/schemas/ClientRequestPluginInstallRequest",
             "plugin/uninstall": "#/components/schemas/ClientRequestPluginUninstallRequest",
             "turn/start": "#/components/schemas/ClientRequestTurnStartRequest",
+            "turn/settings/update": "#/components/schemas/ClientRequestTurnSettingsUpdateRequest",
             "turn/steer": "#/components/schemas/ClientRequestTurnSteerRequest",
             "turn/interrupt": "#/components/schemas/ClientRequestTurnInterruptRequest",
             "thread/realtime/start": "#/components/schemas/ClientRequestThreadRealtimeStartRequest",
@@ -12576,6 +12681,7 @@
               "contextWindowExceeded",
               "sessionBudgetExceeded",
               "usageLimitExceeded",
+              "rateLimitExceeded",
               "serverOverloaded",
               "cyberPolicy",
               "misalignmentPolicyViolation",
@@ -12699,6 +12805,35 @@
           }
         ]
       },
+      "MisalignmentSteer": {
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "type": "object"
+      },
+      "MisalignmentErrorDetails": {
+        "properties": {
+          "detailedExplanation": {
+            "description": "A substantive localized explanation is required before offering continuation.",
+            "type": "string",
+            "nullable": true
+          },
+          "errorType": {
+            "description": "Open-ended classification; clients must accept categories added by Responses.",
+            "type": "string",
+            "nullable": true
+          },
+          "steer": {
+            "$ref": "#/components/schemas/MisalignmentSteer"
+          }
+        },
+        "type": "object"
+      },
       "TurnError": {
         "properties": {
           "additionalDetails": {
@@ -12711,6 +12846,9 @@
           },
           "message": {
             "type": "string"
+          },
+          "misalignment": {
+            "$ref": "#/components/schemas/MisalignmentErrorDetails"
           }
         },
         "required": [
@@ -13172,6 +13310,38 @@
           "type"
         ],
         "title": "AgentMessageThreadItem",
+        "type": "object"
+      },
+      "ThreadItemFunctionCallOutputThreadItem": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "namespace": {
+            "type": "string",
+            "nullable": true
+          },
+          "output": {
+            "$ref": "#/components/schemas/FunctionCallOutputBody"
+          },
+          "type": {
+            "enum": [
+              "functionCallOutput"
+            ],
+            "title": "FunctionCallOutputThreadItemType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "output",
+          "type"
+        ],
+        "title": "FunctionCallOutputThreadItem",
         "type": "object"
       },
       "ThreadItemPlanThreadItem": {
@@ -14223,6 +14393,9 @@
             "$ref": "#/components/schemas/ThreadItemAgentMessageThreadItem"
           },
           {
+            "$ref": "#/components/schemas/ThreadItemFunctionCallOutputThreadItem"
+          },
+          {
             "$ref": "#/components/schemas/ThreadItemPlanThreadItem"
           },
           {
@@ -14274,6 +14447,7 @@
             "userMessage": "#/components/schemas/ThreadItemUserMessageThreadItem",
             "hookPrompt": "#/components/schemas/ThreadItemHookPromptThreadItem",
             "agentMessage": "#/components/schemas/ThreadItemAgentMessageThreadItem",
+            "functionCallOutput": "#/components/schemas/ThreadItemFunctionCallOutputThreadItem",
             "plan": "#/components/schemas/ThreadItemPlanThreadItem",
             "reasoning": "#/components/schemas/ThreadItemReasoningThreadItem",
             "commandExecution": "#/components/schemas/ThreadItemCommandExecutionThreadItem",
@@ -26294,6 +26468,25 @@
       },
       "TurnInterruptResponse": {
         "title": "TurnInterruptResponse",
+        "type": "object"
+      },
+      "TurnSettingsUpdateStatus": {
+        "type": "string",
+        "enum": [
+          "applied",
+          "targetUnavailable"
+        ]
+      },
+      "TurnSettingsUpdateResponse": {
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/TurnSettingsUpdateStatus"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "TurnSettingsUpdateResponse",
         "type": "object"
       },
       "TurnStartResponse": {

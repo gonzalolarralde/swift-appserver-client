@@ -184,6 +184,8 @@ private func describeItem(_ item: Components.Schemas.ThreadItem) -> String {
         return "command: \(singleLine(command.command)) [\(command.status)]"
     case let .fileChange(fileChange):
         return "file change: \(fileChange.changes.count) change(s), \(fileChange.status)"
+    case .functionCallOutput:
+        return "function call output"
     case let .mcpToolCall(toolCall):
         return "MCP tool: \(toolCall.tool) [\(toolCall.status)]"
     case let .dynamicToolCall(toolCall):
@@ -225,6 +227,7 @@ private func itemKind(_ item: Components.Schemas.ThreadItem) -> String {
     case .enteredReviewMode: return "review-enter"
     case .exitedReviewMode: return "review-exit"
     case .fileChange: return "file"
+    case .functionCallOutput: return "function-output"
     case .hookPrompt: return "hook"
     case .imageGeneration: return "image-gen"
     case .imageView: return "image"

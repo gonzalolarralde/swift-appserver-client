@@ -88,6 +88,7 @@ public extension AppServerModels.ClientRequest {
     typealias PluginInstall = Components.Schemas.ClientRequestPluginInstallRequest
     typealias PluginUninstall = Components.Schemas.ClientRequestPluginUninstallRequest
     typealias TurnStart = Components.Schemas.ClientRequestTurnStartRequest
+    typealias TurnSettingsUpdate = Components.Schemas.ClientRequestTurnSettingsUpdateRequest
     typealias TurnSteer = Components.Schemas.ClientRequestTurnSteerRequest
     typealias TurnInterrupt = Components.Schemas.ClientRequestTurnInterruptRequest
     typealias ThreadRealtimeStart = Components.Schemas.ClientRequestThreadRealtimeStartRequest
@@ -243,6 +244,7 @@ public extension AppServerModels.ClientRequest {
         public typealias PluginInstall = Components.Schemas.PluginInstallResponse
         public typealias PluginUninstall = Components.Schemas.PluginUninstallResponse
         public typealias TurnStart = Components.Schemas.TurnStartResponse
+        public typealias TurnSettingsUpdate = Components.Schemas.TurnSettingsUpdateResponse
         public typealias TurnSteer = Components.Schemas.TurnSteerResponse
         public typealias TurnInterrupt = Components.Schemas.TurnInterruptResponse
         public typealias ThreadRealtimeStart = Components.Schemas.ThreadRealtimeStartResponse
@@ -400,6 +402,7 @@ public extension AppServerModels.ClientRequest {
         case let .pluginInstall(value): value
         case let .pluginUninstall(value): value
         case let .turnStart(value): value
+        case let .turnSettingsUpdate(value): value
         case let .turnSteer(value): value
         case let .turnInterrupt(value): value
         case let .threadRealtimeStart(value): value
@@ -1149,6 +1152,14 @@ extension Components.Schemas.ClientRequestTurnStartRequest: ClientRequestable {
     public typealias Response = AppServerModels.ClientRequest.Response.TurnStart
     public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .turnStart(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestTurnSettingsUpdateRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.TurnSettingsUpdateParams
+    public typealias Response = AppServerModels.ClientRequest.Response.TurnSettingsUpdate
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .turnSettingsUpdate(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 

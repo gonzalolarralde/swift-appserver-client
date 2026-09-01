@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.151.0 — 2026-08-29
+
+- Schema provenance: regenerated and synchronized the exact experimental
+  (`--experimental`) export from stable public Codex tag `rust-v0.151.0`,
+  peeled commit
+  `78c290807ce710180111df227df3b7a4fe845452`.
+- Contract: the export grows from 411 to 413 JSON Schema files, with 2
+  additions, no removals, and 31 modified existing files. It adds the
+  `turn/settings/update` RPC, a `functionCallOutput` thread-item case, the
+  `rateLimitExceeded` error code, and turn-scoped settings and usage metadata.
+- Swift compatibility: updated both exhaustive thread-item switches in the
+  smoke executable for the new `functionCallOutput` case.
+- Verification: the generator was idempotent; `swift build --target
+  AppServerClient`, all 14 `swift test` cases, `git diff --check`, and the
+  `Package.resolved` unchanged check passed. `swift run appserver-smoke`
+  passed initialize, account, usage, and empty thread-list calls against the
+  exact public `@openai/codex@0.151.0` CLI in an isolated authenticated Codex
+  home; no turn-list coverage is claimed because that home had no threads.
+
 ## 0.150.1 — 2026-08-27
 
 - Schema provenance: regenerated and synchronized the exact experimental
