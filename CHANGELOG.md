@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.146.0 — 2026-07-29
+
+- Schema provenance: regenerated and synchronized the exact experimental
+  (`--experimental`) export from stable public Codex tag `rust-v0.146.0`,
+  peeled commit
+  `e363b08c9175ac1cbe5893615dd2cb9ddf95043b`.
+- Contract: the export grows from 347 to 349 JSON Schema files, with 2
+  additions, no removals, and 44 modified existing files. It adds the
+  `externalAgentConfig/import/recordHistory` RPC, thread pinning fields and
+  filters, external-agent import attribution and detection bounds, and the
+  `ent26` plan type.
+- Swift compatibility: added an
+  `ExternalAgentConfigImportHistoryRecordResponse` response override for the
+  new RPC and extended the response-type compile check.
+- Verification: the generator was idempotent; `swift build --target
+  AppServerClient`, all 14 `swift test` cases, `git diff --check`, and the
+  `Package.resolved` unchanged check passed. `swift run appserver-smoke`
+  passed initialize, account, usage, and empty thread-list calls against the
+  exact public `@openai/codex@0.146.0` CLI in an isolated authenticated Codex
+  home; no turn-list coverage is claimed because that home had no threads.
+
 ## 0.145.0 — 2026-07-21
 
 - Schema provenance: regenerated and synchronized the exact experimental

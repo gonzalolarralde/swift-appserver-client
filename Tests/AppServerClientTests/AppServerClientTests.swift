@@ -97,6 +97,10 @@ import Testing
         AppServerModels.ClientRequest.AppInstalled.self,
         Components.Schemas.AppsInstalledResponse.self
     )
+    requireResponseType(
+        AppServerModels.ClientRequest.ExternalAgentConfigImportRecordHistory.self,
+        Components.Schemas.ExternalAgentConfigImportHistoryRecordResponse.self
+    )
 }
 
 @Test func fileUploaderCopiesDataAndReportsProgress() async throws {

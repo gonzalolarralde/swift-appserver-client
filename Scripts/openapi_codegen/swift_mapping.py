@@ -27,6 +27,7 @@ RESPONSE_OVERRIDES = {
     "ClientRequestConfigBatchWriteRequest": "ConfigWriteResponse",
     "ClientRequestAccountReadRequest": "GetAccountResponse",
     "ClientRequestExternalAgentConfigImportReadHistoriesRequest": "ExternalAgentConfigImportHistoriesReadResponse",
+    "ClientRequestExternalAgentConfigImportRecordHistoryRequest": "ExternalAgentConfigImportHistoryRecordResponse",
     "ServerRequestItemCommandExecutionRequestApprovalRequest": "CommandExecutionRequestApprovalResponse",
     "ServerRequestItemFileChangeRequestApprovalRequest": "FileChangeRequestApprovalResponse",
     "ServerRequestItemToolRequestUserInputRequest": "ToolRequestUserInputResponse",

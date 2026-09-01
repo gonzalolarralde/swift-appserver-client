@@ -120,6 +120,7 @@ public extension AppServerModels.ClientRequest {
     typealias ConfigRead = Components.Schemas.ClientRequestConfigReadRequest
     typealias ExternalAgentConfigDetect = Components.Schemas.ClientRequestExternalAgentConfigDetectRequest
     typealias ExternalAgentConfigImport = Components.Schemas.ClientRequestExternalAgentConfigImportRequest
+    typealias ExternalAgentConfigImportRecordHistory = Components.Schemas.ClientRequestExternalAgentConfigImportRecordHistoryRequest
     typealias ExternalAgentConfigImportReadHistories = Components.Schemas.ClientRequestExternalAgentConfigImportReadHistoriesRequest
     typealias ConfigValueWrite = Components.Schemas.ClientRequestConfigValueWriteRequest
     typealias ConfigBatchWrite = Components.Schemas.ClientRequestConfigBatchWriteRequest
@@ -248,6 +249,7 @@ public extension AppServerModels.ClientRequest {
         public typealias ConfigRead = Components.Schemas.ConfigReadResponse
         public typealias ExternalAgentConfigDetect = Components.Schemas.ExternalAgentConfigDetectResponse
         public typealias ExternalAgentConfigImport = Components.Schemas.ExternalAgentConfigImportResponse
+        public typealias ExternalAgentConfigImportRecordHistory = Components.Schemas.ExternalAgentConfigImportHistoryRecordResponse
         public typealias ExternalAgentConfigImportReadHistories = Components.Schemas.ExternalAgentConfigImportHistoriesReadResponse
         public typealias ConfigValueWrite = Components.Schemas.ConfigWriteResponse
         public typealias ConfigBatchWrite = Components.Schemas.ConfigWriteResponse
@@ -378,6 +380,7 @@ public extension AppServerModels.ClientRequest {
         case let .configRead(value): value
         case let .externalAgentConfigDetect(value): value
         case let .externalAgentConfigImport(value): value
+        case let .externalAgentConfigImportRecordHistory(value): value
         case let .externalAgentConfigImportReadHistories(value): value
         case let .configValueWrite(value): value
         case let .configBatchWrite(value): value
@@ -1324,6 +1327,14 @@ extension Components.Schemas.ClientRequestExternalAgentConfigImportRequest: Clie
     public typealias Response = AppServerModels.ClientRequest.Response.ExternalAgentConfigImport
     public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .externalAgentConfigImport(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestExternalAgentConfigImportRecordHistoryRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ExternalAgentConfigImportHistoryRecordParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ExternalAgentConfigImportRecordHistory
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .externalAgentConfigImportRecordHistory(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
