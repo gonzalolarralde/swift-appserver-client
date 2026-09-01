@@ -70,11 +70,15 @@ git diff --check
 git diff --exit-code -- Package.resolved
 ```
 
-Also run `swift run appserver-smoke` with the binary built from the exact public
-Codex tag first on `PATH`. The smoke CLI always covers initialize, account,
-usage, and thread-list calls; it covers turn-list calls only when the selected
-Codex home contains a thread. Do not claim turn coverage unless the output
-shows it. Review every generated diff, especially removed RPCs, renamed fields,
+Also run `swift run appserver-smoke` against the exact stable public Codex CLI.
+For a historical backfill, prefer the official `@openai/codex@VERSION` npm
+package, confirm its `codex --version` output, and use a fresh isolated
+`CODEX_HOME` containing only a copy of the authenticated user's `auth.json`.
+This keeps a historical CLI from parsing newer local thread rollouts. A passing
+basic smoke gate covers initialize, account, usage, and thread-list calls; claim
+turn-list coverage only when the output shows it. Record failures honestly:
+0.144.x CLIs can return `-32601` because paginated `thread/list` is unsupported.
+Review every generated diff, especially removed RPCs, renamed fields,
 optionality changes, discriminator changes, and integer-width changes.
 
 An optional build or integration test of the maintained iOS branch is separate

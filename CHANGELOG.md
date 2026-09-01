@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.152.0 — 2026-09-01
+
+- Schema provenance: regenerated and synchronized the exact experimental
+  (`--experimental`) export from stable public Codex tag `rust-v0.152.0`,
+  peeled commit
+  `316795b3cf2a45e90d121d9f46499d4658b2645c`.
+- Contract: the export grows from 413 to 414 JSON Schema files, with 1
+  addition, no removals, and 14 modified existing files. It adds authentication
+  recovery started and completed notifications, the `openaiForm` MCP-server
+  elicitation action, project sorting, expanded rate-limit metadata, and a
+  shell-command `timeoutMs` field.
+- Swift compatibility: added a hand-written elicitation-request override that
+  keeps the `openai/form` and `openaiForm` wire modes as distinct Swift cases,
+  with focused decoding and encoding coverage. Historical smoke-test guidance
+  now prefers the exact official npm CLI in a fresh isolated authenticated
+  Codex home and documents honest coverage limits for empty homes and older
+  0.144.x servers.
+- Verification: the generator was idempotent; `swift build --target
+  AppServerClient`, all 15 `swift test` cases, `git diff --check`, and the
+  `Package.resolved` unchanged check passed. `swift run appserver-smoke`
+  passed initialize, account, usage, and empty thread-list calls against the
+  exact public `@openai/codex@0.152.0` CLI in an isolated authenticated Codex
+  home; no turn-list coverage is claimed because that home had no threads.
+
 ## 0.151.0 — 2026-08-29
 
 - Schema provenance: regenerated and synchronized the exact experimental

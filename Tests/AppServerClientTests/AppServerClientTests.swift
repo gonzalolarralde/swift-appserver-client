@@ -77,6 +77,45 @@ import Testing
     )
 }
 
+@Test func mcpServerElicitationOpenaiFormModesRemainDistinct() throws {
+    let decoder = JSONDecoder()
+    let encoder = JSONEncoder()
+
+    let legacyData = Data(
+        #"{"message":"legacy","mode":"openai/form","requestedSchema":{}}"#.utf8
+    )
+    let legacy = try decoder.decode(
+        Components.Schemas.McpServerElicitationRequestParams.self,
+        from: legacyData
+    )
+    guard case let .legacyOpenaiForm(value) = legacy else {
+        Issue.record("Expected the legacy openai/form mode")
+        return
+    }
+    #expect(value.message == "legacy")
+    let legacyObject = try #require(
+        JSONSerialization.jsonObject(with: encoder.encode(legacy)) as? [String: Any]
+    )
+    #expect(legacyObject["mode"] as? String == "openai/form")
+
+    let currentData = Data(
+        #"{"message":"current","mode":"openaiForm","requestedSchema":{}}"#.utf8
+    )
+    let current = try decoder.decode(
+        Components.Schemas.McpServerElicitationRequestParams.self,
+        from: currentData
+    )
+    guard case let .openaiForm(value) = current else {
+        Issue.record("Expected the current openaiForm mode")
+        return
+    }
+    #expect(value.message == "current")
+    let currentObject = try #require(
+        JSONSerialization.jsonObject(with: encoder.encode(current)) as? [String: Any]
+    )
+    #expect(currentObject["mode"] as? String == "openaiForm")
+}
+
 @Test func clientCanSendRequestWithoutParams() async throws {
     let connection = TestConnection(writeFailure: TestTransportError.writeFailed)
     let client = AppServerClient(connection: connection)

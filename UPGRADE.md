@@ -14,8 +14,9 @@ separately as optional downstream validation.
 
 ## 1. Prerequisites and safety checks
 
-Required tools are `git`, `gh`, `jq`, `rg`, `rsync`, Python 3, Rust/Cargo, and
-Swift 6.2 or newer. Authenticate `gh` for both repositories before starting.
+Required tools are `git`, `gh`, `jq`, `rg`, `rsync`, Python 3, Rust/Cargo,
+Node.js/npm, and Swift 6.2 or newer. Authenticate `gh` for both repositories
+before starting.
 
 Use explicit paths and a temporary root:
 
@@ -264,19 +265,46 @@ git diff --exit-code "$release_base_commit" -- Package.resolved
 resolution modifies it, restore it with a targeted patch before continuing; do
 not include dependency drift in the protocol release.
 
-Run the smoke executable against the Codex binary built from the exact-tag
-worktree:
+For a historical backfill, prefer the exact official npm CLI. Use a fresh Codex
+home with only the authenticated user's auth file so the historical binary does
+not try to parse newer thread rollouts from the normal Codex home:
 
 ```sh
-env PATH="${codex_worktree}/codex-rs/target/debug:${PATH}" \
+smoke_home=$(mktemp -d -t swift-appserver-smoke.XXXXXX)
+cp ~/.codex/auth.json "$smoke_home/auth.json"
+chmod 600 "$smoke_home/auth.json"
+
+env CODEX_HOME="$smoke_home" \
+  npm exec --yes --package="@openai/codex@${release_version}" -- \
+  codex --version
+env CODEX_HOME="$smoke_home" \
+  npm exec --yes --package="@openai/codex@${release_version}" -- \
+  swift run appserver-smoke
+```
+
+Require `codex --version` to print the expected release before accepting the
+result. Copy authentication only; do not copy thread or session rollouts into
+the isolated home. Building the exact public tag remains a valid alternative:
+
+```sh
+env CODEX_HOME="$smoke_home" \
+  PATH="${codex_worktree}/codex-rs/target/debug:${PATH}" \
   swift run appserver-smoke
 ```
 
 The basic release gate is successful initialize, account, usage, and thread-list
-calls. The smoke CLI returns successfully without a turn-list call when the
-selected Codex home has no threads. Record turn coverage only when the output
-shows that call completed. If turn coverage is mandatory, run with a controlled
-Codex home containing a known thread and treat a missing thread as a failure.
+calls. An empty thread list is a successful basic gate, but it provides no
+turn-list coverage. Claim turn-list coverage only when the output shows that
+call completed. If turn coverage is mandatory, use a controlled, compatible
+home containing a known thread. Exact 0.144.x CLIs can instead stop at
+`thread/list` with JSON-RPC `-32601` because paginated threads are unsupported;
+record that failure and do not claim basic or turn-list coverage.
+
+After recording the result, remove the isolated home and its copied credential:
+
+```sh
+rm -R "$smoke_home"
+```
 
 ### Optional downstream iOS validation
 

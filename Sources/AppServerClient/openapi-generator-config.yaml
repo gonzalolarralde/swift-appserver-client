@@ -14,3 +14,4 @@ typeOverrides:
     McpElicitationMultiSelectEnumSchema: McpElicitationMultiSelectEnumSchemaValue
     McpElicitationEnumSchema: McpElicitationEnumSchemaValue
     McpElicitationPrimitiveSchema: McpElicitationPrimitiveSchemaValue
+    McpServerElicitationRequestParams: McpServerElicitationRequestParamsValue

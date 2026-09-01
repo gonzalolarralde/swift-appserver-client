@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Codex App Server Protocol",
-    "version": "0.151.0"
+    "version": "0.152.0"
   },
   "paths": {},
   "components": {
@@ -3358,6 +3358,12 @@
           },
           "threadId": {
             "type": "string"
+          },
+          "timeoutMs": {
+            "description": "Maximum execution time in milliseconds. Defaults to one hour when omitted or null. Must be non-negative; zero requests an immediate timeout, not unlimited execution. Does not affect the immediate RPC acknowledgement.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
           }
         },
         "required": [
@@ -3769,6 +3775,13 @@
         "title": "Thread/listRequest",
         "type": "object"
       },
+      "ProjectSortKey": {
+        "enum": [
+          "position",
+          "recencyAt"
+        ],
+        "type": "string"
+      },
       "ProjectListParams": {
         "properties": {
           "cursor": {
@@ -3780,6 +3793,12 @@
             "minimum": 0.0,
             "type": "integer",
             "nullable": true
+          },
+          "sortDirection": {
+            "$ref": "#/components/schemas/SortDirection"
+          },
+          "sortKey": {
+            "$ref": "#/components/schemas/ProjectSortKey"
           }
         },
         "type": "object"
@@ -11936,6 +11955,27 @@
         ],
         "type": "object"
       },
+      "McpServerElicitationRequestParamsOpenaiForm2": {
+        "properties": {
+          "_meta": {},
+          "message": {
+            "type": "string"
+          },
+          "mode": {
+            "enum": [
+              "openaiForm"
+            ],
+            "type": "string"
+          },
+          "requestedSchema": {}
+        },
+        "required": [
+          "message",
+          "mode",
+          "requestedSchema"
+        ],
+        "type": "object"
+      },
       "McpServerElicitationRequestParamsUrl": {
         "properties": {
           "_meta": {},
@@ -11990,6 +12030,9 @@
             "$ref": "#/components/schemas/McpServerElicitationRequestParamsOpenaiForm"
           },
           {
+            "$ref": "#/components/schemas/McpServerElicitationRequestParamsOpenaiForm2"
+          },
+          {
             "$ref": "#/components/schemas/McpServerElicitationRequestParamsUrl"
           }
         ],
@@ -11998,6 +12041,7 @@
           "mapping": {
             "form": "#/components/schemas/McpServerElicitationRequestParamsForm",
             "openai/form": "#/components/schemas/McpServerElicitationRequestParamsOpenaiForm",
+            "openaiForm": "#/components/schemas/McpServerElicitationRequestParamsOpenaiForm2",
             "url": "#/components/schemas/McpServerElicitationRequestParamsUrl"
           }
         }
@@ -18045,6 +18089,69 @@
         "title": "Model/verificationNotification",
         "type": "object"
       },
+      "AuthRecoveryNotification": {
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "threadId": {
+            "type": "string"
+          },
+          "turnId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message",
+          "provider",
+          "threadId",
+          "turnId"
+        ],
+        "type": "object"
+      },
+      "ServerNotificationModelProviderAuthRecoveryStartedNotification": {
+        "properties": {
+          "method": {
+            "enum": [
+              "modelProvider/authRecoveryStarted"
+            ],
+            "title": "ModelProvider/authRecoveryStartedNotificationMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/AuthRecoveryNotification"
+          }
+        },
+        "required": [
+          "method",
+          "params"
+        ],
+        "title": "ModelProvider/authRecoveryStartedNotification",
+        "type": "object"
+      },
+      "ServerNotificationModelProviderAuthRecoveryCompletedNotification": {
+        "properties": {
+          "method": {
+            "enum": [
+              "modelProvider/authRecoveryCompleted"
+            ],
+            "title": "ModelProvider/authRecoveryCompletedNotificationMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/AuthRecoveryNotification"
+          }
+        },
+        "required": [
+          "method",
+          "params"
+        ],
+        "title": "ModelProvider/authRecoveryCompletedNotification",
+        "type": "object"
+      },
       "TurnModerationMetadataNotification": {
         "properties": {
           "metadata": {},
@@ -19397,6 +19504,12 @@
             "$ref": "#/components/schemas/ServerNotificationModelVerificationNotification"
           },
           {
+            "$ref": "#/components/schemas/ServerNotificationModelProviderAuthRecoveryStartedNotification"
+          },
+          {
+            "$ref": "#/components/schemas/ServerNotificationModelProviderAuthRecoveryCompletedNotification"
+          },
+          {
             "$ref": "#/components/schemas/ServerNotificationTurnModerationMetadataNotification"
           },
           {
@@ -19523,6 +19636,8 @@
             "thread/compacted": "#/components/schemas/ServerNotificationThreadCompactedNotification",
             "model/rerouted": "#/components/schemas/ServerNotificationModelReroutedNotification",
             "model/verification": "#/components/schemas/ServerNotificationModelVerificationNotification",
+            "modelProvider/authRecoveryStarted": "#/components/schemas/ServerNotificationModelProviderAuthRecoveryStartedNotification",
+            "modelProvider/authRecoveryCompleted": "#/components/schemas/ServerNotificationModelProviderAuthRecoveryCompletedNotification",
             "turn/moderationMetadata": "#/components/schemas/ServerNotificationTurnModerationMetadataNotification",
             "model/safetyBuffering/updated": "#/components/schemas/ServerNotificationModelSafetyBufferingUpdatedNotification",
             "warning": "#/components/schemas/ServerNotificationWarningNotification",
@@ -22254,8 +22369,16 @@
       },
       "GetAccountRateLimitsResponse": {
         "properties": {
+          "accountId": {
+            "description": "Account associated with this usage snapshot, when supplied by the backend.",
+            "type": "string",
+            "nullable": true
+          },
           "rateLimitResetCredits": {
             "$ref": "#/components/schemas/RateLimitResetCreditsSummary"
+          },
+          "rateLimitUpsell": {
+            "description": "Optional backend-owned banner from the same usage read. Its nested keys retain the backend's snake_case contract; an absent banner leaves the client's existing UI unchanged."
           },
           "rateLimits": {
             "$ref": "#/components/schemas/RateLimitSnapshot",
@@ -24783,6 +24906,12 @@
           "position": {
             "format": "int64",
             "type": "integer"
+          },
+          "recencyAt": {
+            "description": "Newest non-archived member thread's recency, in Unix seconds; null when none exist.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
           },
           "roots": {
             "items": {

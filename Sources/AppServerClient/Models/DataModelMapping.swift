@@ -1897,6 +1897,8 @@ public extension AppServerModels.ServerNotification {
     typealias ThreadCompacted = Components.Schemas.ServerNotificationThreadCompactedNotification
     typealias ModelRerouted = Components.Schemas.ServerNotificationModelReroutedNotification
     typealias ModelVerification = Components.Schemas.ServerNotificationModelVerificationNotification
+    typealias ModelProviderAuthRecoveryStarted = Components.Schemas.ServerNotificationModelProviderAuthRecoveryStartedNotification
+    typealias ModelProviderAuthRecoveryCompleted = Components.Schemas.ServerNotificationModelProviderAuthRecoveryCompletedNotification
     typealias TurnModerationMetadata = Components.Schemas.ServerNotificationTurnModerationMetadataNotification
     typealias ModelSafetyBufferingUpdated = Components.Schemas.ServerNotificationModelSafetyBufferingUpdatedNotification
     typealias Warning = Components.Schemas.ServerNotificationWarningNotification
@@ -1979,6 +1981,8 @@ public extension AppServerModels.ServerNotification {
         case let .threadCompacted(value): value
         case let .modelRerouted(value): value
         case let .modelVerification(value): value
+        case let .modelProviderAuthRecoveryStarted(value): value
+        case let .modelProviderAuthRecoveryCompleted(value): value
         case let .turnModerationMetadata(value): value
         case let .modelSafetyBufferingUpdated(value): value
         case let .warning(value): value
@@ -2401,6 +2405,20 @@ extension Components.Schemas.ServerNotificationModelVerificationNotification: Se
     public typealias Params = Components.Schemas.ModelVerificationNotification
     public static func build(params: Params) -> AppServerModels.ServerNotification {
         .modelVerification(.init(method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ServerNotificationModelProviderAuthRecoveryStartedNotification: ServerNotificationPayload {
+    public typealias Params = Components.Schemas.AuthRecoveryNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
+        .modelProviderAuthRecoveryStarted(.init(method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ServerNotificationModelProviderAuthRecoveryCompletedNotification: ServerNotificationPayload {
+    public typealias Params = Components.Schemas.AuthRecoveryNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
+        .modelProviderAuthRecoveryCompleted(.init(method: .allCases.first!, params: params))
     }
 }
 

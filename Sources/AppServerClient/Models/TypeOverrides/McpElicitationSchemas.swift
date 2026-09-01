@@ -122,3 +122,52 @@ public enum McpElicitationPrimitiveSchemaValue: Codable, Hashable, Sendable {
         }
     }
 }
+
+/// A stable Swift representation of the MCP elicitation request modes.
+///
+/// The wire values `openai/form` and `openaiForm` normalize to the same Swift
+/// case name in the generated model, so this override keeps them distinct.
+public enum McpServerElicitationRequestParamsValue: Codable, Hashable, Sendable {
+    case form(Components.Schemas.McpServerElicitationRequestParamsForm)
+    case legacyOpenaiForm(Components.Schemas.McpServerElicitationRequestParamsOpenaiForm)
+    case openaiForm(Components.Schemas.McpServerElicitationRequestParamsOpenaiForm2)
+    case url(Components.Schemas.McpServerElicitationRequestParamsUrl)
+
+    private enum CodingKeys: String, CodingKey {
+        case mode
+    }
+
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let mode = try container.decode(String.self, forKey: .mode)
+        switch mode {
+        case "form":
+            self = .form(try .init(from: decoder))
+        case "openai/form":
+            self = .legacyOpenaiForm(try .init(from: decoder))
+        case "openaiForm":
+            self = .openaiForm(try .init(from: decoder))
+        case "url":
+            self = .url(try .init(from: decoder))
+        default:
+            throw DecodingError.dataCorruptedError(
+                forKey: .mode,
+                in: container,
+                debugDescription: "Unknown MCP elicitation mode: \(mode)"
+            )
+        }
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        switch self {
+        case let .form(value):
+            try value.encode(to: encoder)
+        case let .legacyOpenaiForm(value):
+            try value.encode(to: encoder)
+        case let .openaiForm(value):
+            try value.encode(to: encoder)
+        case let .url(value):
+            try value.encode(to: encoder)
+        }
+    }
+}
