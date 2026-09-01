@@ -17,6 +17,7 @@ public extension AppServerModels.ClientRequest {
     typealias ThreadGoalGet = Components.Schemas.ClientRequestThreadGoalGetRequest
     typealias ThreadGoalClear = Components.Schemas.ClientRequestThreadGoalClearRequest
     typealias ThreadMetadataUpdate = Components.Schemas.ClientRequestThreadMetadataUpdateRequest
+    typealias ThreadSectionMove = Components.Schemas.ClientRequestThreadSectionMoveRequest
     typealias ThreadSettingsUpdate = Components.Schemas.ClientRequestThreadSettingsUpdateRequest
     typealias ThreadMemoryModeSet = Components.Schemas.ClientRequestThreadMemoryModeSetRequest
     typealias MemoryReset = Components.Schemas.ClientRequestMemoryResetRequest
@@ -29,6 +30,10 @@ public extension AppServerModels.ClientRequest {
     typealias ThreadBackgroundTerminalsTerminate = Components.Schemas.ClientRequestThreadBackgroundTerminalsTerminateRequest
     typealias ThreadRollback = Components.Schemas.ClientRequestThreadRollbackRequest
     typealias ThreadList = Components.Schemas.ClientRequestThreadListRequest
+    typealias ThreadSectionList = Components.Schemas.ClientRequestThreadSectionListRequest
+    typealias ThreadSectionCreate = Components.Schemas.ClientRequestThreadSectionCreateRequest
+    typealias ThreadSectionUpdate = Components.Schemas.ClientRequestThreadSectionUpdateRequest
+    typealias ThreadSectionDelete = Components.Schemas.ClientRequestThreadSectionDeleteRequest
     typealias ThreadSearch = Components.Schemas.ClientRequestThreadSearchRequest
     typealias ThreadSearchOccurrences = Components.Schemas.ClientRequestThreadSearchOccurrencesRequest
     typealias ThreadLoadedList = Components.Schemas.ClientRequestThreadLoadedListRequest
@@ -43,6 +48,7 @@ public extension AppServerModels.ClientRequest {
     typealias MarketplaceRemove = Components.Schemas.ClientRequestMarketplaceRemoveRequest
     typealias MarketplaceUpgrade = Components.Schemas.ClientRequestMarketplaceUpgradeRequest
     typealias PluginList = Components.Schemas.ClientRequestPluginListRequest
+    typealias PluginSearch = Components.Schemas.ClientRequestPluginSearchRequest
     typealias PluginInstalled = Components.Schemas.ClientRequestPluginInstalledRequest
     typealias PluginRead = Components.Schemas.ClientRequestPluginReadRequest
     typealias PluginSkillRead = Components.Schemas.ClientRequestPluginSkillReadRequest
@@ -146,6 +152,7 @@ public extension AppServerModels.ClientRequest {
         public typealias ThreadGoalGet = Components.Schemas.ThreadGoalGetResponse
         public typealias ThreadGoalClear = Components.Schemas.ThreadGoalClearResponse
         public typealias ThreadMetadataUpdate = Components.Schemas.ThreadMetadataUpdateResponse
+        public typealias ThreadSectionMove = Components.Schemas.ThreadSectionMoveResponse
         public typealias ThreadSettingsUpdate = Components.Schemas.ThreadSettingsUpdateResponse
         public typealias ThreadMemoryModeSet = Components.Schemas.ThreadMemoryModeSetResponse
         public typealias MemoryReset = Components.Schemas.MemoryResetResponse
@@ -158,6 +165,10 @@ public extension AppServerModels.ClientRequest {
         public typealias ThreadBackgroundTerminalsTerminate = Components.Schemas.ThreadBackgroundTerminalsTerminateResponse
         public typealias ThreadRollback = Components.Schemas.ThreadRollbackResponse
         public typealias ThreadList = Components.Schemas.ThreadListResponse
+        public typealias ThreadSectionList = Components.Schemas.ThreadSectionListResponse
+        public typealias ThreadSectionCreate = Components.Schemas.ThreadSectionCreateResponse
+        public typealias ThreadSectionUpdate = Components.Schemas.ThreadSectionUpdateResponse
+        public typealias ThreadSectionDelete = Components.Schemas.ThreadSectionDeleteResponse
         public typealias ThreadSearch = Components.Schemas.ThreadSearchResponse
         public typealias ThreadSearchOccurrences = Components.Schemas.ThreadSearchOccurrencesResponse
         public typealias ThreadLoadedList = Components.Schemas.ThreadLoadedListResponse
@@ -172,6 +183,7 @@ public extension AppServerModels.ClientRequest {
         public typealias MarketplaceRemove = Components.Schemas.MarketplaceRemoveResponse
         public typealias MarketplaceUpgrade = Components.Schemas.MarketplaceUpgradeResponse
         public typealias PluginList = Components.Schemas.PluginListResponse
+        public typealias PluginSearch = Components.Schemas.PluginSearchResponse
         public typealias PluginInstalled = Components.Schemas.PluginInstalledResponse
         public typealias PluginRead = Components.Schemas.PluginReadResponse
         public typealias PluginSkillRead = Components.Schemas.PluginSkillReadResponse
@@ -277,6 +289,7 @@ public extension AppServerModels.ClientRequest {
         case let .threadGoalGet(value): value
         case let .threadGoalClear(value): value
         case let .threadMetadataUpdate(value): value
+        case let .threadSectionMove(value): value
         case let .threadSettingsUpdate(value): value
         case let .threadMemoryModeSet(value): value
         case let .memoryReset(value): value
@@ -289,6 +302,10 @@ public extension AppServerModels.ClientRequest {
         case let .threadBackgroundTerminalsTerminate(value): value
         case let .threadRollback(value): value
         case let .threadList(value): value
+        case let .threadSectionList(value): value
+        case let .threadSectionCreate(value): value
+        case let .threadSectionUpdate(value): value
+        case let .threadSectionDelete(value): value
         case let .threadSearch(value): value
         case let .threadSearchOccurrences(value): value
         case let .threadLoadedList(value): value
@@ -303,6 +320,7 @@ public extension AppServerModels.ClientRequest {
         case let .marketplaceRemove(value): value
         case let .marketplaceUpgrade(value): value
         case let .pluginList(value): value
+        case let .pluginSearch(value): value
         case let .pluginInstalled(value): value
         case let .pluginRead(value): value
         case let .pluginSkillRead(value): value
@@ -506,6 +524,14 @@ extension Components.Schemas.ClientRequestThreadMetadataUpdateRequest: ClientReq
     }
 }
 
+extension Components.Schemas.ClientRequestThreadSectionMoveRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ThreadSectionMoveParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadSectionMove
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .threadSectionMove(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
 extension Components.Schemas.ClientRequestThreadSettingsUpdateRequest: ClientRequestable {
     public typealias Params = Components.Schemas.ThreadSettingsUpdateParams
     public typealias Response = AppServerModels.ClientRequest.Response.ThreadSettingsUpdate
@@ -599,6 +625,38 @@ extension Components.Schemas.ClientRequestThreadListRequest: ClientRequestable {
     public typealias Response = AppServerModels.ClientRequest.Response.ThreadList
     public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadList(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestThreadSectionListRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ThreadSectionListParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadSectionList
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .threadSectionList(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestThreadSectionCreateRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ThreadSectionCreateParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadSectionCreate
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .threadSectionCreate(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestThreadSectionUpdateRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ThreadSectionUpdateParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadSectionUpdate
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .threadSectionUpdate(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestThreadSectionDeleteRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ThreadSectionDeleteParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadSectionDelete
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .threadSectionDelete(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
@@ -711,6 +769,14 @@ extension Components.Schemas.ClientRequestPluginListRequest: ClientRequestable {
     public typealias Response = AppServerModels.ClientRequest.Response.PluginList
     public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .pluginList(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestPluginSearchRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.PluginSearchParams
+    public typealias Response = AppServerModels.ClientRequest.Response.PluginSearch
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .pluginSearch(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 

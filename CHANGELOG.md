@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.147.0 — 2026-08-07
+
+- Schema provenance: regenerated and synchronized the exact experimental
+  (`--experimental`) export from stable public Codex tag `rust-v0.147.0`,
+  peeled commit
+  `be6e8eac029b183056b7e4402879f15d2c85f61b`.
+- Contract: the export grows from 349 to 361 JSON Schema files, with 12
+  additions, no removals, and 48 modified existing files. It adds plugin search
+  and thread-section create, delete, list, move, and update RPCs. Thread
+  sections replace the short-lived pinning fields and add section-position
+  sorting. Tool user-input requests also gain a required `isBlocking` field.
+- Swift compatibility: no additional hand-written compatibility fix was
+  required.
+- Verification: the generator was idempotent; `swift build --target
+  AppServerClient`, all 14 `swift test` cases, `git diff --check`, and the
+  `Package.resolved` unchanged check passed. `swift run appserver-smoke`
+  passed initialize, account, usage, and empty thread-list calls against the
+  exact public `@openai/codex@0.147.0` CLI in an isolated authenticated Codex
+  home; no turn-list coverage is claimed because that home had no threads.
+
 ## 0.146.1 — 2026-08-05
 
 - Schema provenance: regenerated and synchronized the exact experimental
