@@ -101,6 +101,14 @@ import Testing
         AppServerModels.ClientRequest.ExternalAgentConfigImportRecordHistory.self,
         Components.Schemas.ExternalAgentConfigImportHistoryRecordResponse.self
     )
+    requireResponseType(
+        AppServerModels.ClientRequest.AccountBedrockDiscover.self,
+        Components.Schemas.BedrockDiscoverResponse.self
+    )
+    requireResponseType(
+        AppServerModels.ClientRequest.AccountBedrockSetup.self,
+        Components.Schemas.BedrockSetupResponse.self
+    )
 }
 
 @Test func fileUploaderCopiesDataAndReportsProgress() async throws {

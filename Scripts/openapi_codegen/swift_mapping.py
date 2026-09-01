@@ -23,6 +23,8 @@ RESPONSE_OVERRIDES = {
     "ClientRequestAccountUsageReadRequest": "GetAccountTokenUsageResponse",
     "ClientRequestAccountWorkspaceMessagesReadRequest": "GetWorkspaceMessagesResponse",
     "ClientRequestAccountSendAddCreditsNudgeEmailRequest": "SendAddCreditsNudgeEmailResponse",
+    "ClientRequestAccountBedrockDiscoverRequest": "BedrockDiscoverResponse",
+    "ClientRequestAccountBedrockSetupRequest": "BedrockSetupResponse",
     "ClientRequestConfigValueWriteRequest": "ConfigWriteResponse",
     "ClientRequestConfigBatchWriteRequest": "ConfigWriteResponse",
     "ClientRequestAccountReadRequest": "GetAccountResponse",

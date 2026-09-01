@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Codex App Server Protocol",
-    "version": "0.148.0"
+    "version": "0.149.0"
   },
   "paths": {},
   "components": {
@@ -506,6 +506,11 @@
           },
           "personality": {
             "$ref": "#/components/schemas/Personality"
+          },
+          "projectId": {
+            "description": "Optional project identity for this new thread. Durable threads persist the assignment; ephemeral threads expose it only in live responses.",
+            "type": "string",
+            "nullable": true
           },
           "runtimeWorkspaceRoots": {
             "description": "Replace the thread's runtime workspace roots. Paths must be absolute.",
@@ -2852,6 +2857,11 @@
           "gitInfo": {
             "$ref": "#/components/schemas/ThreadMetadataGitInfoUpdateParams"
           },
+          "projectId": {
+            "description": "Omit to leave the project unchanged, use an empty string to clear it, or provide an existing project ID to assign it.",
+            "type": "string",
+            "nullable": true
+          },
           "threadId": {
             "type": "string"
           }
@@ -3692,6 +3702,11 @@
             "type": "string",
             "nullable": true
           },
+          "projectId": {
+            "description": "Omit to include every project, set to null for unassigned threads, or provide a project ID to return only threads in that project.",
+            "type": "string",
+            "nullable": true
+          },
           "searchTerm": {
             "description": "Optional substring filter for the extracted thread title.",
             "type": "string",
@@ -3744,6 +3759,326 @@
           "params"
         ],
         "title": "Thread/listRequest",
+        "type": "object"
+      },
+      "ProjectListParams": {
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "nullable": true
+          },
+          "limit": {
+            "format": "uint32",
+            "minimum": 0.0,
+            "type": "integer",
+            "nullable": true
+          }
+        },
+        "type": "object"
+      },
+      "ClientRequestProjectListRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "project/list"
+            ],
+            "title": "Project/listRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ProjectListParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "Project/listRequest",
+        "type": "object"
+      },
+      "ProjectReadParams": {
+        "properties": {
+          "projectId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "projectId"
+        ],
+        "type": "object"
+      },
+      "ClientRequestProjectReadRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "project/read"
+            ],
+            "title": "Project/readRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ProjectReadParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "Project/readRequest",
+        "type": "object"
+      },
+      "ProjectRoot": {
+        "properties": {
+          "path": {
+            "$ref": "#/components/schemas/AbsolutePathBuf"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      },
+      "ProjectCreateParams": {
+        "properties": {
+          "idempotencyKey": {
+            "type": "string"
+          },
+          "metadata": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "name": {
+            "type": "string"
+          },
+          "roots": {
+            "items": {
+              "$ref": "#/components/schemas/ProjectRoot"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "idempotencyKey",
+          "name",
+          "roots"
+        ],
+        "type": "object"
+      },
+      "ClientRequestProjectCreateRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "project/create"
+            ],
+            "title": "Project/createRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ProjectCreateParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "Project/createRequest",
+        "type": "object"
+      },
+      "ProjectImportParams": {
+        "properties": {
+          "idempotencyKey": {
+            "type": "string"
+          },
+          "metadata": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "name": {
+            "type": "string"
+          },
+          "roots": {
+            "items": {
+              "$ref": "#/components/schemas/ProjectRoot"
+            },
+            "type": "array"
+          },
+          "threads": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "idempotencyKey",
+          "name",
+          "roots"
+        ],
+        "type": "object"
+      },
+      "ClientRequestProjectImportRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "project/import"
+            ],
+            "title": "Project/importRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ProjectImportParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "Project/importRequest",
+        "type": "object"
+      },
+      "ProjectUpdateParams": {
+        "properties": {
+          "metadata": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "roots": {
+            "items": {
+              "$ref": "#/components/schemas/ProjectRoot"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "projectId"
+        ],
+        "type": "object"
+      },
+      "ClientRequestProjectUpdateRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "project/update"
+            ],
+            "title": "Project/updateRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ProjectUpdateParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "Project/updateRequest",
+        "type": "object"
+      },
+      "ProjectMoveParams": {
+        "properties": {
+          "beforeProjectId": {
+            "type": "string",
+            "nullable": true
+          },
+          "projectId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "projectId"
+        ],
+        "type": "object"
+      },
+      "ClientRequestProjectMoveRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "project/move"
+            ],
+            "title": "Project/moveRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ProjectMoveParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "Project/moveRequest",
+        "type": "object"
+      },
+      "ProjectDeleteParams": {
+        "properties": {
+          "projectId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "projectId"
+        ],
+        "type": "object"
+      },
+      "ClientRequestProjectDeleteRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "project/delete"
+            ],
+            "title": "Project/deleteRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ProjectDeleteParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "Project/deleteRequest",
         "type": "object"
       },
       "ThreadSectionListParams": {
@@ -7282,6 +7617,15 @@
       },
       "McpResourceReadParams": {
         "properties": {
+          "connectorId": {
+            "type": "string",
+            "nullable": true
+          },
+          "originCallId": {
+            "description": "Originating MCP tool call used to select the resource's app.",
+            "type": "string",
+            "nullable": true
+          },
           "server": {
             "type": "string"
           },
@@ -7612,6 +7956,165 @@
           "params"
         ],
         "title": "Account/login/startRequest",
+        "type": "object"
+      },
+      "BedrockDiscoverParams": {
+        "type": "object"
+      },
+      "ClientRequestAccountBedrockDiscoverRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "account/bedrock/discover"
+            ],
+            "title": "Account/bedrock/discoverRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/BedrockDiscoverParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "Account/bedrock/discoverRequest",
+        "type": "object"
+      },
+      "BedrockSetupParamsProfileBedrockSetupParams": {
+        "properties": {
+          "profile": {
+            "type": "string"
+          },
+          "region": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "profile"
+            ],
+            "title": "ProfileBedrockSetupParamsType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "profile",
+          "region",
+          "type"
+        ],
+        "title": "ProfileBedrockSetupParams",
+        "type": "object"
+      },
+      "AwsCredentialType": {
+        "enum": [
+          "accessKeys",
+          "bedrockApiKey"
+        ],
+        "type": "string"
+      },
+      "BedrockSetupParamsEnvironmentBedrockSetupParams": {
+        "properties": {
+          "credentialType": {
+            "$ref": "#/components/schemas/AwsCredentialType"
+          },
+          "region": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "environment"
+            ],
+            "title": "EnvironmentBedrockSetupParamsType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "credentialType",
+          "region",
+          "type"
+        ],
+        "title": "EnvironmentBedrockSetupParams",
+        "type": "object"
+      },
+      "BedrockSetupParamsAccessKeysBedrockSetupParams": {
+        "properties": {
+          "accessKeyId": {
+            "type": "string"
+          },
+          "region": {
+            "type": "string"
+          },
+          "secretAccessKey": {
+            "type": "string"
+          },
+          "sessionToken": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "enum": [
+              "accessKeys"
+            ],
+            "title": "AccessKeysBedrockSetupParamsType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "accessKeyId",
+          "region",
+          "secretAccessKey",
+          "type"
+        ],
+        "title": "AccessKeysBedrockSetupParams",
+        "type": "object"
+      },
+      "BedrockSetupParams": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/BedrockSetupParamsProfileBedrockSetupParams"
+          },
+          {
+            "$ref": "#/components/schemas/BedrockSetupParamsEnvironmentBedrockSetupParams"
+          },
+          {
+            "$ref": "#/components/schemas/BedrockSetupParamsAccessKeysBedrockSetupParams"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "profile": "#/components/schemas/BedrockSetupParamsProfileBedrockSetupParams",
+            "environment": "#/components/schemas/BedrockSetupParamsEnvironmentBedrockSetupParams",
+            "accessKeys": "#/components/schemas/BedrockSetupParamsAccessKeysBedrockSetupParams"
+          }
+        }
+      },
+      "ClientRequestAccountBedrockSetupRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "account/bedrock/setup"
+            ],
+            "title": "Account/bedrock/setupRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/BedrockSetupParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "Account/bedrock/setupRequest",
         "type": "object"
       },
       "CancelLoginAccountParams": {
@@ -9335,6 +9838,27 @@
             "$ref": "#/components/schemas/ClientRequestThreadListRequest"
           },
           {
+            "$ref": "#/components/schemas/ClientRequestProjectListRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ClientRequestProjectReadRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ClientRequestProjectCreateRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ClientRequestProjectImportRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ClientRequestProjectUpdateRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ClientRequestProjectMoveRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ClientRequestProjectDeleteRequest"
+          },
+          {
             "$ref": "#/components/schemas/ClientRequestThreadSectionListRequest"
           },
           {
@@ -9566,6 +10090,12 @@
             "$ref": "#/components/schemas/ClientRequestAccountLoginStartRequest"
           },
           {
+            "$ref": "#/components/schemas/ClientRequestAccountBedrockDiscoverRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ClientRequestAccountBedrockSetupRequest"
+          },
+          {
             "$ref": "#/components/schemas/ClientRequestAccountLoginCancelRequest"
           },
           {
@@ -9691,6 +10221,13 @@
             "thread/rollback": "#/components/schemas/ClientRequestThreadRollbackRequest",
             "thread/revert": "#/components/schemas/ClientRequestThreadRevertRequest",
             "thread/list": "#/components/schemas/ClientRequestThreadListRequest",
+            "project/list": "#/components/schemas/ClientRequestProjectListRequest",
+            "project/read": "#/components/schemas/ClientRequestProjectReadRequest",
+            "project/create": "#/components/schemas/ClientRequestProjectCreateRequest",
+            "project/import": "#/components/schemas/ClientRequestProjectImportRequest",
+            "project/update": "#/components/schemas/ClientRequestProjectUpdateRequest",
+            "project/move": "#/components/schemas/ClientRequestProjectMoveRequest",
+            "project/delete": "#/components/schemas/ClientRequestProjectDeleteRequest",
             "threadSection/list": "#/components/schemas/ClientRequestThreadSectionListRequest",
             "threadSection/create": "#/components/schemas/ClientRequestThreadSectionCreateRequest",
             "threadSection/update": "#/components/schemas/ClientRequestThreadSectionUpdateRequest",
@@ -9768,6 +10305,8 @@
             "windowsSandbox/setupStart": "#/components/schemas/ClientRequestWindowsSandboxSetupStartRequest",
             "windowsSandbox/readiness": "#/components/schemas/ClientRequestWindowsSandboxReadinessRequest",
             "account/login/start": "#/components/schemas/ClientRequestAccountLoginStartRequest",
+            "account/bedrock/discover": "#/components/schemas/ClientRequestAccountBedrockDiscoverRequest",
+            "account/bedrock/setup": "#/components/schemas/ClientRequestAccountBedrockSetupRequest",
             "account/login/cancel": "#/components/schemas/ClientRequestAccountLoginCancelRequest",
             "account/logout": "#/components/schemas/ClientRequestAccountLogoutRequest",
             "account/rateLimits/read": "#/components/schemas/ClientRequestAccountRateLimitsReadRequest",
@@ -12369,6 +12908,12 @@
         "title": "HookPromptThreadItem",
         "type": "object"
       },
+      "AgentMessageDelivery": {
+        "enum": [
+          "async"
+        ],
+        "type": "string"
+      },
       "MemoryCitationEntry": {
         "properties": {
           "lineEnd": {
@@ -12419,6 +12964,9 @@
       },
       "ThreadItemAgentMessageThreadItem": {
         "properties": {
+          "delivery": {
+            "$ref": "#/components/schemas/AgentMessageDelivery"
+          },
           "id": {
             "type": "string"
           },
@@ -13695,6 +14243,11 @@
             "description": "Usually the first user message in the thread, if available.",
             "type": "string"
           },
+          "projectId": {
+            "description": "Canonical project assignment owned by app-server, if any.",
+            "type": "string",
+            "nullable": true
+          },
           "recencyAt": {
             "description": "Unix timestamp (in seconds) used for thread recency ordering.",
             "format": "int64",
@@ -13747,6 +14300,7 @@
           "id",
           "modelProvider",
           "preview",
+          "projectId",
           "sessionId",
           "source",
           "status",
@@ -14178,6 +14732,85 @@
           "params"
         ],
         "title": "Thread/queue/changedNotification",
+        "type": "object"
+      },
+      "ProjectChangeType": {
+        "enum": [
+          "created",
+          "updated",
+          "deleted"
+        ],
+        "type": "string"
+      },
+      "ProjectChangedNotification": {
+        "properties": {
+          "changeType": {
+            "$ref": "#/components/schemas/ProjectChangeType"
+          },
+          "projectId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "changeType",
+          "projectId"
+        ],
+        "type": "object"
+      },
+      "ServerNotificationProjectChangedNotification": {
+        "properties": {
+          "method": {
+            "enum": [
+              "project/changed"
+            ],
+            "title": "Project/changedNotificationMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ProjectChangedNotification"
+          }
+        },
+        "required": [
+          "method",
+          "params"
+        ],
+        "title": "Project/changedNotification",
+        "type": "object"
+      },
+      "ThreadProjectUpdatedNotification": {
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "nullable": true
+          },
+          "threadId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "projectId",
+          "threadId"
+        ],
+        "type": "object"
+      },
+      "ServerNotificationThreadProjectUpdatedNotification": {
+        "properties": {
+          "method": {
+            "enum": [
+              "thread/project/updated"
+            ],
+            "title": "Thread/project/updatedNotificationMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ThreadProjectUpdatedNotification"
+          }
+        },
+        "required": [
+          "method",
+          "params"
+        ],
+        "title": "Thread/project/updatedNotification",
         "type": "object"
       },
       "EnvironmentConnectionNotification": {
@@ -15316,6 +15949,47 @@
         "title": "Item/autoApprovalReview/completedNotification",
         "type": "object"
       },
+      "StrictReviewRequiredNotification": {
+        "properties": {
+          "startedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when this review started.",
+            "format": "int64",
+            "type": "integer"
+          },
+          "threadId": {
+            "type": "string"
+          },
+          "turnId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "startedAtMs",
+          "threadId",
+          "turnId"
+        ],
+        "type": "object"
+      },
+      "ServerNotificationAutoApprovalReviewStrictReviewRequiredNotification": {
+        "properties": {
+          "method": {
+            "enum": [
+              "autoApprovalReview/strictReviewRequired"
+            ],
+            "title": "AutoApprovalReview/strictReviewRequiredNotificationMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/StrictReviewRequiredNotification"
+          }
+        },
+        "required": [
+          "method",
+          "params"
+        ],
+        "title": "AutoApprovalReview/strictReviewRequiredNotification",
+        "type": "object"
+      },
       "ItemCompletedNotification": {
         "properties": {
           "completedAtMs": {
@@ -16015,6 +16689,8 @@
           "enterprise_cbp_usage_based",
           "enterprise",
           "edu",
+          "edu_plus",
+          "edu_pro",
           "unknown"
         ],
         "type": "string"
@@ -17814,6 +18490,12 @@
             "$ref": "#/components/schemas/ServerNotificationThreadQueueChangedNotification"
           },
           {
+            "$ref": "#/components/schemas/ServerNotificationProjectChangedNotification"
+          },
+          {
+            "$ref": "#/components/schemas/ServerNotificationThreadProjectUpdatedNotification"
+          },
+          {
             "$ref": "#/components/schemas/ServerNotificationThreadEnvironmentConnectedNotification"
           },
           {
@@ -17851,6 +18533,9 @@
           },
           {
             "$ref": "#/components/schemas/ServerNotificationItemAutoApprovalReviewCompletedNotification"
+          },
+          {
+            "$ref": "#/components/schemas/ServerNotificationAutoApprovalReviewStrictReviewRequiredNotification"
           },
           {
             "$ref": "#/components/schemas/ServerNotificationItemCompletedNotification"
@@ -18007,6 +18692,8 @@
             "thread/goal/updated": "#/components/schemas/ServerNotificationThreadGoalUpdatedNotification",
             "thread/goal/cleared": "#/components/schemas/ServerNotificationThreadGoalClearedNotification",
             "thread/queue/changed": "#/components/schemas/ServerNotificationThreadQueueChangedNotification",
+            "project/changed": "#/components/schemas/ServerNotificationProjectChangedNotification",
+            "thread/project/updated": "#/components/schemas/ServerNotificationThreadProjectUpdatedNotification",
             "thread/environment/connected": "#/components/schemas/ServerNotificationThreadEnvironmentConnectedNotification",
             "thread/environment/disconnected": "#/components/schemas/ServerNotificationThreadEnvironmentDisconnectedNotification",
             "thread/settings/updated": "#/components/schemas/ServerNotificationThreadSettingsUpdatedNotification",
@@ -18020,6 +18707,7 @@
             "item/started": "#/components/schemas/ServerNotificationItemStartedNotification",
             "item/autoApprovalReview/started": "#/components/schemas/ServerNotificationItemAutoApprovalReviewStartedNotification",
             "item/autoApprovalReview/completed": "#/components/schemas/ServerNotificationItemAutoApprovalReviewCompletedNotification",
+            "autoApprovalReview/strictReviewRequired": "#/components/schemas/ServerNotificationAutoApprovalReviewStrictReviewRequiredNotification",
             "item/completed": "#/components/schemas/ServerNotificationItemCompletedNotification",
             "item/agentMessage/delta": "#/components/schemas/ServerNotificationItemAgentMessageDeltaNotification",
             "item/plan/delta": "#/components/schemas/ServerNotificationItemPlanDeltaNotification",
@@ -18632,6 +19320,62 @@
           "missingAppIds"
         ],
         "title": "AppsReadResponse",
+        "type": "object"
+      },
+      "BedrockEnvironmentCredential": {
+        "properties": {
+          "region": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "$ref": "#/components/schemas/AwsCredentialType"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "type": "object"
+      },
+      "BedrockAwsProfile": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "region": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "BedrockDiscoverResponse": {
+        "properties": {
+          "environmentCredentials": {
+            "items": {
+              "$ref": "#/components/schemas/BedrockEnvironmentCredential"
+            },
+            "type": "array"
+          },
+          "profiles": {
+            "items": {
+              "$ref": "#/components/schemas/BedrockAwsProfile"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "environmentCredentials",
+          "profiles"
+        ],
+        "title": "BedrockDiscoverResponse",
+        "type": "object"
+      },
+      "BedrockSetupResponse": {
+        "title": "BedrockSetupResponse",
         "type": "object"
       },
       "CancelLoginAccountStatus": {
@@ -19329,6 +20073,15 @@
         },
         "type": "object"
       },
+      "CliAuthCredentialsStoreMode": {
+        "enum": [
+          "file",
+          "keyring",
+          "auto",
+          "ephemeral"
+        ],
+        "type": "string"
+      },
       "ComputerUseRequirements": {
         "properties": {
           "allowLockedComputerUse": {
@@ -19779,9 +20532,16 @@
           "browserUse": {
             "$ref": "#/components/schemas/BrowserUseRequirements"
           },
+          "chatgptBaseUrl": {
+            "type": "string",
+            "nullable": true
+          },
           "checkForUpdateOnStartup": {
             "type": "boolean",
             "nullable": true
+          },
+          "cliAuthCredentialsStore": {
+            "$ref": "#/components/schemas/CliAuthCredentialsStoreMode"
           },
           "computerUse": {
             "$ref": "#/components/schemas/ComputerUseRequirements"
@@ -21472,6 +22232,11 @@
               "$ref": "#/components/schemas/ResourceContent"
             },
             "type": "array"
+          },
+          "originCallId": {
+            "description": "Originating call when the server applied app-specific resource scoping.",
+            "type": "string",
+            "nullable": true
           }
         },
         "required": [
@@ -22919,6 +23684,125 @@
       "ProcessWriteStdinResponse": {
         "description": "Empty success response for `process/writeStdin`.",
         "title": "ProcessWriteStdinResponse",
+        "type": "object"
+      },
+      "Project": {
+        "properties": {
+          "createdAt": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "id": {
+            "type": "string"
+          },
+          "metadata": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "name": {
+            "type": "string"
+          },
+          "position": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "roots": {
+            "items": {
+              "$ref": "#/components/schemas/ProjectRoot"
+            },
+            "type": "array"
+          },
+          "updatedAt": {
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "createdAt",
+          "id",
+          "metadata",
+          "name",
+          "position",
+          "roots",
+          "updatedAt"
+        ],
+        "type": "object"
+      },
+      "ProjectCreateResponse": {
+        "properties": {
+          "project": {
+            "$ref": "#/components/schemas/Project"
+          }
+        },
+        "required": [
+          "project"
+        ],
+        "title": "ProjectCreateResponse",
+        "type": "object"
+      },
+      "ProjectDeleteResponse": {
+        "title": "ProjectDeleteResponse",
+        "type": "object"
+      },
+      "ProjectImportResponse": {
+        "properties": {
+          "project": {
+            "$ref": "#/components/schemas/Project"
+          }
+        },
+        "required": [
+          "project"
+        ],
+        "title": "ProjectImportResponse",
+        "type": "object"
+      },
+      "ProjectListResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/Project"
+            },
+            "type": "array"
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "title": "ProjectListResponse",
+        "type": "object"
+      },
+      "ProjectMoveResponse": {
+        "title": "ProjectMoveResponse",
+        "type": "object"
+      },
+      "ProjectReadResponse": {
+        "properties": {
+          "project": {
+            "$ref": "#/components/schemas/Project"
+          }
+        },
+        "required": [
+          "project"
+        ],
+        "title": "ProjectReadResponse",
+        "type": "object"
+      },
+      "ProjectUpdateResponse": {
+        "properties": {
+          "project": {
+            "$ref": "#/components/schemas/Project"
+          }
+        },
+        "required": [
+          "project"
+        ],
+        "title": "ProjectUpdateResponse",
         "type": "object"
       },
       "RemoteControlClient": {

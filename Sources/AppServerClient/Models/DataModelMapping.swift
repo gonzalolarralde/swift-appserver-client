@@ -38,6 +38,13 @@ public extension AppServerModels.ClientRequest {
     typealias ThreadRollback = Components.Schemas.ClientRequestThreadRollbackRequest
     typealias ThreadRevert = Components.Schemas.ClientRequestThreadRevertRequest
     typealias ThreadList = Components.Schemas.ClientRequestThreadListRequest
+    typealias ProjectList = Components.Schemas.ClientRequestProjectListRequest
+    typealias ProjectRead = Components.Schemas.ClientRequestProjectReadRequest
+    typealias ProjectCreate = Components.Schemas.ClientRequestProjectCreateRequest
+    typealias ProjectImport = Components.Schemas.ClientRequestProjectImportRequest
+    typealias ProjectUpdate = Components.Schemas.ClientRequestProjectUpdateRequest
+    typealias ProjectMove = Components.Schemas.ClientRequestProjectMoveRequest
+    typealias ProjectDelete = Components.Schemas.ClientRequestProjectDeleteRequest
     typealias ThreadSectionList = Components.Schemas.ClientRequestThreadSectionListRequest
     typealias ThreadSectionCreate = Components.Schemas.ClientRequestThreadSectionCreateRequest
     typealias ThreadSectionUpdate = Components.Schemas.ClientRequestThreadSectionUpdateRequest
@@ -115,6 +122,8 @@ public extension AppServerModels.ClientRequest {
     typealias WindowsSandboxSetupStart = Components.Schemas.ClientRequestWindowsSandboxSetupStartRequest
     typealias WindowsSandboxReadiness = Components.Schemas.ClientRequestWindowsSandboxReadinessRequest
     typealias AccountLoginStart = Components.Schemas.ClientRequestAccountLoginStartRequest
+    typealias AccountBedrockDiscover = Components.Schemas.ClientRequestAccountBedrockDiscoverRequest
+    typealias AccountBedrockSetup = Components.Schemas.ClientRequestAccountBedrockSetupRequest
     typealias AccountLoginCancel = Components.Schemas.ClientRequestAccountLoginCancelRequest
     typealias AccountLogout = Components.Schemas.ClientRequestAccountLogoutRequest
     typealias AccountRateLimitsRead = Components.Schemas.ClientRequestAccountRateLimitsReadRequest
@@ -181,6 +190,13 @@ public extension AppServerModels.ClientRequest {
         public typealias ThreadRollback = Components.Schemas.ThreadRollbackResponse
         public typealias ThreadRevert = Components.Schemas.ThreadRevertResponse
         public typealias ThreadList = Components.Schemas.ThreadListResponse
+        public typealias ProjectList = Components.Schemas.ProjectListResponse
+        public typealias ProjectRead = Components.Schemas.ProjectReadResponse
+        public typealias ProjectCreate = Components.Schemas.ProjectCreateResponse
+        public typealias ProjectImport = Components.Schemas.ProjectImportResponse
+        public typealias ProjectUpdate = Components.Schemas.ProjectUpdateResponse
+        public typealias ProjectMove = Components.Schemas.ProjectMoveResponse
+        public typealias ProjectDelete = Components.Schemas.ProjectDeleteResponse
         public typealias ThreadSectionList = Components.Schemas.ThreadSectionListResponse
         public typealias ThreadSectionCreate = Components.Schemas.ThreadSectionCreateResponse
         public typealias ThreadSectionUpdate = Components.Schemas.ThreadSectionUpdateResponse
@@ -258,6 +274,8 @@ public extension AppServerModels.ClientRequest {
         public typealias WindowsSandboxSetupStart = Components.Schemas.WindowsSandboxSetupStartResponse
         public typealias WindowsSandboxReadiness = Components.Schemas.WindowsSandboxReadinessResponse
         public typealias AccountLoginStart = Components.Schemas.LoginAccountResponse
+        public typealias AccountBedrockDiscover = Components.Schemas.BedrockDiscoverResponse
+        public typealias AccountBedrockSetup = Components.Schemas.BedrockSetupResponse
         public typealias AccountLoginCancel = Components.Schemas.CancelLoginAccountResponse
         public typealias AccountLogout = Components.Schemas.LogoutAccountResponse
         public typealias AccountRateLimitsRead = Components.Schemas.GetAccountRateLimitsResponse
@@ -326,6 +344,13 @@ public extension AppServerModels.ClientRequest {
         case let .threadRollback(value): value
         case let .threadRevert(value): value
         case let .threadList(value): value
+        case let .projectList(value): value
+        case let .projectRead(value): value
+        case let .projectCreate(value): value
+        case let .projectImport(value): value
+        case let .projectUpdate(value): value
+        case let .projectMove(value): value
+        case let .projectDelete(value): value
         case let .threadSectionList(value): value
         case let .threadSectionCreate(value): value
         case let .threadSectionUpdate(value): value
@@ -403,6 +428,8 @@ public extension AppServerModels.ClientRequest {
         case let .windowsSandboxSetupStart(value): value
         case let .windowsSandboxReadiness(value): value
         case let .accountLoginStart(value): value
+        case let .accountBedrockDiscover(value): value
+        case let .accountBedrockSetup(value): value
         case let .accountLoginCancel(value): value
         case let .accountLogout(value): value
         case let .accountRateLimitsRead(value): value
@@ -713,6 +740,62 @@ extension Components.Schemas.ClientRequestThreadListRequest: ClientRequestable {
     public typealias Response = AppServerModels.ClientRequest.Response.ThreadList
     public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadList(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestProjectListRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ProjectListParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ProjectList
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .projectList(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestProjectReadRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ProjectReadParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ProjectRead
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .projectRead(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestProjectCreateRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ProjectCreateParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ProjectCreate
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .projectCreate(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestProjectImportRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ProjectImportParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ProjectImport
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .projectImport(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestProjectUpdateRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ProjectUpdateParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ProjectUpdate
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .projectUpdate(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestProjectMoveRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ProjectMoveParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ProjectMove
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .projectMove(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestProjectDeleteRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ProjectDeleteParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ProjectDelete
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .projectDelete(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
@@ -1332,6 +1415,22 @@ extension Components.Schemas.ClientRequestAccountLoginStartRequest: ClientReques
     }
 }
 
+extension Components.Schemas.ClientRequestAccountBedrockDiscoverRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.BedrockDiscoverParams
+    public typealias Response = AppServerModels.ClientRequest.Response.AccountBedrockDiscover
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .accountBedrockDiscover(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestAccountBedrockSetupRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.BedrockSetupParams
+    public typealias Response = AppServerModels.ClientRequest.Response.AccountBedrockSetup
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .accountBedrockSetup(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
 extension Components.Schemas.ClientRequestAccountLoginCancelRequest: ClientRequestable {
     public typealias Params = Components.Schemas.CancelLoginAccountParams
     public typealias Response = AppServerModels.ClientRequest.Response.AccountLoginCancel
@@ -1710,6 +1809,8 @@ public extension AppServerModels.ServerNotification {
     typealias ThreadGoalUpdated = Components.Schemas.ServerNotificationThreadGoalUpdatedNotification
     typealias ThreadGoalCleared = Components.Schemas.ServerNotificationThreadGoalClearedNotification
     typealias ThreadQueueChanged = Components.Schemas.ServerNotificationThreadQueueChangedNotification
+    typealias ProjectChanged = Components.Schemas.ServerNotificationProjectChangedNotification
+    typealias ThreadProjectUpdated = Components.Schemas.ServerNotificationThreadProjectUpdatedNotification
     typealias ThreadEnvironmentConnected = Components.Schemas.ServerNotificationThreadEnvironmentConnectedNotification
     typealias ThreadEnvironmentDisconnected = Components.Schemas.ServerNotificationThreadEnvironmentDisconnectedNotification
     typealias ThreadSettingsUpdated = Components.Schemas.ServerNotificationThreadSettingsUpdatedNotification
@@ -1723,6 +1824,7 @@ public extension AppServerModels.ServerNotification {
     typealias ItemStarted = Components.Schemas.ServerNotificationItemStartedNotification
     typealias ItemAutoApprovalReviewStarted = Components.Schemas.ServerNotificationItemAutoApprovalReviewStartedNotification
     typealias ItemAutoApprovalReviewCompleted = Components.Schemas.ServerNotificationItemAutoApprovalReviewCompletedNotification
+    typealias AutoApprovalReviewStrictReviewRequired = Components.Schemas.ServerNotificationAutoApprovalReviewStrictReviewRequiredNotification
     typealias ItemCompleted = Components.Schemas.ServerNotificationItemCompletedNotification
     typealias ItemAgentMessageDelta = Components.Schemas.ServerNotificationItemAgentMessageDeltaNotification
     typealias ItemPlanDelta = Components.Schemas.ServerNotificationItemPlanDeltaNotification
@@ -1785,6 +1887,8 @@ public extension AppServerModels.ServerNotification {
         case let .threadGoalUpdated(value): value
         case let .threadGoalCleared(value): value
         case let .threadQueueChanged(value): value
+        case let .projectChanged(value): value
+        case let .threadProjectUpdated(value): value
         case let .threadEnvironmentConnected(value): value
         case let .threadEnvironmentDisconnected(value): value
         case let .threadSettingsUpdated(value): value
@@ -1798,6 +1902,7 @@ public extension AppServerModels.ServerNotification {
         case let .itemStarted(value): value
         case let .itemAutoApprovalReviewStarted(value): value
         case let .itemAutoApprovalReviewCompleted(value): value
+        case let .autoApprovalReviewStrictReviewRequired(value): value
         case let .itemCompleted(value): value
         case let .itemAgentMessageDelta(value): value
         case let .itemPlanDelta(value): value
@@ -1939,6 +2044,20 @@ extension Components.Schemas.ServerNotificationThreadQueueChangedNotification: S
     }
 }
 
+extension Components.Schemas.ServerNotificationProjectChangedNotification: ServerNotificationPayload {
+    public typealias Params = Components.Schemas.ProjectChangedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
+        .projectChanged(.init(method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ServerNotificationThreadProjectUpdatedNotification: ServerNotificationPayload {
+    public typealias Params = Components.Schemas.ThreadProjectUpdatedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
+        .threadProjectUpdated(.init(method: .allCases.first!, params: params))
+    }
+}
+
 extension Components.Schemas.ServerNotificationThreadEnvironmentConnectedNotification: ServerNotificationPayload {
     public typealias Params = Components.Schemas.EnvironmentConnectionNotification
     public static func build(params: Params) -> AppServerModels.ServerNotification {
@@ -2027,6 +2146,13 @@ extension Components.Schemas.ServerNotificationItemAutoApprovalReviewCompletedNo
     public typealias Params = Components.Schemas.ItemGuardianApprovalReviewCompletedNotification
     public static func build(params: Params) -> AppServerModels.ServerNotification {
         .itemAutoApprovalReviewCompleted(.init(method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ServerNotificationAutoApprovalReviewStrictReviewRequiredNotification: ServerNotificationPayload {
+    public typealias Params = Components.Schemas.StrictReviewRequiredNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
+        .autoApprovalReviewStrictReviewRequired(.init(method: .allCases.first!, params: params))
     }
 }
 

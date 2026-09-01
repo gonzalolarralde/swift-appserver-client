@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.149.0 — 2026-08-20
+
+- Schema provenance: regenerated and synchronized the exact experimental
+  (`--experimental`) export from stable public Codex tag `rust-v0.149.0`,
+  peeled commit
+  `758ef40f50c1a458425c7cfbf1eb12cbc07af0b0`.
+- Contract: the export grows from 380 to 401 JSON Schema files, with 21
+  additions, no removals, and 34 modified existing files. It adds Amazon
+  Bedrock discovery and setup plus project create, delete, import, list, move,
+  read, and update RPCs. It also adds project lifecycle and strict-review
+  notifications. Threads gain required project assignment and filtering, and
+  plan types gain `edu_plus` and `edu_pro`.
+- Swift compatibility: added hand-written response overrides for
+  `BedrockDiscoverResponse` and `BedrockSetupResponse`, with focused
+  compile-time response-mapping coverage.
+- Verification: the generator was idempotent; `swift build --target
+  AppServerClient`, all 14 `swift test` cases, `git diff --check`, and the
+  `Package.resolved` unchanged check passed. `swift run appserver-smoke`
+  passed initialize, account, usage, and empty thread-list calls against the
+  exact public `@openai/codex@0.149.0` CLI in an isolated authenticated Codex
+  home; no turn-list coverage is claimed because that home had no threads.
+
 ## 0.148.0 — 2026-08-18
 
 - Schema provenance: regenerated and synchronized the exact experimental
