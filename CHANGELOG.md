@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.150.1 — 2026-08-27
+
+- Schema provenance: regenerated and synchronized the exact experimental
+  (`--experimental`) export from stable public Codex tag `rust-v0.150.1`,
+  peeled commit
+  `90854393966b21e9ebfd21b122334eb09a20c93d`.
+- Contract: no public contract change from 0.150.0. Canonical comparison of all
+  411 JSON Schema files found no additions, removals, or semantic changes.
+- Swift compatibility: advanced package metadata, the default client version,
+  and version-specific documentation to 0.150.1. No generator, override, or
+  call-site fix was required.
+- Verification: the generator was idempotent; `swift build --target
+  AppServerClient`, all 14 `swift test` cases, `git diff --check`, and the
+  `Package.resolved` unchanged check passed. `swift run appserver-smoke`
+  passed initialize, account, usage, and empty thread-list calls against the
+  exact public `@openai/codex@0.150.1` CLI in an isolated authenticated Codex
+  home; no turn-list coverage is claimed because that home had no threads.
+
 ## 0.150.0 — 2026-08-26
 
 - Schema provenance: regenerated and synchronized the exact experimental
