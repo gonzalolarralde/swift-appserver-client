@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.145.0 — 2026-07-21
+
+- Schema provenance: regenerated and synchronized the exact experimental
+  (`--experimental`) export from stable public Codex tag `rust-v0.145.0`,
+  peeled commit
+  `25af12f7e61572b0bc18ddb1008be543b91519b0`.
+- Contract: the export grows from 337 to 347 JSON Schema files, with 10
+  additions, no removals, and 61 modified existing files. New RPCs cover
+  installed-app reads, app metadata reads, environment status, and thread
+  search occurrences; new notifications report environment connection state.
+  The contract also adds audio input/output union cases and Amazon Bedrock
+  login cases. Notably, the denied review decision changes from a string case
+  to an object containing a rejection reason.
+- Swift compatibility: added response overrides for `AppsReadResponse` and
+  `AppsInstalledResponse` so the new request/response pairs generate and
+  compile correctly.
+- Verification: the generator was idempotent; `swift build --target
+  AppServerClient`, all 14 `swift test` cases, `git diff --check`, and the
+  `Package.resolved` unchanged check passed. `swift run appserver-smoke`
+  passed initialize, account, usage, and empty thread-list calls against the
+  exact public `@openai/codex@0.145.0` CLI in an isolated authenticated Codex
+  home; no turn-list coverage is claimed because that home had no threads.
+
 ## 0.144.6 — 2026-07-18
 
 - Schema provenance: regenerated and synchronized the exact experimental

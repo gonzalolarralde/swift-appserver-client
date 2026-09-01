@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Codex App Server Protocol",
-    "version": "0.144.6"
+    "version": "0.145.0"
   },
   "paths": {},
   "components": {
@@ -281,6 +281,13 @@
           },
           "environmentId": {
             "type": "string"
+          },
+          "runtimeWorkspaceRoots": {
+            "description": "Environment-native runtime workspace roots. Omitted defaults to `cwd`.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LegacyAppPathString"
+            }
           }
         }
       },
@@ -578,6 +585,26 @@
         },
         "title": "InputImageContentItem"
       },
+      "ContentItemInputAudioContentItem": {
+        "type": "object",
+        "required": [
+          "audio_url",
+          "type"
+        ],
+        "properties": {
+          "audio_url": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "input_audio"
+            ],
+            "title": "InputAudioContentItemType"
+          }
+        },
+        "title": "InputAudioContentItem"
+      },
       "ContentItemOutputTextContentItem": {
         "type": "object",
         "required": [
@@ -607,6 +634,9 @@
             "$ref": "#/components/schemas/ContentItemInputImageContentItem"
           },
           {
+            "$ref": "#/components/schemas/ContentItemInputAudioContentItem"
+          },
+          {
             "$ref": "#/components/schemas/ContentItemOutputTextContentItem"
           }
         ],
@@ -615,6 +645,7 @@
           "mapping": {
             "input_text": "#/components/schemas/ContentItemInputTextContentItem",
             "input_image": "#/components/schemas/ContentItemInputImageContentItem",
+            "input_audio": "#/components/schemas/ContentItemInputAudioContentItem",
             "output_text": "#/components/schemas/ContentItemOutputTextContentItem"
           }
         }
@@ -1094,6 +1125,26 @@
         },
         "title": "InputImageFunctionCallOutputContentItem"
       },
+      "FunctionCallOutputContentItemInputAudioFunctionCallOutputContentItem": {
+        "type": "object",
+        "required": [
+          "audio_url",
+          "type"
+        ],
+        "properties": {
+          "audio_url": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "input_audio"
+            ],
+            "title": "InputAudioFunctionCallOutputContentItemType"
+          }
+        },
+        "title": "InputAudioFunctionCallOutputContentItem"
+      },
       "FunctionCallOutputContentItemEncryptedContentFunctionCallOutputContentItem": {
         "type": "object",
         "required": [
@@ -1124,6 +1175,9 @@
             "$ref": "#/components/schemas/FunctionCallOutputContentItemInputImageFunctionCallOutputContentItem"
           },
           {
+            "$ref": "#/components/schemas/FunctionCallOutputContentItemInputAudioFunctionCallOutputContentItem"
+          },
+          {
             "$ref": "#/components/schemas/FunctionCallOutputContentItemEncryptedContentFunctionCallOutputContentItem"
           }
         ],
@@ -1132,6 +1186,7 @@
           "mapping": {
             "input_text": "#/components/schemas/FunctionCallOutputContentItemInputTextFunctionCallOutputContentItem",
             "input_image": "#/components/schemas/FunctionCallOutputContentItemInputImageFunctionCallOutputContentItem",
+            "input_audio": "#/components/schemas/FunctionCallOutputContentItemInputAudioFunctionCallOutputContentItem",
             "encrypted_content": "#/components/schemas/FunctionCallOutputContentItemEncryptedContentFunctionCallOutputContentItem"
           }
         }
@@ -1792,6 +1847,11 @@
             "type": "string",
             "nullable": true
           },
+          "beforeTurnId": {
+            "description": "Optional turn id to fork before, excluding that turn and all later turns. Cannot be combined with `last_turn_id`.",
+            "type": "string",
+            "nullable": true
+          },
           "config": {
             "type": "object",
             "additionalProperties": true
@@ -1799,6 +1859,10 @@
           "cwd": {
             "type": "string",
             "nullable": true
+          },
+          "deferGoalContinuation": {
+            "description": "When true, carry the source thread's current goal into the fork without starting its initial automatic continuation. The next explicit turn owns the goal lifecycle, and normal automatic continuation resumes after it.",
+            "type": "boolean"
           },
           "developerInstructions": {
             "type": "string",
@@ -3120,6 +3184,59 @@
         },
         "title": "Thread/searchRequest"
       },
+      "ThreadSearchOccurrencesParams": {
+        "description": "Parameters for searching visible message occurrences within one paginated thread.",
+        "type": "object",
+        "required": [
+          "searchTerm",
+          "threadId"
+        ],
+        "properties": {
+          "cursor": {
+            "description": "Opaque cursor returned by a previous call for the same thread and search term.",
+            "type": "string",
+            "nullable": true
+          },
+          "limit": {
+            "description": "Optional occurrence page size.",
+            "type": "integer",
+            "format": "uint32",
+            "minimum": 0.0,
+            "nullable": true
+          },
+          "searchTerm": {
+            "description": "Case-insensitive literal substring to find in visible user messages and final assistant messages.",
+            "type": "string"
+          },
+          "threadId": {
+            "type": "string"
+          }
+        }
+      },
+      "ClientRequestThreadSearchOccurrencesRequest": {
+        "type": "object",
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "thread/searchOccurrences"
+            ],
+            "title": "Thread/searchOccurrencesRequestMethod"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ThreadSearchOccurrencesParams"
+          }
+        },
+        "title": "Thread/searchOccurrencesRequest"
+      },
       "ThreadLoadedListParams": {
         "type": "object",
         "properties": {
@@ -3852,7 +3969,8 @@
         "type": "string",
         "enum": [
           "UNLISTED",
-          "PRIVATE"
+          "PRIVATE",
+          "LISTED"
         ]
       },
       "PluginShareUpdateTargetsParams": {
@@ -3998,6 +4116,50 @@
         },
         "title": "Plugin/share/deleteRequest"
       },
+      "AppsReadParams": {
+        "description": "EXPERIMENTAL - read metadata for specific apps/connectors.",
+        "type": "object",
+        "required": [
+          "appIds"
+        ],
+        "properties": {
+          "appIds": {
+            "description": "App ids to read. The server accepts at most 100 ids and deduplicates repeated ids while preserving their first-request order.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "includeTools": {
+            "description": "When true, include display-only public tool summaries in the returned metadata.",
+            "type": "boolean"
+          }
+        }
+      },
+      "ClientRequestAppReadRequest": {
+        "type": "object",
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "app/read"
+            ],
+            "title": "App/readRequestMethod"
+          },
+          "params": {
+            "$ref": "#/components/schemas/AppsReadParams"
+          }
+        },
+        "title": "App/readRequest"
+      },
       "AppsListParams": {
         "description": "EXPERIMENTAL - list available apps/connectors.",
         "type": "object",
@@ -4048,6 +4210,45 @@
           }
         },
         "title": "App/listRequest"
+      },
+      "AppsInstalledParams": {
+        "description": "Read the committed installed connector runtime snapshot.",
+        "type": "object",
+        "properties": {
+          "forceRefresh": {
+            "description": "When true and Apps are permitted, refresh and publish the hosted connector runtime tool snapshot first.",
+            "type": "boolean"
+          },
+          "threadId": {
+            "description": "Optional loaded thread id used to evaluate effective app configuration.",
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ClientRequestAppInstalledRequest": {
+        "type": "object",
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "app/installed"
+            ],
+            "title": "App/installedRequestMethod"
+          },
+          "params": {
+            "$ref": "#/components/schemas/AppsInstalledParams"
+          }
+        },
+        "title": "App/installedRequest"
       },
       "FsReadFileParams": {
         "description": "Read a file from the host filesystem.",
@@ -4668,6 +4869,46 @@
         },
         "title": "LocalImageUserInput"
       },
+      "UserInputAudioUserInput": {
+        "type": "object",
+        "required": [
+          "type",
+          "url"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "audio"
+            ],
+            "title": "AudioUserInputType"
+          },
+          "url": {
+            "type": "string"
+          }
+        },
+        "title": "AudioUserInput"
+      },
+      "UserInputLocalAudioUserInput": {
+        "type": "object",
+        "required": [
+          "path",
+          "type"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "localAudio"
+            ],
+            "title": "LocalAudioUserInputType"
+          }
+        },
+        "title": "LocalAudioUserInput"
+      },
       "UserInputSkillUserInput": {
         "type": "object",
         "required": [
@@ -4728,6 +4969,12 @@
             "$ref": "#/components/schemas/UserInputLocalImageUserInput"
           },
           {
+            "$ref": "#/components/schemas/UserInputAudioUserInput"
+          },
+          {
+            "$ref": "#/components/schemas/UserInputLocalAudioUserInput"
+          },
+          {
             "$ref": "#/components/schemas/UserInputSkillUserInput"
           },
           {
@@ -4740,6 +4987,8 @@
             "text": "#/components/schemas/UserInputTextUserInput",
             "image": "#/components/schemas/UserInputImageUserInput",
             "localImage": "#/components/schemas/UserInputLocalImageUserInput",
+            "audio": "#/components/schemas/UserInputAudioUserInput",
+            "localAudio": "#/components/schemas/UserInputLocalAudioUserInput",
             "skill": "#/components/schemas/UserInputSkillUserInput",
             "mention": "#/components/schemas/UserInputMentionUserInput"
           }
@@ -4970,6 +5219,38 @@
         },
         "title": "Turn/interruptRequest"
       },
+      "CodexResponseHandoffMode": {
+        "type": "string",
+        "enum": [
+          "thinking",
+          "commentary",
+          "bemTags"
+        ]
+      },
+      "ConversationTextRole": {
+        "type": "string",
+        "enum": [
+          "user",
+          "developer",
+          "assistant"
+        ]
+      },
+      "ThreadRealtimeInitialItem": {
+        "description": "EXPERIMENTAL - role-bearing text item included when a realtime V3 session starts.",
+        "type": "object",
+        "required": [
+          "role",
+          "text"
+        ],
+        "properties": {
+          "role": {
+            "$ref": "#/components/schemas/ConversationTextRole"
+          },
+          "text": {
+            "type": "string"
+          }
+        }
+      },
       "RealtimeOutputModality": {
         "type": "string",
         "enum": [
@@ -5036,7 +5317,8 @@
         "type": "string",
         "enum": [
           "v1",
-          "v2"
+          "v2",
+          "v3"
         ]
       },
       "RealtimeVoice": {
@@ -5076,10 +5358,8 @@
             "type": "boolean",
             "nullable": true
           },
-          "codexResponseHandoffPrefix": {
-            "description": "Optional prefix added to automatic V1 Codex commentary sent with `conversation.handoff.append` when `codexResponsesAsItems` is not true. Final answers are sent without the prefix.",
-            "type": "string",
-            "nullable": true
+          "codexResponseHandoffMode": {
+            "$ref": "#/components/schemas/CodexResponseHandoffMode"
           },
           "codexResponseItemPrefix": {
             "description": "Optional prefix added to automatic Codex response items when `codexResponsesAsItems` is true.",
@@ -5100,6 +5380,13 @@
             "description": "Set to false to start without Codex's startup context. Omitted or null includes it.",
             "type": "boolean",
             "nullable": true
+          },
+          "initialItems": {
+            "description": "Adds complete role-bearing text items to the initial Frameless Bidi session history. This is only supported by realtime V3 and is sent during session startup. Requests are limited to 128 items and 8,192 estimated text tokens in total.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ThreadRealtimeInitialItem"
+            }
           },
           "model": {
             "description": "Overrides the configured realtime model for this session only.",
@@ -5229,14 +5516,6 @@
           }
         },
         "title": "Thread/realtime/appendAudioRequest"
-      },
-      "ConversationTextRole": {
-        "type": "string",
-        "enum": [
-          "user",
-          "developer",
-          "assistant"
-        ]
       },
       "ThreadRealtimeAppendTextParams": {
         "description": "EXPERIMENTAL - append text input to thread realtime.",
@@ -6144,6 +6423,44 @@
         },
         "title": "Environment/infoRequest"
       },
+      "EnvironmentStatusParams": {
+        "description": "Parameters for reading the current status of one configured environment.",
+        "type": "object",
+        "required": [
+          "environmentId"
+        ],
+        "properties": {
+          "environmentId": {
+            "description": "Environment id to inspect.",
+            "type": "string"
+          }
+        }
+      },
+      "ClientRequestEnvironmentStatusRequest": {
+        "description": "Reads the current status of a configured execution environment.",
+        "type": "object",
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "environment/status"
+            ],
+            "title": "Environment/statusRequestMethod"
+          },
+          "params": {
+            "$ref": "#/components/schemas/EnvironmentStatusParams"
+          }
+        },
+        "title": "Environment/statusRequest"
+      },
       "McpServerOauthLoginParams": {
         "type": "object",
         "required": [
@@ -6528,6 +6845,31 @@
         },
         "title": "ChatgptAuthTokensLoginAccountParams"
       },
+      "LoginAccountParamsAmazonBedrockLoginAccountParams": {
+        "description": "[UNSTABLE] Managed Amazon Bedrock login is experimental.",
+        "type": "object",
+        "required": [
+          "apiKey",
+          "region",
+          "type"
+        ],
+        "properties": {
+          "apiKey": {
+            "type": "string"
+          },
+          "region": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "amazonBedrock"
+            ],
+            "title": "AmazonBedrockLoginAccountParamsType"
+          }
+        },
+        "title": "AmazonBedrockLoginAccountParams"
+      },
       "LoginAccountParams": {
         "oneOf": [
           {
@@ -6541,6 +6883,9 @@
           },
           {
             "$ref": "#/components/schemas/LoginAccountParamsChatgptAuthTokensLoginAccountParams"
+          },
+          {
+            "$ref": "#/components/schemas/LoginAccountParamsAmazonBedrockLoginAccountParams"
           }
         ],
         "discriminator": {
@@ -6549,7 +6894,8 @@
             "apiKey": "#/components/schemas/LoginAccountParamsApiKeyLoginAccountParams",
             "chatgpt": "#/components/schemas/LoginAccountParamsChatgptLoginAccountParams",
             "chatgptDeviceCode": "#/components/schemas/LoginAccountParamsChatgptDeviceCodeLoginAccountParams",
-            "chatgptAuthTokens": "#/components/schemas/LoginAccountParamsChatgptAuthTokensLoginAccountParams"
+            "chatgptAuthTokens": "#/components/schemas/LoginAccountParamsChatgptAuthTokensLoginAccountParams",
+            "amazonBedrock": "#/components/schemas/LoginAccountParamsAmazonBedrockLoginAccountParams"
           }
         }
       },
@@ -7385,6 +7731,16 @@
           "includeHome": {
             "description": "If true, include detection under the user's home directory.",
             "type": "boolean"
+          },
+          "migrationSource": {
+            "description": "Optional migration-source selector. Missing or unrecognized values use the default source.",
+            "type": "string",
+            "nullable": true
+          },
+          "source": {
+            "description": "Deprecated field retained for compatibility. This field is ignored; use `migrationSource` to select the migration source.",
+            "type": "string",
+            "nullable": true
           }
         }
       },
@@ -7528,6 +7884,12 @@
               "$ref": "#/components/schemas/McpServerMigration"
             }
           },
+          "memory": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "plugins": {
             "default": [],
             "type": "array",
@@ -7569,6 +7931,7 @@
           "SUBAGENTS",
           "HOOKS",
           "COMMANDS",
+          "MEMORY",
           "SESSIONS"
         ]
       },
@@ -7607,8 +7970,13 @@
               "$ref": "#/components/schemas/ExternalAgentConfigMigrationItem"
             }
           },
+          "migrationSource": {
+            "description": "Migration-source selector used to produce the migration items. Pass the same value to detection and import; missing or unrecognized values use the default source.",
+            "type": "string",
+            "nullable": true
+          },
           "source": {
-            "description": "Source product that produced the migration items. Missing means unspecified.",
+            "description": "Optional identifier for the product that initiated the import.",
             "type": "string",
             "nullable": true
           }
@@ -8090,6 +8458,9 @@
             "$ref": "#/components/schemas/ClientRequestThreadSearchRequest"
           },
           {
+            "$ref": "#/components/schemas/ClientRequestThreadSearchOccurrencesRequest"
+          },
+          {
             "$ref": "#/components/schemas/ClientRequestThreadLoadedListRequest"
           },
           {
@@ -8150,7 +8521,13 @@
             "$ref": "#/components/schemas/ClientRequestPluginShareDeleteRequest"
           },
           {
+            "$ref": "#/components/schemas/ClientRequestAppReadRequest"
+          },
+          {
             "$ref": "#/components/schemas/ClientRequestAppListRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ClientRequestAppInstalledRequest"
           },
           {
             "$ref": "#/components/schemas/ClientRequestFsReadFileRequest"
@@ -8265,6 +8642,9 @@
           },
           {
             "$ref": "#/components/schemas/ClientRequestEnvironmentInfoRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ClientRequestEnvironmentStatusRequest"
           },
           {
             "$ref": "#/components/schemas/ClientRequestMcpServerOauthLoginRequest"
@@ -8405,6 +8785,7 @@
             "thread/rollback": "#/components/schemas/ClientRequestThreadRollbackRequest",
             "thread/list": "#/components/schemas/ClientRequestThreadListRequest",
             "thread/search": "#/components/schemas/ClientRequestThreadSearchRequest",
+            "thread/searchOccurrences": "#/components/schemas/ClientRequestThreadSearchOccurrencesRequest",
             "thread/loaded/list": "#/components/schemas/ClientRequestThreadLoadedListRequest",
             "thread/read": "#/components/schemas/ClientRequestThreadReadRequest",
             "thread/turns/list": "#/components/schemas/ClientRequestThreadTurnsListRequest",
@@ -8425,7 +8806,9 @@
             "plugin/share/list": "#/components/schemas/ClientRequestPluginShareListRequest",
             "plugin/share/checkout": "#/components/schemas/ClientRequestPluginShareCheckoutRequest",
             "plugin/share/delete": "#/components/schemas/ClientRequestPluginShareDeleteRequest",
+            "app/read": "#/components/schemas/ClientRequestAppReadRequest",
             "app/list": "#/components/schemas/ClientRequestAppListRequest",
+            "app/installed": "#/components/schemas/ClientRequestAppInstalledRequest",
             "fs/readFile": "#/components/schemas/ClientRequestFsReadFileRequest",
             "fs/writeFile": "#/components/schemas/ClientRequestFsWriteFileRequest",
             "fs/createDirectory": "#/components/schemas/ClientRequestFsCreateDirectoryRequest",
@@ -8464,6 +8847,7 @@
             "mock/experimentalMethod": "#/components/schemas/ClientRequestMockExperimentalMethodRequest",
             "environment/add": "#/components/schemas/ClientRequestEnvironmentAddRequest",
             "environment/info": "#/components/schemas/ClientRequestEnvironmentInfoRequest",
+            "environment/status": "#/components/schemas/ClientRequestEnvironmentStatusRequest",
             "mcpServer/oauth/login": "#/components/schemas/ClientRequestMcpServerOauthLoginRequest",
             "config/mcpServer/reload": "#/components/schemas/ClientRequestConfigMcpServerReloadRequest",
             "mcpServerStatus/list": "#/components/schemas/ClientRequestMcpServerStatusListRequest",
@@ -8594,8 +8978,7 @@
             ]
           },
           "subpath": {
-            "type": "string",
-            "nullable": true
+            "$ref": "#/components/schemas/LegacyAppPathString"
           }
         },
         "title": "KindFileSystemSpecialPath"
@@ -8647,8 +9030,7 @@
             "type": "string"
           },
           "subpath": {
-            "type": "string",
-            "nullable": true
+            "$ref": "#/components/schemas/LegacyAppPathString"
           }
         }
       },
@@ -11426,10 +11808,6 @@
           "resourceUri": {
             "type": "string",
             "nullable": true
-          },
-          "templateId": {
-            "type": "string",
-            "nullable": true
           }
         }
       },
@@ -11564,6 +11942,26 @@
         },
         "title": "InputImageDynamicToolCallOutputContentItem"
       },
+      "DynamicToolCallOutputContentItemInputAudioDynamicToolCallOutputContentItem": {
+        "type": "object",
+        "required": [
+          "audioUrl",
+          "type"
+        ],
+        "properties": {
+          "audioUrl": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "inputAudio"
+            ],
+            "title": "InputAudioDynamicToolCallOutputContentItemType"
+          }
+        },
+        "title": "InputAudioDynamicToolCallOutputContentItem"
+      },
       "DynamicToolCallOutputContentItem": {
         "oneOf": [
           {
@@ -11571,13 +11969,17 @@
           },
           {
             "$ref": "#/components/schemas/DynamicToolCallOutputContentItemInputImageDynamicToolCallOutputContentItem"
+          },
+          {
+            "$ref": "#/components/schemas/DynamicToolCallOutputContentItemInputAudioDynamicToolCallOutputContentItem"
           }
         ],
         "discriminator": {
           "propertyName": "type",
           "mapping": {
             "inputText": "#/components/schemas/DynamicToolCallOutputContentItemInputTextDynamicToolCallOutputContentItem",
-            "inputImage": "#/components/schemas/DynamicToolCallOutputContentItemInputImageDynamicToolCallOutputContentItem"
+            "inputImage": "#/components/schemas/DynamicToolCallOutputContentItemInputImageDynamicToolCallOutputContentItem",
+            "inputAudio": "#/components/schemas/DynamicToolCallOutputContentItemInputAudioDynamicToolCallOutputContentItem"
           }
         }
       },
@@ -11917,6 +12319,12 @@
           "query": {
             "type": "string"
           },
+          "results": {
+            "description": "Structured search results returned out-of-band by standalone web search.\n\nThese stay as opaque JSON at the extension/app-server boundary so new result fields and result types can pass through without a Codex release.",
+            "default": null,
+            "type": "array",
+            "items": {}
+          },
           "type": {
             "type": "string",
             "enum": [
@@ -11952,6 +12360,7 @@
         "title": "ImageViewThreadItem"
       },
       "ThreadItemSleepThreadItem": {
+        "description": "Display item emitted by the interruptible `clock.sleep` tool.",
         "type": "object",
         "required": [
           "durationMs",
@@ -12245,6 +12654,11 @@
           "agentRole": {
             "description": "Optional role (agent_role) assigned to an AgentControl-spawned sub-agent.",
             "type": "string",
+            "nullable": true
+          },
+          "canAcceptDirectInput": {
+            "description": "Whether the app server accepts direct turn input for this loaded thread. `None` means the capability is unavailable, such as for an unloaded stored thread.",
+            "type": "boolean",
             "nullable": true
           },
           "cliVersion": {
@@ -12705,6 +13119,61 @@
         },
         "title": "Thread/goal/clearedNotification"
       },
+      "EnvironmentConnectionNotification": {
+        "type": "object",
+        "required": [
+          "environmentId",
+          "threadId"
+        ],
+        "properties": {
+          "environmentId": {
+            "type": "string"
+          },
+          "threadId": {
+            "type": "string"
+          }
+        }
+      },
+      "ServerNotificationThreadEnvironmentConnectedNotification": {
+        "type": "object",
+        "required": [
+          "method",
+          "params"
+        ],
+        "properties": {
+          "method": {
+            "type": "string",
+            "enum": [
+              "thread/environment/connected"
+            ],
+            "title": "Thread/environment/connectedNotificationMethod"
+          },
+          "params": {
+            "$ref": "#/components/schemas/EnvironmentConnectionNotification"
+          }
+        },
+        "title": "Thread/environment/connectedNotification"
+      },
+      "ServerNotificationThreadEnvironmentDisconnectedNotification": {
+        "type": "object",
+        "required": [
+          "method",
+          "params"
+        ],
+        "properties": {
+          "method": {
+            "type": "string",
+            "enum": [
+              "thread/environment/disconnected"
+            ],
+            "title": "Thread/environment/disconnectedNotificationMethod"
+          },
+          "params": {
+            "$ref": "#/components/schemas/EnvironmentConnectionNotification"
+          }
+        },
+        "title": "Thread/environment/disconnectedNotification"
+      },
       "ActivePermissionProfile": {
         "type": "object",
         "required": [
@@ -12824,6 +13293,11 @@
           "totalTokens"
         ],
         "properties": {
+          "cacheWriteInputTokens": {
+            "default": 0,
+            "type": "integer",
+            "format": "int64"
+          },
           "cachedInputTokens": {
             "type": "integer",
             "format": "int64"
@@ -12974,6 +13448,7 @@
           "preCompact",
           "postCompact",
           "sessionStart",
+          "sessionEnd",
           "userPromptSubmit",
           "subagentStart",
           "subagentStop",
@@ -14614,6 +15089,11 @@
           },
           "secondary": {
             "$ref": "#/components/schemas/RateLimitWindow"
+          },
+          "spendControlReached": {
+            "description": "Backend-reported spend-control state. `None` is unavailable, not a sparse-update recovery.",
+            "type": "boolean",
+            "nullable": true
           }
         }
       },
@@ -14959,6 +15439,10 @@
             "type": "string"
           },
           "source": {
+            "type": "string",
+            "nullable": true
+          },
+          "subErrorType": {
             "type": "string",
             "nullable": true
           }
@@ -16241,6 +16725,13 @@
       "ServerNotification": {
         "title": "ServerNotification",
         "description": "Notification sent from the server to the client.",
+        "properties": {
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
+          }
+        },
         "oneOf": [
           {
             "$ref": "#/components/schemas/ServerNotificationErrorNotification"
@@ -16274,6 +16765,12 @@
           },
           {
             "$ref": "#/components/schemas/ServerNotificationThreadGoalClearedNotification"
+          },
+          {
+            "$ref": "#/components/schemas/ServerNotificationThreadEnvironmentConnectedNotification"
+          },
+          {
+            "$ref": "#/components/schemas/ServerNotificationThreadEnvironmentDisconnectedNotification"
           },
           {
             "$ref": "#/components/schemas/ServerNotificationThreadSettingsUpdatedNotification"
@@ -16461,6 +16958,8 @@
             "thread/name/updated": "#/components/schemas/ServerNotificationThreadNameUpdatedNotification",
             "thread/goal/updated": "#/components/schemas/ServerNotificationThreadGoalUpdatedNotification",
             "thread/goal/cleared": "#/components/schemas/ServerNotificationThreadGoalClearedNotification",
+            "thread/environment/connected": "#/components/schemas/ServerNotificationThreadEnvironmentConnectedNotification",
+            "thread/environment/disconnected": "#/components/schemas/ServerNotificationThreadEnvironmentDisconnectedNotification",
             "thread/settings/updated": "#/components/schemas/ServerNotificationThreadSettingsUpdatedNotification",
             "thread/tokenUsage/updated": "#/components/schemas/ServerNotificationThreadTokenUsageUpdatedNotification",
             "turn/started": "#/components/schemas/ServerNotificationTurnStartedNotification",
@@ -16587,10 +17086,25 @@
           },
           {
             "description": "User has denied this command and the agent should not execute it, but it should continue the session and try something else.",
-            "type": "string",
-            "enum": [
+            "type": "object",
+            "required": [
               "denied"
-            ]
+            ],
+            "properties": {
+              "denied": {
+                "type": "object",
+                "required": [
+                  "rejection"
+                ],
+                "properties": {
+                  "rejection": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "additionalProperties": false,
+            "title": "DeniedReviewDecision"
           },
           {
             "description": "Automatic approval review timed out before reaching a decision.",
@@ -16896,6 +17410,49 @@
           }
         }
       },
+      "InstalledApp": {
+        "description": "Installed connector runtime state.",
+        "type": "object",
+        "required": [
+          "callable",
+          "enabled",
+          "id"
+        ],
+        "properties": {
+          "callable": {
+            "description": "Whether the connector is enabled and has a non-synthetic, model-visible tool allowed by effective MCP and app/tool policy in the committed runtime snapshot.",
+            "type": "boolean"
+          },
+          "enabled": {
+            "description": "Effective enabled state after applying global, workspace, local, and managed configuration at read time.",
+            "type": "boolean"
+          },
+          "id": {
+            "type": "string"
+          },
+          "runtimeName": {
+            "description": "Best-effort name carried by the runtime tool catalog. Canonical app metadata remains owned by `app/read`.",
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "AppsInstalledResponse": {
+        "title": "AppsInstalledResponse",
+        "description": "The installed connectors in one committed runtime snapshot.",
+        "type": "object",
+        "required": [
+          "apps"
+        ],
+        "properties": {
+          "apps": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InstalledApp"
+            }
+          }
+        }
+      },
       "AppsListResponse": {
         "title": "AppsListResponse",
         "description": "EXPERIMENTAL - app list response.",
@@ -16914,6 +17471,98 @@
             "description": "Opaque cursor to pass to the next call to continue after the last item. If None, there are no more items to return.",
             "type": "string",
             "nullable": true
+          }
+        }
+      },
+      "AppToolSummary": {
+        "description": "EXPERIMENTAL - metadata returned by app/read.",
+        "type": "object",
+        "required": [
+          "description",
+          "name"
+        ],
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "ConnectorMetadata": {
+        "description": "EXPERIMENTAL - metadata returned by app/read.",
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "properties": {
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "distributionChannel": {
+            "type": "string",
+            "nullable": true
+          },
+          "iconUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "iconUrlDark": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "string"
+          },
+          "installUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string"
+          },
+          "pluginDisplayNames": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "toolSummaries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AppToolSummary"
+            }
+          }
+        }
+      },
+      "AppsReadResponse": {
+        "title": "AppsReadResponse",
+        "description": "EXPERIMENTAL - app/read response.",
+        "type": "object",
+        "required": [
+          "apps",
+          "missingAppIds"
+        ],
+        "properties": {
+          "apps": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConnectorMetadata"
+            }
+          },
+          "missingAppIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
@@ -17583,6 +18232,13 @@
           "type"
         ],
         "properties": {
+          "additionalContextLimit": {
+            "description": "Approximate token threshold for spilling this hook's `additionalContext` to disk. `null` uses 2,500 tokens; `0` disables spilling for this hook. The threshold is evaluated against the original context; a spilled preview also includes recovery metadata.",
+            "type": "integer",
+            "format": "uint",
+            "minimum": 0.0,
+            "nullable": true
+          },
           "async": {
             "type": "boolean"
           },
@@ -17724,6 +18380,13 @@
             }
           },
           "PreToolUse": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConfiguredHookMatcherGroup"
+            }
+          },
+          "SessionEnd": {
+            "default": [],
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ConfiguredHookMatcherGroup"
@@ -18079,6 +18742,35 @@
           }
         }
       },
+      "EnvironmentStatusKind": {
+        "description": "Current status observed by app-server without starting or recovering an environment.\n\nFor a currently ready remote environment, app-server asks the existing exec-server connection for `environment/status` without allowing recovery.",
+        "type": "string",
+        "enum": [
+          "ready",
+          "pending",
+          "disconnected",
+          "unknown"
+        ]
+      },
+      "EnvironmentStatusResponse": {
+        "title": "EnvironmentStatusResponse",
+        "description": "Current status for the requested environment.",
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "error": {
+            "description": "Human-readable detail for `disconnected` and `unknown`; omitted for other statuses.",
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/EnvironmentStatusKind",
+            "description": "Current status observed without starting or recovering the environment."
+          }
+        }
+      },
       "ExperimentalFeatureEnablementSetResponse": {
         "title": "ExperimentalFeatureEnablementSetResponse",
         "type": "object",
@@ -18182,6 +18874,33 @@
           }
         }
       },
+      "ExternalAgentImportedConnectorSource": {
+        "type": "string",
+        "enum": [
+          "remoteMcpServersConfig"
+        ]
+      },
+      "ExternalAgentImportedConnectorCandidate": {
+        "type": "object",
+        "required": [
+          "name",
+          "sessionCount",
+          "source"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "sessionCount": {
+            "type": "integer",
+            "format": "uint32",
+            "minimum": 0.0
+          },
+          "source": {
+            "$ref": "#/components/schemas/ExternalAgentImportedConnectorSource"
+          }
+        }
+      },
       "ExternalAgentConfigImportHistory": {
         "type": "object",
         "required": [
@@ -18216,9 +18935,16 @@
         "title": "ExternalAgentConfigImportHistoriesReadResponse",
         "type": "object",
         "required": [
+          "connectors",
           "data"
         ],
         "properties": {
+          "connectors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExternalAgentImportedConnectorCandidate"
+            }
+          },
           "data": {
             "type": "array",
             "items": {
@@ -18521,29 +19247,22 @@
         },
         "title": "ChatgptAccount"
       },
-      "AmazonBedrockCredentialSource": {
-        "type": "string",
-        "enum": [
-          "codexManaged",
-          "awsManaged"
-        ]
-      },
       "AccountAmazonBedrockAccount": {
         "type": "object",
         "required": [
           "type"
         ],
         "properties": {
-          "credentialSource": {
-            "$ref": "#/components/schemas/AmazonBedrockCredentialSource",
-            "default": "awsManaged"
-          },
           "type": {
             "type": "string",
             "enum": [
               "amazonBedrock"
             ],
             "title": "AmazonBedrockAccountType"
+          },
+          "usesCodexManagedCredentials": {
+            "default": false,
+            "type": "boolean"
           }
         },
         "title": "AmazonBedrockAccount"
@@ -18748,6 +19467,13 @@
           "trustStatus"
         ],
         "properties": {
+          "additionalContextLimit": {
+            "description": "Configured `additionalContext` spill threshold. `null` uses 2,500 tokens; `0` disables spilling.",
+            "type": "integer",
+            "format": "uint",
+            "minimum": 0.0,
+            "nullable": true
+          },
           "command": {
             "type": "string",
             "nullable": true
@@ -19133,6 +19859,22 @@
         },
         "title": "ChatgptAuthTokensv2::LoginAccountResponse"
       },
+      "LoginAccountResponseAmazonBedrockv2LoginAccountResponse": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "amazonBedrock"
+            ],
+            "title": "AmazonBedrockv2::LoginAccountResponseType"
+          }
+        },
+        "title": "AmazonBedrockv2::LoginAccountResponse"
+      },
       "LoginAccountResponse": {
         "title": "LoginAccountResponse",
         "oneOf": [
@@ -19147,6 +19889,9 @@
           },
           {
             "$ref": "#/components/schemas/LoginAccountResponseChatgptAuthTokensv2LoginAccountResponse"
+          },
+          {
+            "$ref": "#/components/schemas/LoginAccountResponseAmazonBedrockv2LoginAccountResponse"
           }
         ],
         "discriminator": {
@@ -19155,7 +19900,8 @@
             "apiKey": "#/components/schemas/LoginAccountResponseApiKeyv2LoginAccountResponse",
             "chatgpt": "#/components/schemas/LoginAccountResponseChatgptv2LoginAccountResponse",
             "chatgptDeviceCode": "#/components/schemas/LoginAccountResponseChatgptDeviceCodev2LoginAccountResponse",
-            "chatgptAuthTokens": "#/components/schemas/LoginAccountResponseChatgptAuthTokensv2LoginAccountResponse"
+            "chatgptAuthTokens": "#/components/schemas/LoginAccountResponseChatgptAuthTokensv2LoginAccountResponse",
+            "amazonBedrock": "#/components/schemas/LoginAccountResponseAmazonBedrockv2LoginAccountResponse"
           }
         }
       },
@@ -19370,7 +20116,8 @@
         "type": "string",
         "enum": [
           "text",
-          "image"
+          "image",
+          "audio"
         ]
       },
       "ModelServiceTier": {
@@ -20040,6 +20787,11 @@
             "type": "string",
             "nullable": true
           },
+          "mustShowInstallationInterstitial": {
+            "default": null,
+            "type": "boolean",
+            "nullable": true
+          },
           "name": {
             "type": "string"
           },
@@ -20204,6 +20956,161 @@
           }
         }
       },
+      "ScheduledTaskWeekday": {
+        "type": "string",
+        "enum": [
+          "MO",
+          "TU",
+          "WE",
+          "TH",
+          "FR",
+          "SA",
+          "SU"
+        ]
+      },
+      "ScheduledTaskScheduleHourlyScheduledTaskSchedule": {
+        "type": "object",
+        "required": [
+          "intervalHours",
+          "type"
+        ],
+        "properties": {
+          "days": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScheduledTaskWeekday"
+            }
+          },
+          "intervalHours": {
+            "type": "integer",
+            "format": "uint32",
+            "minimum": 0.0
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "hourly"
+            ],
+            "title": "HourlyScheduledTaskScheduleType"
+          }
+        },
+        "title": "HourlyScheduledTaskSchedule"
+      },
+      "ScheduledTaskScheduleDailyScheduledTaskSchedule": {
+        "type": "object",
+        "required": [
+          "time",
+          "type"
+        ],
+        "properties": {
+          "time": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "daily"
+            ],
+            "title": "DailyScheduledTaskScheduleType"
+          }
+        },
+        "title": "DailyScheduledTaskSchedule"
+      },
+      "ScheduledTaskScheduleWeekdaysScheduledTaskSchedule": {
+        "type": "object",
+        "required": [
+          "time",
+          "type"
+        ],
+        "properties": {
+          "time": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "weekdays"
+            ],
+            "title": "WeekdaysScheduledTaskScheduleType"
+          }
+        },
+        "title": "WeekdaysScheduledTaskSchedule"
+      },
+      "ScheduledTaskScheduleWeeklyScheduledTaskSchedule": {
+        "type": "object",
+        "required": [
+          "days",
+          "time",
+          "type"
+        ],
+        "properties": {
+          "days": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScheduledTaskWeekday"
+            }
+          },
+          "time": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "weekly"
+            ],
+            "title": "WeeklyScheduledTaskScheduleType"
+          }
+        },
+        "title": "WeeklyScheduledTaskSchedule"
+      },
+      "ScheduledTaskSchedule": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ScheduledTaskScheduleHourlyScheduledTaskSchedule"
+          },
+          {
+            "$ref": "#/components/schemas/ScheduledTaskScheduleDailyScheduledTaskSchedule"
+          },
+          {
+            "$ref": "#/components/schemas/ScheduledTaskScheduleWeekdaysScheduledTaskSchedule"
+          },
+          {
+            "$ref": "#/components/schemas/ScheduledTaskScheduleWeeklyScheduledTaskSchedule"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "hourly": "#/components/schemas/ScheduledTaskScheduleHourlyScheduledTaskSchedule",
+            "daily": "#/components/schemas/ScheduledTaskScheduleDailyScheduledTaskSchedule",
+            "weekdays": "#/components/schemas/ScheduledTaskScheduleWeekdaysScheduledTaskSchedule",
+            "weekly": "#/components/schemas/ScheduledTaskScheduleWeeklyScheduledTaskSchedule"
+          }
+        }
+      },
+      "ScheduledTaskSummary": {
+        "type": "object",
+        "required": [
+          "key",
+          "name",
+          "prompt",
+          "schedule"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "prompt": {
+            "type": "string"
+          },
+          "schedule": {
+            "$ref": "#/components/schemas/ScheduledTaskSchedule"
+          }
+        }
+      },
       "SkillInterface": {
         "type": "object",
         "properties": {
@@ -20304,6 +21211,12 @@
             "type": "array",
             "items": {
               "type": "string"
+            }
+          },
+          "scheduledTasks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScheduledTaskSummary"
             }
           },
           "shareUrl": {
@@ -21080,6 +21993,22 @@
         "title": "ThreadInjectItemsResponse",
         "type": "object"
       },
+      "ThreadItemEntry": {
+        "type": "object",
+        "required": [
+          "item",
+          "turnId"
+        ],
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/ThreadItem"
+          },
+          "turnId": {
+            "description": "Turn containing this item.",
+            "type": "string"
+          }
+        }
+      },
       "ThreadItemsListResponse": {
         "title": "ThreadItemsListResponse",
         "type": "object",
@@ -21095,7 +22024,7 @@
           "data": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ThreadItem"
+              "$ref": "#/components/schemas/ThreadItemEntry"
             }
           },
           "nextCursor": {
@@ -21305,6 +22234,12 @@
               "$ref": "#/components/schemas/LegacyAppPathString"
             }
           },
+          "itemsBackwardsCursor": {
+            "description": "Opaque head cursor for hydrating paginated items backwards.\n\nPass this as `cursor` to `thread/items/list` with `sortDirection: \"desc\"`. The first page includes the cursor's head item.",
+            "default": null,
+            "type": "string",
+            "nullable": true
+          },
           "model": {
             "type": "string"
           },
@@ -21337,6 +22272,12 @@
           },
           "thread": {
             "$ref": "#/components/schemas/Thread"
+          },
+          "turnsBackwardsCursor": {
+            "description": "Opaque head cursor for hydrating paginated turns backwards.\n\nPass this as `cursor` to `thread/turns/list` with `sortDirection: \"desc\"`. The first page includes the cursor's head turn.",
+            "default": null,
+            "type": "string",
+            "nullable": true
           }
         }
       },
@@ -21350,6 +22291,79 @@
           "thread": {
             "$ref": "#/components/schemas/Thread",
             "description": "The updated thread after applying the rollback, with `turns` populated.\n\nThe ThreadItems stored in each Turn are lossy since we explicitly do not persist all agent interactions, such as command executions. This is the same behavior as `thread/resume`."
+          }
+        }
+      },
+      "ThreadSearchTextRange": {
+        "description": "UTF-16 code-unit range within `snippet`.",
+        "type": "object",
+        "required": [
+          "end",
+          "start"
+        ],
+        "properties": {
+          "end": {
+            "description": "Exclusive UTF-16 code-unit offset.",
+            "type": "integer",
+            "format": "uint32",
+            "minimum": 0.0
+          },
+          "start": {
+            "description": "Inclusive UTF-16 code-unit offset.",
+            "type": "integer",
+            "format": "uint32",
+            "minimum": 0.0
+          }
+        }
+      },
+      "ThreadSearchOccurrence": {
+        "description": "One visible message occurrence returned by [`ThreadSearchOccurrencesResponse`].",
+        "type": "object",
+        "required": [
+          "itemId",
+          "snippet",
+          "snippetMatchRange",
+          "turnCursor",
+          "turnId"
+        ],
+        "properties": {
+          "itemId": {
+            "type": "string"
+          },
+          "snippet": {
+            "type": "string"
+          },
+          "snippetMatchRange": {
+            "$ref": "#/components/schemas/ThreadSearchTextRange",
+            "description": "Match range within `snippet`, in UTF-16 code units."
+          },
+          "turnCursor": {
+            "description": "Opaque inclusive cursor accepted by `thread/turns/list` for this turn.",
+            "type": "string"
+          },
+          "turnId": {
+            "type": "string"
+          }
+        }
+      },
+      "ThreadSearchOccurrencesResponse": {
+        "title": "ThreadSearchOccurrencesResponse",
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "description": "Occurrences in chronological message order.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ThreadSearchOccurrence"
+            }
+          },
+          "nextCursor": {
+            "description": "Opaque cursor to continue after the last returned occurrence.",
+            "type": "string",
+            "nullable": true
           }
         }
       },

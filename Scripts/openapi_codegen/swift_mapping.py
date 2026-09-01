@@ -8,6 +8,8 @@ from openapi_codegen.common import UnionCase, UnionMapping, pascal_case
 RESPONSE_OVERRIDES = {
     "ClientRequestThreadNameSetRequest": "ThreadSetNameResponse",
     "ClientRequestAppListRequest": "AppsListResponse",
+    "ClientRequestAppReadRequest": "AppsReadResponse",
+    "ClientRequestAppInstalledRequest": "AppsInstalledResponse",
     "ClientRequestRemoteControlClientListRequest": "RemoteControlClientsListResponse",
     "ClientRequestRemoteControlClientRevokeRequest": "RemoteControlClientsRevokeResponse",
     "ClientRequestConfigMcpServerReloadRequest": "McpServerRefreshResponse",

@@ -88,6 +88,17 @@ import Testing
     }
 }
 
+@Test func appRequestsUseTheirExportedResponseTypes() {
+    requireResponseType(
+        AppServerModels.ClientRequest.AppRead.self,
+        Components.Schemas.AppsReadResponse.self
+    )
+    requireResponseType(
+        AppServerModels.ClientRequest.AppInstalled.self,
+        Components.Schemas.AppsInstalledResponse.self
+    )
+}
+
 @Test func fileUploaderCopiesDataAndReportsProgress() async throws {
     let root = FileManager.default.temporaryDirectory
         .appendingPathComponent(UUID().uuidString, isDirectory: true)
@@ -231,6 +242,11 @@ import Testing
 private enum TestTransportError: Error, Equatable {
     case writeFailed
 }
+
+private func requireResponseType<Request, Response>(
+    _: Request.Type,
+    _: Response.Type
+) where Request: ClientRequestable, Request.Response == Response {}
 
 private actor TestConnection: AppServerConnection {
     nonisolated let reader: AsyncStream<Data>

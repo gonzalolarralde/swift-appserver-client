@@ -30,6 +30,7 @@ public extension AppServerModels.ClientRequest {
     typealias ThreadRollback = Components.Schemas.ClientRequestThreadRollbackRequest
     typealias ThreadList = Components.Schemas.ClientRequestThreadListRequest
     typealias ThreadSearch = Components.Schemas.ClientRequestThreadSearchRequest
+    typealias ThreadSearchOccurrences = Components.Schemas.ClientRequestThreadSearchOccurrencesRequest
     typealias ThreadLoadedList = Components.Schemas.ClientRequestThreadLoadedListRequest
     typealias ThreadRead = Components.Schemas.ClientRequestThreadReadRequest
     typealias ThreadTurnsList = Components.Schemas.ClientRequestThreadTurnsListRequest
@@ -50,7 +51,9 @@ public extension AppServerModels.ClientRequest {
     typealias PluginShareList = Components.Schemas.ClientRequestPluginShareListRequest
     typealias PluginShareCheckout = Components.Schemas.ClientRequestPluginShareCheckoutRequest
     typealias PluginShareDelete = Components.Schemas.ClientRequestPluginShareDeleteRequest
+    typealias AppRead = Components.Schemas.ClientRequestAppReadRequest
     typealias AppList = Components.Schemas.ClientRequestAppListRequest
+    typealias AppInstalled = Components.Schemas.ClientRequestAppInstalledRequest
     typealias FsReadFile = Components.Schemas.ClientRequestFsReadFileRequest
     typealias FsWriteFile = Components.Schemas.ClientRequestFsWriteFileRequest
     typealias FsCreateDirectory = Components.Schemas.ClientRequestFsCreateDirectoryRequest
@@ -89,6 +92,7 @@ public extension AppServerModels.ClientRequest {
     typealias MockExperimentalMethod = Components.Schemas.ClientRequestMockExperimentalMethodRequest
     typealias EnvironmentAdd = Components.Schemas.ClientRequestEnvironmentAddRequest
     typealias EnvironmentInfo = Components.Schemas.ClientRequestEnvironmentInfoRequest
+    typealias EnvironmentStatus = Components.Schemas.ClientRequestEnvironmentStatusRequest
     typealias McpServerOauthLogin = Components.Schemas.ClientRequestMcpServerOauthLoginRequest
     typealias ConfigMcpServerReload = Components.Schemas.ClientRequestConfigMcpServerReloadRequest
     typealias McpServerStatusList = Components.Schemas.ClientRequestMcpServerStatusListRequest
@@ -154,6 +158,7 @@ public extension AppServerModels.ClientRequest {
         public typealias ThreadRollback = Components.Schemas.ThreadRollbackResponse
         public typealias ThreadList = Components.Schemas.ThreadListResponse
         public typealias ThreadSearch = Components.Schemas.ThreadSearchResponse
+        public typealias ThreadSearchOccurrences = Components.Schemas.ThreadSearchOccurrencesResponse
         public typealias ThreadLoadedList = Components.Schemas.ThreadLoadedListResponse
         public typealias ThreadRead = Components.Schemas.ThreadReadResponse
         public typealias ThreadTurnsList = Components.Schemas.ThreadTurnsListResponse
@@ -174,7 +179,9 @@ public extension AppServerModels.ClientRequest {
         public typealias PluginShareList = Components.Schemas.PluginShareListResponse
         public typealias PluginShareCheckout = Components.Schemas.PluginShareCheckoutResponse
         public typealias PluginShareDelete = Components.Schemas.PluginShareDeleteResponse
+        public typealias AppRead = Components.Schemas.AppsReadResponse
         public typealias AppList = Components.Schemas.AppsListResponse
+        public typealias AppInstalled = Components.Schemas.AppsInstalledResponse
         public typealias FsReadFile = Components.Schemas.FsReadFileResponse
         public typealias FsWriteFile = Components.Schemas.FsWriteFileResponse
         public typealias FsCreateDirectory = Components.Schemas.FsCreateDirectoryResponse
@@ -213,6 +220,7 @@ public extension AppServerModels.ClientRequest {
         public typealias MockExperimentalMethod = Components.Schemas.MockExperimentalMethodResponse
         public typealias EnvironmentAdd = Components.Schemas.EnvironmentAddResponse
         public typealias EnvironmentInfo = Components.Schemas.EnvironmentInfoResponse
+        public typealias EnvironmentStatus = Components.Schemas.EnvironmentStatusResponse
         public typealias McpServerOauthLogin = Components.Schemas.McpServerOauthLoginResponse
         public typealias ConfigMcpServerReload = Components.Schemas.McpServerRefreshResponse
         public typealias McpServerStatusList = Components.Schemas.ListMcpServerStatusResponse
@@ -280,6 +288,7 @@ public extension AppServerModels.ClientRequest {
         case let .threadRollback(value): value
         case let .threadList(value): value
         case let .threadSearch(value): value
+        case let .threadSearchOccurrences(value): value
         case let .threadLoadedList(value): value
         case let .threadRead(value): value
         case let .threadTurnsList(value): value
@@ -300,7 +309,9 @@ public extension AppServerModels.ClientRequest {
         case let .pluginShareList(value): value
         case let .pluginShareCheckout(value): value
         case let .pluginShareDelete(value): value
+        case let .appRead(value): value
         case let .appList(value): value
+        case let .appInstalled(value): value
         case let .fsReadFile(value): value
         case let .fsWriteFile(value): value
         case let .fsCreateDirectory(value): value
@@ -339,6 +350,7 @@ public extension AppServerModels.ClientRequest {
         case let .mockExperimentalMethod(value): value
         case let .environmentAdd(value): value
         case let .environmentInfo(value): value
+        case let .environmentStatus(value): value
         case let .mcpServerOauthLogin(value): value
         case let .configMcpServerReload(value): value
         case let .mcpServerStatusList(value): value
@@ -595,6 +607,14 @@ extension Components.Schemas.ClientRequestThreadSearchRequest: ClientRequestable
     }
 }
 
+extension Components.Schemas.ClientRequestThreadSearchOccurrencesRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ThreadSearchOccurrencesParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadSearchOccurrences
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .threadSearchOccurrences(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
 extension Components.Schemas.ClientRequestThreadLoadedListRequest: ClientRequestable {
     public typealias Params = Components.Schemas.ThreadLoadedListParams
     public typealias Response = AppServerModels.ClientRequest.Response.ThreadLoadedList
@@ -755,11 +775,27 @@ extension Components.Schemas.ClientRequestPluginShareDeleteRequest: ClientReques
     }
 }
 
+extension Components.Schemas.ClientRequestAppReadRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.AppsReadParams
+    public typealias Response = AppServerModels.ClientRequest.Response.AppRead
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .appRead(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
 extension Components.Schemas.ClientRequestAppListRequest: ClientRequestable {
     public typealias Params = Components.Schemas.AppsListParams
     public typealias Response = AppServerModels.ClientRequest.Response.AppList
     public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .appList(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestAppInstalledRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.AppsInstalledParams
+    public typealias Response = AppServerModels.ClientRequest.Response.AppInstalled
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .appInstalled(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
@@ -1064,6 +1100,14 @@ extension Components.Schemas.ClientRequestEnvironmentInfoRequest: ClientRequesta
     public typealias Response = AppServerModels.ClientRequest.Response.EnvironmentInfo
     public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .environmentInfo(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestEnvironmentStatusRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.EnvironmentStatusParams
+    public typealias Response = AppServerModels.ClientRequest.Response.EnvironmentStatus
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .environmentStatus(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
@@ -1499,6 +1543,8 @@ public extension AppServerModels.ServerNotification {
     typealias ThreadNameUpdated = Components.Schemas.ServerNotificationThreadNameUpdatedNotification
     typealias ThreadGoalUpdated = Components.Schemas.ServerNotificationThreadGoalUpdatedNotification
     typealias ThreadGoalCleared = Components.Schemas.ServerNotificationThreadGoalClearedNotification
+    typealias ThreadEnvironmentConnected = Components.Schemas.ServerNotificationThreadEnvironmentConnectedNotification
+    typealias ThreadEnvironmentDisconnected = Components.Schemas.ServerNotificationThreadEnvironmentDisconnectedNotification
     typealias ThreadSettingsUpdated = Components.Schemas.ServerNotificationThreadSettingsUpdatedNotification
     typealias ThreadTokenUsageUpdated = Components.Schemas.ServerNotificationThreadTokenUsageUpdatedNotification
     typealias TurnStarted = Components.Schemas.ServerNotificationTurnStartedNotification
@@ -1570,6 +1616,8 @@ public extension AppServerModels.ServerNotification {
         case let .threadNameUpdated(value): value
         case let .threadGoalUpdated(value): value
         case let .threadGoalCleared(value): value
+        case let .threadEnvironmentConnected(value): value
+        case let .threadEnvironmentDisconnected(value): value
         case let .threadSettingsUpdated(value): value
         case let .threadTokenUsageUpdated(value): value
         case let .turnStarted(value): value
@@ -1705,6 +1753,20 @@ extension Components.Schemas.ServerNotificationThreadGoalClearedNotification: Se
     public typealias Params = Components.Schemas.ThreadGoalClearedNotification
     public static func build(params: Params) -> AppServerModels.ServerNotification {
         .threadGoalCleared(.init(method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ServerNotificationThreadEnvironmentConnectedNotification: ServerNotificationPayload {
+    public typealias Params = Components.Schemas.EnvironmentConnectionNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
+        .threadEnvironmentConnected(.init(method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ServerNotificationThreadEnvironmentDisconnectedNotification: ServerNotificationPayload {
+    public typealias Params = Components.Schemas.EnvironmentConnectionNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
+        .threadEnvironmentDisconnected(.init(method: .allCases.first!, params: params))
     }
 }
 
