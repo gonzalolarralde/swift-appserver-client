@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Codex App Server Protocol",
-    "version": "0.149.1"
+    "version": "0.150.0"
   },
   "paths": {},
   "components": {
@@ -1251,7 +1251,8 @@
       "ResponseItemFunctionCallOutputResponseItem": {
         "properties": {
           "call_id": {
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "id": {
             "type": "string",
@@ -1259,6 +1260,14 @@
           },
           "internal_chat_message_metadata_passthrough": {
             "$ref": "#/components/schemas/InternalChatMessageMetadataPassthrough"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "namespace": {
+            "type": "string",
+            "nullable": true
           },
           "output": {
             "$ref": "#/components/schemas/FunctionCallOutputBody"
@@ -1272,7 +1281,6 @@
           }
         },
         "required": [
-          "call_id",
           "output",
           "type"
         ],
@@ -6285,6 +6293,27 @@
         "title": "WebrtcThreadRealtimeStartTransport",
         "type": "object"
       },
+      "ThreadRealtimeStartTransportExistingCallThreadRealtimeStartTransport": {
+        "properties": {
+          "callId": {
+            "description": "Identifier of a realtime call already created and negotiated by the client.",
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "existingCall"
+            ],
+            "title": "ExistingCallThreadRealtimeStartTransportType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "callId",
+          "type"
+        ],
+        "title": "ExistingCallThreadRealtimeStartTransport",
+        "type": "object"
+      },
       "ThreadRealtimeStartTransport": {
         "description": "EXPERIMENTAL - transport used by thread realtime.",
         "oneOf": [
@@ -6293,13 +6322,17 @@
           },
           {
             "$ref": "#/components/schemas/ThreadRealtimeStartTransportWebrtcThreadRealtimeStartTransport"
+          },
+          {
+            "$ref": "#/components/schemas/ThreadRealtimeStartTransportExistingCallThreadRealtimeStartTransport"
           }
         ],
         "discriminator": {
           "propertyName": "type",
           "mapping": {
             "websocket": "#/components/schemas/ThreadRealtimeStartTransportWebsocketThreadRealtimeStartTransport",
-            "webrtc": "#/components/schemas/ThreadRealtimeStartTransportWebrtcThreadRealtimeStartTransport"
+            "webrtc": "#/components/schemas/ThreadRealtimeStartTransportWebrtcThreadRealtimeStartTransport",
+            "existingCall": "#/components/schemas/ThreadRealtimeStartTransportExistingCallThreadRealtimeStartTransport"
           }
         }
       },
@@ -6650,6 +6683,52 @@
           "params"
         ],
         "title": "Thread/realtime/stopRequest",
+        "type": "object"
+      },
+      "ThreadTimelineListParams": {
+        "description": "EXPERIMENTAL - list ordinary and realtime thread history in rollout order.",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "nullable": true
+          },
+          "limit": {
+            "format": "uint32",
+            "minimum": 0.0,
+            "type": "integer",
+            "nullable": true
+          },
+          "threadId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "threadId"
+        ],
+        "type": "object"
+      },
+      "ClientRequestThreadTimelineListRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "thread/timeline/list"
+            ],
+            "title": "Thread/timeline/listRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ThreadTimelineListParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "Thread/timeline/listRequest",
         "type": "object"
       },
       "ThreadRealtimeListVoicesParams": {
@@ -7667,6 +7746,91 @@
         "title": "McpServer/resource/readRequest",
         "type": "object"
       },
+      "McpServerEventStreamStartParams": {
+        "properties": {
+          "_meta": {},
+          "arguments": {},
+          "name": {
+            "type": "string"
+          },
+          "server": {
+            "type": "string"
+          },
+          "subscriptionId": {
+            "type": "string"
+          },
+          "threadId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "arguments",
+          "name",
+          "server",
+          "subscriptionId",
+          "threadId"
+        ],
+        "type": "object"
+      },
+      "ClientRequestMcpServerEventStreamStartRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "mcpServer/event/stream/start"
+            ],
+            "title": "McpServer/event/stream/startRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/McpServerEventStreamStartParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "McpServer/event/stream/startRequest",
+        "type": "object"
+      },
+      "McpServerEventStreamStopParams": {
+        "properties": {
+          "subscriptionId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "subscriptionId"
+        ],
+        "type": "object"
+      },
+      "ClientRequestMcpServerEventStreamStopRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "mcpServer/event/stream/stop"
+            ],
+            "title": "McpServer/event/stream/stopRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/McpServerEventStreamStopParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "McpServer/event/stream/stopRequest",
+        "type": "object"
+      },
       "McpServerToolCallParams": {
         "properties": {
           "_meta": {},
@@ -7905,6 +8069,39 @@
         "title": "AmazonBedrockLoginAccountParams",
         "type": "object"
       },
+      "LoginAccountParamsAmazonBedrockAccessKeysLoginAccountParams": {
+        "description": "[UNSTABLE] Managed Amazon Bedrock AWS access key login is experimental.",
+        "properties": {
+          "accessKeyId": {
+            "type": "string"
+          },
+          "region": {
+            "type": "string"
+          },
+          "secretAccessKey": {
+            "type": "string"
+          },
+          "sessionToken": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "enum": [
+              "amazonBedrockAccessKeys"
+            ],
+            "title": "AmazonBedrockAccessKeysLoginAccountParamsType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "accessKeyId",
+          "region",
+          "secretAccessKey",
+          "type"
+        ],
+        "title": "AmazonBedrockAccessKeysLoginAccountParams",
+        "type": "object"
+      },
       "LoginAccountParams": {
         "oneOf": [
           {
@@ -7921,6 +8118,9 @@
           },
           {
             "$ref": "#/components/schemas/LoginAccountParamsAmazonBedrockLoginAccountParams"
+          },
+          {
+            "$ref": "#/components/schemas/LoginAccountParamsAmazonBedrockAccessKeysLoginAccountParams"
           }
         ],
         "discriminator": {
@@ -7930,7 +8130,8 @@
             "chatgpt": "#/components/schemas/LoginAccountParamsChatgptLoginAccountParams",
             "chatgptDeviceCode": "#/components/schemas/LoginAccountParamsChatgptDeviceCodeLoginAccountParams",
             "chatgptAuthTokens": "#/components/schemas/LoginAccountParamsChatgptAuthTokensLoginAccountParams",
-            "amazonBedrock": "#/components/schemas/LoginAccountParamsAmazonBedrockLoginAccountParams"
+            "amazonBedrock": "#/components/schemas/LoginAccountParamsAmazonBedrockLoginAccountParams",
+            "amazonBedrockAccessKeys": "#/components/schemas/LoginAccountParamsAmazonBedrockAccessKeysLoginAccountParams"
           }
         }
       },
@@ -8009,18 +8210,8 @@
         "title": "ProfileBedrockSetupParams",
         "type": "object"
       },
-      "AwsCredentialType": {
-        "enum": [
-          "accessKeys",
-          "bedrockApiKey"
-        ],
-        "type": "string"
-      },
       "BedrockSetupParamsEnvironmentBedrockSetupParams": {
         "properties": {
-          "credentialType": {
-            "$ref": "#/components/schemas/AwsCredentialType"
-          },
           "region": {
             "type": "string"
           },
@@ -8033,43 +8224,10 @@
           }
         },
         "required": [
-          "credentialType",
           "region",
           "type"
         ],
         "title": "EnvironmentBedrockSetupParams",
-        "type": "object"
-      },
-      "BedrockSetupParamsAccessKeysBedrockSetupParams": {
-        "properties": {
-          "accessKeyId": {
-            "type": "string"
-          },
-          "region": {
-            "type": "string"
-          },
-          "secretAccessKey": {
-            "type": "string"
-          },
-          "sessionToken": {
-            "type": "string",
-            "nullable": true
-          },
-          "type": {
-            "enum": [
-              "accessKeys"
-            ],
-            "title": "AccessKeysBedrockSetupParamsType",
-            "type": "string"
-          }
-        },
-        "required": [
-          "accessKeyId",
-          "region",
-          "secretAccessKey",
-          "type"
-        ],
-        "title": "AccessKeysBedrockSetupParams",
         "type": "object"
       },
       "BedrockSetupParams": {
@@ -8079,17 +8237,13 @@
           },
           {
             "$ref": "#/components/schemas/BedrockSetupParamsEnvironmentBedrockSetupParams"
-          },
-          {
-            "$ref": "#/components/schemas/BedrockSetupParamsAccessKeysBedrockSetupParams"
           }
         ],
         "discriminator": {
           "propertyName": "type",
           "mapping": {
             "profile": "#/components/schemas/BedrockSetupParamsProfileBedrockSetupParams",
-            "environment": "#/components/schemas/BedrockSetupParamsEnvironmentBedrockSetupParams",
-            "accessKeys": "#/components/schemas/BedrockSetupParamsAccessKeysBedrockSetupParams"
+            "environment": "#/components/schemas/BedrockSetupParamsEnvironmentBedrockSetupParams"
           }
         }
       },
@@ -10009,6 +10163,9 @@
             "$ref": "#/components/schemas/ClientRequestThreadRealtimeStopRequest"
           },
           {
+            "$ref": "#/components/schemas/ClientRequestThreadTimelineListRequest"
+          },
+          {
             "$ref": "#/components/schemas/ClientRequestThreadRealtimeListVoicesRequest"
           },
           {
@@ -10076,6 +10233,12 @@
           },
           {
             "$ref": "#/components/schemas/ClientRequestMcpServerResourceReadRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ClientRequestMcpServerEventStreamStartRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ClientRequestMcpServerEventStreamStopRequest"
           },
           {
             "$ref": "#/components/schemas/ClientRequestMcpServerToolCallRequest"
@@ -10278,6 +10441,7 @@
             "thread/realtime/appendText": "#/components/schemas/ClientRequestThreadRealtimeAppendTextRequest",
             "thread/realtime/appendSpeech": "#/components/schemas/ClientRequestThreadRealtimeAppendSpeechRequest",
             "thread/realtime/stop": "#/components/schemas/ClientRequestThreadRealtimeStopRequest",
+            "thread/timeline/list": "#/components/schemas/ClientRequestThreadTimelineListRequest",
             "thread/realtime/listVoices": "#/components/schemas/ClientRequestThreadRealtimeListVoicesRequest",
             "review/start": "#/components/schemas/ClientRequestReviewStartRequest",
             "model/list": "#/components/schemas/ClientRequestModelListRequest",
@@ -10301,6 +10465,8 @@
             "config/mcpServer/reload": "#/components/schemas/ClientRequestConfigMcpServerReloadRequest",
             "mcpServerStatus/list": "#/components/schemas/ClientRequestMcpServerStatusListRequest",
             "mcpServer/resource/read": "#/components/schemas/ClientRequestMcpServerResourceReadRequest",
+            "mcpServer/event/stream/start": "#/components/schemas/ClientRequestMcpServerEventStreamStartRequest",
+            "mcpServer/event/stream/stop": "#/components/schemas/ClientRequestMcpServerEventStreamStopRequest",
             "mcpServer/tool/call": "#/components/schemas/ClientRequestMcpServerToolCallRequest",
             "windowsSandbox/setupStart": "#/components/schemas/ClientRequestWindowsSandboxSetupStartRequest",
             "windowsSandbox/readiness": "#/components/schemas/ClientRequestWindowsSandboxReadinessRequest",
@@ -10852,6 +11018,14 @@
           }
         }
       },
+      "CommandExecutionApprovalKind": {
+        "description": "Distinguishes a command approval from input sent to an existing terminal.",
+        "enum": [
+          "command",
+          "writeStdin"
+        ],
+        "type": "string"
+      },
       "NetworkApprovalProtocol": {
         "enum": [
           "http",
@@ -10882,7 +11056,7 @@
             "$ref": "#/components/schemas/AdditionalPermissionProfile"
           },
           "approvalId": {
-            "description": "Unique identifier for this specific approval callback.\n\nFor regular shell/unified_exec approvals, this is null.\n\nFor zsh-exec-bridge subcommand approvals, multiple callbacks can belong to one parent `itemId`, so `approvalId` is a distinct opaque callback id (a UUID) used to disambiguate routing.",
+            "description": "Unique identifier for this specific approval callback.\n\nFor regular shell/unified_exec approvals, this is null.\n\nFor zsh-exec-bridge subcommand approvals, multiple callbacks can belong to one parent `itemId`, so `approvalId` is a distinct opaque callback id (a UUID) used to disambiguate routing. Stdin approvals also use a distinct callback id; inspect `kind` to distinguish them.",
             "type": "string",
             "nullable": true
           },
@@ -10916,6 +11090,11 @@
           },
           "itemId": {
             "type": "string"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/CommandExecutionApprovalKind",
+            "default": "command",
+            "description": "Kind of action under review. Defaults to `command` for older servers."
           },
           "networkApprovalContext": {
             "$ref": "#/components/schemas/NetworkApprovalContext"
@@ -13576,7 +13755,8 @@
         "enum": [
           "inProgress",
           "completed",
-          "failed"
+          "failed",
+          "interrupted"
         ],
         "type": "string"
       },
@@ -13586,7 +13766,11 @@
           "sendInput",
           "resumeAgent",
           "wait",
-          "closeAgent"
+          "closeAgent",
+          "sendMessage",
+          "followupTask",
+          "interruptAgent",
+          "listAgents"
         ],
         "type": "string"
       },
@@ -13659,7 +13843,8 @@
         "enum": [
           "started",
           "interacted",
-          "interrupted"
+          "interrupted",
+          "completed"
         ],
         "type": "string"
       },
@@ -15145,7 +15330,8 @@
           "userPromptSubmit",
           "subagentStart",
           "subagentStop",
-          "stop"
+          "stop",
+          "interrupt"
         ],
         "type": "string"
       },
@@ -15605,6 +15791,39 @@
         "title": "ExecveGuardianApprovalReviewAction",
         "type": "object"
       },
+      "GuardianApprovalReviewActionWriteStdinGuardianApprovalReviewAction": {
+        "description": "A child approval for input to an existing command execution item.",
+        "properties": {
+          "approvalId": {
+            "type": "string"
+          },
+          "cwd": {
+            "$ref": "#/components/schemas/LegacyAppPathString"
+          },
+          "processId": {
+            "type": "string"
+          },
+          "stdin": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "writeStdin"
+            ],
+            "title": "WriteStdinGuardianApprovalReviewActionType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "approvalId",
+          "cwd",
+          "processId",
+          "stdin",
+          "type"
+        ],
+        "title": "WriteStdinGuardianApprovalReviewAction",
+        "type": "object"
+      },
       "GuardianApprovalReviewActionApplyPatchGuardianApprovalReviewAction": {
         "properties": {
           "cwd": {
@@ -15735,6 +15954,9 @@
             "$ref": "#/components/schemas/GuardianApprovalReviewActionExecveGuardianApprovalReviewAction"
           },
           {
+            "$ref": "#/components/schemas/GuardianApprovalReviewActionWriteStdinGuardianApprovalReviewAction"
+          },
+          {
             "$ref": "#/components/schemas/GuardianApprovalReviewActionApplyPatchGuardianApprovalReviewAction"
           },
           {
@@ -15752,6 +15974,7 @@
           "mapping": {
             "command": "#/components/schemas/GuardianApprovalReviewActionCommandGuardianApprovalReviewAction",
             "execve": "#/components/schemas/GuardianApprovalReviewActionExecveGuardianApprovalReviewAction",
+            "writeStdin": "#/components/schemas/GuardianApprovalReviewActionWriteStdinGuardianApprovalReviewAction",
             "applyPatch": "#/components/schemas/GuardianApprovalReviewActionApplyPatchGuardianApprovalReviewAction",
             "networkAccess": "#/components/schemas/GuardianApprovalReviewActionNetworkAccessGuardianApprovalReviewAction",
             "mcpToolCall": "#/components/schemas/GuardianApprovalReviewActionMcpToolCallGuardianApprovalReviewAction",
@@ -15831,7 +16054,7 @@
             "type": "integer"
           },
           "targetItemId": {
-            "description": "Identifier for the reviewed item or tool call when one exists.\n\nIn most cases, one review maps to one target item. The exceptions are - execve reviews, where a single command may contain multiple execve calls to review (only possible when using the shell_zsh_fork feature) - network policy reviews, where there is no target item\n\nA network call is triggered by a CommandExecution item, so having a target_item_id set to the CommandExecution item would be misleading because the review is about the network call, not the command execution. Therefore, target_item_id is set to None for network policy reviews.",
+            "description": "Identifier for the reviewed item or tool call when one exists.\n\nIn most cases, one review maps to one target item. The exceptions are - execve reviews, where a single command may contain multiple execve calls to review (only possible when using the shell_zsh_fork feature) - stdin reviews, which refer to the existing parent command item and have a separate approval ID in the action payload - network policy reviews, where there is no target item\n\nA network call is triggered by a CommandExecution item, so having a target_item_id set to the CommandExecution item would be misleading because the review is about the network call, not the command execution. Therefore, target_item_id is set to None for network policy reviews.",
             "type": "string",
             "nullable": true
           },
@@ -15906,7 +16129,7 @@
             "type": "integer"
           },
           "targetItemId": {
-            "description": "Identifier for the reviewed item or tool call when one exists.\n\nIn most cases, one review maps to one target item. The exceptions are - execve reviews, where a single command may contain multiple execve calls to review (only possible when using the shell_zsh_fork feature) - network policy reviews, where there is no target item\n\nA network call is triggered by a CommandExecution item, so having a target_item_id set to the CommandExecution item would be misleading because the review is about the network call, not the command execution. Therefore, target_item_id is set to None for network policy reviews.",
+            "description": "Identifier for the reviewed item or tool call when one exists.\n\nIn most cases, one review maps to one target item. The exceptions are - execve reviews, where a single command may contain multiple execve calls to review (only possible when using the shell_zsh_fork feature) - stdin reviews, which refer to the existing parent command item and have a separate approval ID in the action payload - network policy reviews, where there is no target item\n\nA network call is triggered by a CommandExecution item, so having a target_item_id set to the CommandExecution item would be misleading because the review is about the network call, not the command execution. Therefore, target_item_id is set to None for network policy reviews.",
             "type": "string",
             "nullable": true
           },
@@ -16660,6 +16883,54 @@
         "title": "McpServer/startupStatus/updatedNotification",
         "type": "object"
       },
+      "McpServerEventNotification": {
+        "properties": {
+          "method": {
+            "type": "string"
+          },
+          "params": {}
+        },
+        "required": [
+          "method",
+          "params"
+        ],
+        "type": "object"
+      },
+      "McpServerEventStreamNotification": {
+        "properties": {
+          "notification": {
+            "$ref": "#/components/schemas/McpServerEventNotification"
+          },
+          "subscriptionId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "notification",
+          "subscriptionId"
+        ],
+        "type": "object"
+      },
+      "ServerNotificationMcpServerEventStreamNotificationNotification": {
+        "properties": {
+          "method": {
+            "enum": [
+              "mcpServer/event/stream/notification"
+            ],
+            "title": "McpServer/event/stream/notificationNotificationMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/McpServerEventStreamNotification"
+          }
+        },
+        "required": [
+          "method",
+          "params"
+        ],
+        "title": "McpServer/event/stream/notificationNotification",
+        "type": "object"
+      },
       "AuthMode": {
         "description": "Authentication mode for OpenAI-backed providers.",
         "type": "string",
@@ -16670,7 +16941,8 @@
           "headers",
           "agentIdentity",
           "personalAccessToken",
-          "bedrockApiKey"
+          "bedrockApiKey",
+          "bedrockAccessKeys"
         ]
       },
       "PlanType": {
@@ -18081,6 +18353,335 @@
         "title": "Thread/realtime/itemAddedNotification",
         "type": "object"
       },
+      "ThreadRealtimeItemRealtimeSessionStartedThreadRealtimeItem": {
+        "properties": {
+          "type": {
+            "enum": [
+              "realtimeSessionStarted"
+            ],
+            "title": "RealtimeSessionStartedThreadRealtimeItemType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "title": "RealtimeSessionStartedThreadRealtimeItem",
+        "type": "object"
+      },
+      "ThreadRealtimeTranscriptRole": {
+        "enum": [
+          "user",
+          "assistant"
+        ],
+        "type": "string"
+      },
+      "ThreadRealtimeItemTranscriptSegmentThreadRealtimeItem": {
+        "properties": {
+          "role": {
+            "$ref": "#/components/schemas/ThreadRealtimeTranscriptRole"
+          },
+          "text": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "transcriptSegment"
+            ],
+            "title": "TranscriptSegmentThreadRealtimeItemType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "role",
+          "text",
+          "type"
+        ],
+        "title": "TranscriptSegmentThreadRealtimeItem",
+        "type": "object"
+      },
+      "ThreadRealtimeBemItemPresentationWholeItemThreadRealtimeBemItemPresentation": {
+        "properties": {
+          "type": {
+            "enum": [
+              "wholeItem"
+            ],
+            "title": "WholeItemThreadRealtimeBemItemPresentationType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "title": "WholeItemThreadRealtimeBemItemPresentation",
+        "type": "object"
+      },
+      "ThreadRealtimeBemItemPresentationInlineMarkdownThreadRealtimeBemItemPresentation": {
+        "properties": {
+          "type": {
+            "enum": [
+              "inlineMarkdown"
+            ],
+            "title": "InlineMarkdownThreadRealtimeBemItemPresentationType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "title": "InlineMarkdownThreadRealtimeBemItemPresentation",
+        "type": "object"
+      },
+      "ThreadRealtimeBemItemPresentationInlineVisualizationThreadRealtimeBemItemPresentation": {
+        "properties": {
+          "index": {
+            "format": "uint32",
+            "minimum": 0.0,
+            "type": "integer"
+          },
+          "type": {
+            "enum": [
+              "inlineVisualization"
+            ],
+            "title": "InlineVisualizationThreadRealtimeBemItemPresentationType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "index",
+          "type"
+        ],
+        "title": "InlineVisualizationThreadRealtimeBemItemPresentation",
+        "type": "object"
+      },
+      "ThreadRealtimeBemItemPresentation": {
+        "description": "EXPERIMENTAL - how an existing agent item appears in a realtime conversation.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ThreadRealtimeBemItemPresentationWholeItemThreadRealtimeBemItemPresentation"
+          },
+          {
+            "$ref": "#/components/schemas/ThreadRealtimeBemItemPresentationInlineMarkdownThreadRealtimeBemItemPresentation"
+          },
+          {
+            "$ref": "#/components/schemas/ThreadRealtimeBemItemPresentationInlineVisualizationThreadRealtimeBemItemPresentation"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "wholeItem": "#/components/schemas/ThreadRealtimeBemItemPresentationWholeItemThreadRealtimeBemItemPresentation",
+            "inlineMarkdown": "#/components/schemas/ThreadRealtimeBemItemPresentationInlineMarkdownThreadRealtimeBemItemPresentation",
+            "inlineVisualization": "#/components/schemas/ThreadRealtimeBemItemPresentationInlineVisualizationThreadRealtimeBemItemPresentation"
+          }
+        }
+      },
+      "ThreadRealtimeItemBemItemPromotedThreadRealtimeItem": {
+        "properties": {
+          "item_id": {
+            "type": "string"
+          },
+          "presentation": {
+            "$ref": "#/components/schemas/ThreadRealtimeBemItemPresentation"
+          },
+          "turn_id": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "bemItemPromoted"
+            ],
+            "title": "BemItemPromotedThreadRealtimeItemType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "item_id",
+          "presentation",
+          "turn_id",
+          "type"
+        ],
+        "title": "BemItemPromotedThreadRealtimeItem",
+        "type": "object"
+      },
+      "ThreadRealtimeSessionOutcome": {
+        "enum": [
+          "ended",
+          "failed"
+        ],
+        "type": "string"
+      },
+      "ThreadRealtimeItemRealtimeSessionClosedThreadRealtimeItem": {
+        "properties": {
+          "outcome": {
+            "$ref": "#/components/schemas/ThreadRealtimeSessionOutcome"
+          },
+          "type": {
+            "enum": [
+              "realtimeSessionClosed"
+            ],
+            "title": "RealtimeSessionClosedThreadRealtimeItemType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "outcome",
+          "type"
+        ],
+        "title": "RealtimeSessionClosedThreadRealtimeItem",
+        "type": "object"
+      },
+      "ThreadRealtimeItem": {
+        "description": "EXPERIMENTAL - a thread-scoped realtime item in the canonical timeline.",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "realtimeSessionId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "realtimeSessionId"
+        ],
+        "type": "object",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ThreadRealtimeItemRealtimeSessionStartedThreadRealtimeItem"
+          },
+          {
+            "$ref": "#/components/schemas/ThreadRealtimeItemTranscriptSegmentThreadRealtimeItem"
+          },
+          {
+            "$ref": "#/components/schemas/ThreadRealtimeItemBemItemPromotedThreadRealtimeItem"
+          },
+          {
+            "$ref": "#/components/schemas/ThreadRealtimeItemRealtimeSessionClosedThreadRealtimeItem"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "realtimeSessionStarted": "#/components/schemas/ThreadRealtimeItemRealtimeSessionStartedThreadRealtimeItem",
+            "transcriptSegment": "#/components/schemas/ThreadRealtimeItemTranscriptSegmentThreadRealtimeItem",
+            "bemItemPromoted": "#/components/schemas/ThreadRealtimeItemBemItemPromotedThreadRealtimeItem",
+            "realtimeSessionClosed": "#/components/schemas/ThreadRealtimeItemRealtimeSessionClosedThreadRealtimeItem"
+          }
+        }
+      },
+      "ThreadRealtimeItemStartedNotification": {
+        "description": "EXPERIMENTAL - a realtime timeline item started before its content streams.",
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/ThreadRealtimeItem"
+          },
+          "threadId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "item",
+          "threadId"
+        ],
+        "type": "object"
+      },
+      "ServerNotificationThreadRealtimeItemStartedNotification": {
+        "properties": {
+          "method": {
+            "enum": [
+              "thread/realtime/item/started"
+            ],
+            "title": "Thread/realtime/item/startedNotificationMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ThreadRealtimeItemStartedNotification"
+          }
+        },
+        "required": [
+          "method",
+          "params"
+        ],
+        "title": "Thread/realtime/item/startedNotification",
+        "type": "object"
+      },
+      "ThreadRealtimeItemTranscriptDeltaNotification": {
+        "description": "EXPERIMENTAL - text appended to an active realtime transcript item.",
+        "properties": {
+          "delta": {
+            "type": "string"
+          },
+          "itemId": {
+            "type": "string"
+          },
+          "threadId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "delta",
+          "itemId",
+          "threadId"
+        ],
+        "type": "object"
+      },
+      "ServerNotificationThreadRealtimeItemTranscriptDeltaNotification": {
+        "properties": {
+          "method": {
+            "enum": [
+              "thread/realtime/item/transcript/delta"
+            ],
+            "title": "Thread/realtime/item/transcript/deltaNotificationMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ThreadRealtimeItemTranscriptDeltaNotification"
+          }
+        },
+        "required": [
+          "method",
+          "params"
+        ],
+        "title": "Thread/realtime/item/transcript/deltaNotification",
+        "type": "object"
+      },
+      "ThreadRealtimeItemCompletedNotification": {
+        "description": "EXPERIMENTAL - a realtime timeline item published after canonical commit.",
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/ThreadRealtimeItem"
+          },
+          "threadId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "item",
+          "threadId"
+        ],
+        "type": "object"
+      },
+      "ServerNotificationThreadRealtimeItemCompletedNotification": {
+        "properties": {
+          "method": {
+            "enum": [
+              "thread/realtime/item/completed"
+            ],
+            "title": "Thread/realtime/item/completedNotificationMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ThreadRealtimeItemCompletedNotification"
+          }
+        },
+        "required": [
+          "method",
+          "params"
+        ],
+        "title": "Thread/realtime/item/completedNotification",
+        "type": "object"
+      },
       "ThreadRealtimeTranscriptDeltaNotification": {
         "description": "EXPERIMENTAL - flat transcript delta emitted whenever realtime transcript text changes.",
         "properties": {
@@ -18580,6 +19181,9 @@
             "$ref": "#/components/schemas/ServerNotificationMcpServerStartupStatusUpdatedNotification"
           },
           {
+            "$ref": "#/components/schemas/ServerNotificationMcpServerEventStreamNotificationNotification"
+          },
+          {
             "$ref": "#/components/schemas/ServerNotificationAccountUpdatedNotification"
           },
           {
@@ -18647,6 +19251,15 @@
           },
           {
             "$ref": "#/components/schemas/ServerNotificationThreadRealtimeItemAddedNotification"
+          },
+          {
+            "$ref": "#/components/schemas/ServerNotificationThreadRealtimeItemStartedNotification"
+          },
+          {
+            "$ref": "#/components/schemas/ServerNotificationThreadRealtimeItemTranscriptDeltaNotification"
+          },
+          {
+            "$ref": "#/components/schemas/ServerNotificationThreadRealtimeItemCompletedNotification"
           },
           {
             "$ref": "#/components/schemas/ServerNotificationThreadRealtimeTranscriptDeltaNotification"
@@ -18722,6 +19335,7 @@
             "item/mcpToolCall/progress": "#/components/schemas/ServerNotificationItemMcpToolCallProgressNotification",
             "mcpServer/oauthLogin/completed": "#/components/schemas/ServerNotificationMcpServerOauthLoginCompletedNotification",
             "mcpServer/startupStatus/updated": "#/components/schemas/ServerNotificationMcpServerStartupStatusUpdatedNotification",
+            "mcpServer/event/stream/notification": "#/components/schemas/ServerNotificationMcpServerEventStreamNotificationNotification",
             "account/updated": "#/components/schemas/ServerNotificationAccountUpdatedNotification",
             "account/rateLimits/updated": "#/components/schemas/ServerNotificationAccountRateLimitsUpdatedNotification",
             "app/list/updated": "#/components/schemas/ServerNotificationAppListUpdatedNotification",
@@ -18745,6 +19359,9 @@
             "fuzzyFileSearch/sessionCompleted": "#/components/schemas/ServerNotificationFuzzyFileSearchSessionCompletedNotification",
             "thread/realtime/started": "#/components/schemas/ServerNotificationThreadRealtimeStartedNotification",
             "thread/realtime/itemAdded": "#/components/schemas/ServerNotificationThreadRealtimeItemAddedNotification",
+            "thread/realtime/item/started": "#/components/schemas/ServerNotificationThreadRealtimeItemStartedNotification",
+            "thread/realtime/item/transcript/delta": "#/components/schemas/ServerNotificationThreadRealtimeItemTranscriptDeltaNotification",
+            "thread/realtime/item/completed": "#/components/schemas/ServerNotificationThreadRealtimeItemCompletedNotification",
             "thread/realtime/transcript/delta": "#/components/schemas/ServerNotificationThreadRealtimeTranscriptDeltaNotification",
             "thread/realtime/transcript/done": "#/components/schemas/ServerNotificationThreadRealtimeTranscriptDoneNotification",
             "thread/realtime/outputAudio/delta": "#/components/schemas/ServerNotificationThreadRealtimeOutputAudioDeltaNotification",
@@ -19322,6 +19939,13 @@
         "title": "AppsReadResponse",
         "type": "object"
       },
+      "AwsCredentialType": {
+        "enum": [
+          "accessKeys",
+          "bedrockApiKey"
+        ],
+        "type": "string"
+      },
       "BedrockEnvironmentCredential": {
         "properties": {
           "region": {
@@ -19526,6 +20150,113 @@
         },
         "type": "object"
       },
+      "AllowDenyRequirement": {
+        "enum": [
+          "allow",
+          "deny"
+        ],
+        "type": "string"
+      },
+      "BrowserUseOriginPolicyConfig": {
+        "properties": {
+          "access": {
+            "$ref": "#/components/schemas/AllowDenyRequirement"
+          },
+          "downloads": {
+            "$ref": "#/components/schemas/AllowDenyRequirement"
+          },
+          "full_cdp_access": {
+            "$ref": "#/components/schemas/AllowDenyRequirement"
+          },
+          "uploads": {
+            "$ref": "#/components/schemas/AllowDenyRequirement"
+          }
+        },
+        "type": "object"
+      },
+      "BrowserUseConfig": {
+        "properties": {
+          "allow_history_access": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "default_origin_policy": {
+            "$ref": "#/components/schemas/BrowserUseOriginPolicyConfig"
+          },
+          "origins": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/BrowserUseOriginPolicyConfig"
+            },
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "ComputerUseMacosConfig": {
+        "properties": {
+          "bundle_ids": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/AllowDenyRequirement"
+            },
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "ComputerUseWindowsExeConfig": {
+        "properties": {
+          "access": {
+            "$ref": "#/components/schemas/AllowDenyRequirement"
+          },
+          "binary_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "product_name": {
+            "type": "string"
+          },
+          "publisher_name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "access",
+          "product_name",
+          "publisher_name"
+        ],
+        "type": "object"
+      },
+      "ComputerUseWindowsConfig": {
+        "properties": {
+          "aumids": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/AllowDenyRequirement"
+            },
+            "type": "object"
+          },
+          "exes": {
+            "items": {
+              "$ref": "#/components/schemas/ComputerUseWindowsExeConfig"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "ComputerUseConfig": {
+        "properties": {
+          "default_app_access": {
+            "$ref": "#/components/schemas/AllowDenyRequirement"
+          },
+          "macos": {
+            "$ref": "#/components/schemas/ComputerUseMacosConfig"
+          },
+          "windows": {
+            "$ref": "#/components/schemas/ComputerUseWindowsConfig"
+          }
+        },
+        "type": "object"
+      },
       "ForcedChatgptWorkspaceIds": {
         "anyOf": [
           {
@@ -19668,9 +20399,15 @@
           "apps": {
             "$ref": "#/components/schemas/AppsConfig"
           },
+          "browser_use": {
+            "$ref": "#/components/schemas/BrowserUseConfig"
+          },
           "compact_prompt": {
             "type": "string",
             "nullable": true
+          },
+          "computer_use": {
+            "$ref": "#/components/schemas/ComputerUseConfig"
           },
           "desktop": {
             "additionalProperties": true,
@@ -20064,11 +20801,62 @@
         },
         "type": "object"
       },
+      "BrowserUseAccessApprovalLifetime": {
+        "enum": [
+          "turn",
+          "thread"
+        ],
+        "type": "string"
+      },
+      "BrowserUseOriginPolicy": {
+        "properties": {
+          "access": {
+            "$ref": "#/components/schemas/AllowDenyRequirement"
+          },
+          "accessApprovalLifetime": {
+            "$ref": "#/components/schemas/BrowserUseAccessApprovalLifetime"
+          },
+          "autoReview": {
+            "$ref": "#/components/schemas/AllowDenyRequirement"
+          },
+          "downloads": {
+            "$ref": "#/components/schemas/AllowDenyRequirement"
+          },
+          "fullCdpAccess": {
+            "$ref": "#/components/schemas/AllowDenyRequirement"
+          },
+          "persistentApproval": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "uploads": {
+            "$ref": "#/components/schemas/AllowDenyRequirement"
+          }
+        },
+        "type": "object"
+      },
       "BrowserUseRequirements": {
         "properties": {
+          "allowGlobalPersistentApproval": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "allowHistoryAccess": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "defaultOriginPolicy": {
+            "$ref": "#/components/schemas/BrowserUseOriginPolicy"
+          },
           "disableAutoReview": {
             "type": "boolean",
             "nullable": true
+          },
+          "origins": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/BrowserUseOriginPolicy"
+            },
+            "type": "object"
           }
         },
         "type": "object"
@@ -20082,11 +20870,75 @@
         ],
         "type": "string"
       },
+      "ComputerUseMacosRequirements": {
+        "properties": {
+          "bundleIds": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/AllowDenyRequirement"
+            },
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "ComputerUseWindowsExeRequirement": {
+        "properties": {
+          "access": {
+            "$ref": "#/components/schemas/AllowDenyRequirement"
+          },
+          "binaryName": {
+            "type": "string",
+            "nullable": true
+          },
+          "productName": {
+            "type": "string"
+          },
+          "publisherName": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "access",
+          "productName",
+          "publisherName"
+        ],
+        "type": "object"
+      },
+      "ComputerUseWindowsRequirements": {
+        "properties": {
+          "aumids": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/AllowDenyRequirement"
+            },
+            "type": "object"
+          },
+          "exes": {
+            "items": {
+              "$ref": "#/components/schemas/ComputerUseWindowsExeRequirement"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
       "ComputerUseRequirements": {
         "properties": {
           "allowLockedComputerUse": {
             "type": "boolean",
             "nullable": true
+          },
+          "allowPersistentApproval": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "defaultAppAccess": {
+            "$ref": "#/components/schemas/AllowDenyRequirement"
+          },
+          "macos": {
+            "$ref": "#/components/schemas/ComputerUseMacosRequirements"
+          },
+          "windows": {
+            "$ref": "#/components/schemas/ComputerUseWindowsRequirements"
           }
         },
         "type": "object"
@@ -20267,6 +21119,13 @@
       },
       "ManagedHooksRequirements": {
         "properties": {
+          "Interrupt": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/ConfiguredHookMatcherGroup"
+            },
+            "type": "array"
+          },
           "PermissionRequest": {
             "items": {
               "$ref": "#/components/schemas/ConfiguredHookMatcherGroup"
@@ -20355,6 +21214,15 @@
           "SubagentStop",
           "UserPromptSubmit"
         ],
+        "type": "object"
+      },
+      "InAppBrowserRequirements": {
+        "properties": {
+          "allowExternalBrowserSettingsImport": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
         "type": "object"
       },
       "NewThreadModelDefaults": {
@@ -20474,7 +21342,15 @@
       },
       "ConfigRequirements": {
         "properties": {
+          "additionalDeveloperInstructions": {
+            "type": "string",
+            "nullable": true
+          },
           "allowAppshots": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "allowBrowserAndComputerUse": {
             "type": "boolean",
             "nullable": true
           },
@@ -20564,6 +21440,9 @@
           },
           "hooks": {
             "$ref": "#/components/schemas/ManagedHooksRequirements"
+          },
+          "inAppBrowser": {
+            "$ref": "#/components/schemas/InAppBrowserRequirements"
           },
           "logDir": {
             "type": "string",
@@ -21838,6 +22717,18 @@
         ],
         "type": "object"
       },
+      "McpServerConnectionStatus": {
+        "enum": [
+          "notStarted",
+          "starting",
+          "connected",
+          "authenticationRequired",
+          "failed",
+          "cancelled",
+          "disabled"
+        ],
+        "type": "string"
+      },
       "McpServerInfo": {
         "description": "Presentation metadata advertised by an initialized MCP server.",
         "properties": {
@@ -21922,6 +22813,9 @@
               "$ref": "#/components/schemas/Resource"
             },
             "type": "array"
+          },
+          "runtimeStatus": {
+            "$ref": "#/components/schemas/McpServerConnectionStatus"
           },
           "serverInfo": {
             "$ref": "#/components/schemas/McpServerInfo"
@@ -22243,6 +23137,14 @@
           "contents"
         ],
         "title": "McpResourceReadResponse",
+        "type": "object"
+      },
+      "McpServerEventStreamStartResponse": {
+        "title": "McpServerEventStreamStartResponse",
+        "type": "object"
+      },
+      "McpServerEventStreamStopResponse": {
+        "title": "McpServerEventStreamStopResponse",
         "type": "object"
       },
       "McpServerOauthLoginResponse": {
@@ -24179,6 +25081,11 @@
           "path": {
             "$ref": "#/components/schemas/AbsolutePathBuf"
           },
+          "pluginId": {
+            "description": "Owning plugin ID, matching `PluginSummary.id`, when known.",
+            "type": "string",
+            "nullable": true
+          },
           "scope": {
             "$ref": "#/components/schemas/SkillScope"
           },
@@ -25141,6 +26048,191 @@
           "thread"
         ],
         "title": "ThreadStartResponse",
+        "type": "object"
+      },
+      "ThreadTimelineEntryItemThreadTimelineEntry": {
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/ThreadItem"
+          },
+          "position": {
+            "format": "uint64",
+            "minimum": 0.0,
+            "type": "integer"
+          },
+          "turnId": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "item"
+            ],
+            "title": "ItemThreadTimelineEntryType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "item",
+          "position",
+          "turnId",
+          "type"
+        ],
+        "title": "ItemThreadTimelineEntry",
+        "type": "object"
+      },
+      "ThreadTimelineEntryRealtimeThreadTimelineEntry": {
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/ThreadRealtimeItem"
+          },
+          "position": {
+            "format": "uint64",
+            "minimum": 0.0,
+            "type": "integer"
+          },
+          "type": {
+            "enum": [
+              "realtime"
+            ],
+            "title": "RealtimeThreadTimelineEntryType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "item",
+          "position",
+          "type"
+        ],
+        "title": "RealtimeThreadTimelineEntry",
+        "type": "object"
+      },
+      "ThreadTimelineEntryTurnStartedThreadTimelineEntry": {
+        "properties": {
+          "position": {
+            "format": "uint64",
+            "minimum": 0.0,
+            "type": "integer"
+          },
+          "started_at": {
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
+          },
+          "turn_id": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "turnStarted"
+            ],
+            "title": "TurnStartedThreadTimelineEntryType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "position",
+          "turn_id",
+          "type"
+        ],
+        "title": "TurnStartedThreadTimelineEntry",
+        "type": "object"
+      },
+      "ThreadTimelineEntryTurnCompletedThreadTimelineEntry": {
+        "properties": {
+          "completed_at": {
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
+          },
+          "duration_ms": {
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
+          },
+          "error": {
+            "$ref": "#/components/schemas/TurnError"
+          },
+          "position": {
+            "format": "uint64",
+            "minimum": 0.0,
+            "type": "integer"
+          },
+          "started_at": {
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/TurnStatus"
+          },
+          "turn_id": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "turnCompleted"
+            ],
+            "title": "TurnCompletedThreadTimelineEntryType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "position",
+          "status",
+          "turn_id",
+          "type"
+        ],
+        "title": "TurnCompletedThreadTimelineEntry",
+        "type": "object"
+      },
+      "ThreadTimelineEntry": {
+        "description": "EXPERIMENTAL - one item or turn boundary in canonical rollout order.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ThreadTimelineEntryItemThreadTimelineEntry"
+          },
+          {
+            "$ref": "#/components/schemas/ThreadTimelineEntryRealtimeThreadTimelineEntry"
+          },
+          {
+            "$ref": "#/components/schemas/ThreadTimelineEntryTurnStartedThreadTimelineEntry"
+          },
+          {
+            "$ref": "#/components/schemas/ThreadTimelineEntryTurnCompletedThreadTimelineEntry"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "item": "#/components/schemas/ThreadTimelineEntryItemThreadTimelineEntry",
+            "realtime": "#/components/schemas/ThreadTimelineEntryRealtimeThreadTimelineEntry",
+            "turnStarted": "#/components/schemas/ThreadTimelineEntryTurnStartedThreadTimelineEntry",
+            "turnCompleted": "#/components/schemas/ThreadTimelineEntryTurnCompletedThreadTimelineEntry"
+          }
+        }
+      },
+      "ThreadTimelineListResponse": {
+        "description": "EXPERIMENTAL - a bounded timeline page with its resolved opening voice state.",
+        "properties": {
+          "activeRealtimeSessionAtPageStart": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/ThreadTimelineEntry"
+            },
+            "type": "array"
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "title": "ThreadTimelineListResponse",
         "type": "object"
       },
       "ThreadTurnsListResponse": {

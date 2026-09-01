@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.150.0 — 2026-08-26
+
+- Schema provenance: regenerated and synchronized the exact experimental
+  (`--experimental`) export from stable public Codex tag `rust-v0.150.0`,
+  peeled commit
+  `3b3b4f8fb3f6403e72c2d0533ed0d2f309c59717`.
+- Contract: the export grows from 401 to 411 JSON Schema files, with 10
+  additions, no removals, and 42 modified existing files. It adds MCP server
+  event-stream start and stop RPCs, thread timeline listing, MCP event
+  notifications, and realtime item-started, item-completed, and transcript
+  delta notifications. Amazon Bedrock access-key login moves to dedicated
+  union cases while the `accessKeys` Bedrock setup branch is removed.
+  Collaboration and approval unions also gain new cases.
+- Swift compatibility: no additional hand-written compatibility fix was
+  required.
+- Verification: the generator was idempotent; `swift build --target
+  AppServerClient`, all 14 `swift test` cases, `git diff --check`, and the
+  `Package.resolved` unchanged check passed. `swift run appserver-smoke`
+  passed initialize, account, usage, and empty thread-list calls against the
+  exact public `@openai/codex@0.150.0` CLI in an isolated authenticated Codex
+  home; no turn-list coverage is claimed because that home had no threads.
+
 ## 0.149.1 — 2026-08-24
 
 - Schema provenance: regenerated and synchronized the exact experimental

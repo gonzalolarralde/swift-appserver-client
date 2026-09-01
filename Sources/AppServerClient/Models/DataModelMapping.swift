@@ -95,6 +95,7 @@ public extension AppServerModels.ClientRequest {
     typealias ThreadRealtimeAppendText = Components.Schemas.ClientRequestThreadRealtimeAppendTextRequest
     typealias ThreadRealtimeAppendSpeech = Components.Schemas.ClientRequestThreadRealtimeAppendSpeechRequest
     typealias ThreadRealtimeStop = Components.Schemas.ClientRequestThreadRealtimeStopRequest
+    typealias ThreadTimelineList = Components.Schemas.ClientRequestThreadTimelineListRequest
     typealias ThreadRealtimeListVoices = Components.Schemas.ClientRequestThreadRealtimeListVoicesRequest
     typealias ReviewStart = Components.Schemas.ClientRequestReviewStartRequest
     typealias ModelList = Components.Schemas.ClientRequestModelListRequest
@@ -118,6 +119,8 @@ public extension AppServerModels.ClientRequest {
     typealias ConfigMcpServerReload = Components.Schemas.ClientRequestConfigMcpServerReloadRequest
     typealias McpServerStatusList = Components.Schemas.ClientRequestMcpServerStatusListRequest
     typealias McpServerResourceRead = Components.Schemas.ClientRequestMcpServerResourceReadRequest
+    typealias McpServerEventStreamStart = Components.Schemas.ClientRequestMcpServerEventStreamStartRequest
+    typealias McpServerEventStreamStop = Components.Schemas.ClientRequestMcpServerEventStreamStopRequest
     typealias McpServerToolCall = Components.Schemas.ClientRequestMcpServerToolCallRequest
     typealias WindowsSandboxSetupStart = Components.Schemas.ClientRequestWindowsSandboxSetupStartRequest
     typealias WindowsSandboxReadiness = Components.Schemas.ClientRequestWindowsSandboxReadinessRequest
@@ -247,6 +250,7 @@ public extension AppServerModels.ClientRequest {
         public typealias ThreadRealtimeAppendText = Components.Schemas.ThreadRealtimeAppendTextResponse
         public typealias ThreadRealtimeAppendSpeech = Components.Schemas.ThreadRealtimeAppendSpeechResponse
         public typealias ThreadRealtimeStop = Components.Schemas.ThreadRealtimeStopResponse
+        public typealias ThreadTimelineList = Components.Schemas.ThreadTimelineListResponse
         public typealias ThreadRealtimeListVoices = Components.Schemas.ThreadRealtimeListVoicesResponse
         public typealias ReviewStart = Components.Schemas.ReviewStartResponse
         public typealias ModelList = Components.Schemas.ModelListResponse
@@ -270,6 +274,8 @@ public extension AppServerModels.ClientRequest {
         public typealias ConfigMcpServerReload = Components.Schemas.McpServerRefreshResponse
         public typealias McpServerStatusList = Components.Schemas.ListMcpServerStatusResponse
         public typealias McpServerResourceRead = Components.Schemas.McpResourceReadResponse
+        public typealias McpServerEventStreamStart = Components.Schemas.McpServerEventStreamStartResponse
+        public typealias McpServerEventStreamStop = Components.Schemas.McpServerEventStreamStopResponse
         public typealias McpServerToolCall = Components.Schemas.McpServerToolCallResponse
         public typealias WindowsSandboxSetupStart = Components.Schemas.WindowsSandboxSetupStartResponse
         public typealias WindowsSandboxReadiness = Components.Schemas.WindowsSandboxReadinessResponse
@@ -401,6 +407,7 @@ public extension AppServerModels.ClientRequest {
         case let .threadRealtimeAppendText(value): value
         case let .threadRealtimeAppendSpeech(value): value
         case let .threadRealtimeStop(value): value
+        case let .threadTimelineList(value): value
         case let .threadRealtimeListVoices(value): value
         case let .reviewStart(value): value
         case let .modelList(value): value
@@ -424,6 +431,8 @@ public extension AppServerModels.ClientRequest {
         case let .configMcpServerReload(value): value
         case let .mcpServerStatusList(value): value
         case let .mcpServerResourceRead(value): value
+        case let .mcpServerEventStreamStart(value): value
+        case let .mcpServerEventStreamStop(value): value
         case let .mcpServerToolCall(value): value
         case let .windowsSandboxSetupStart(value): value
         case let .windowsSandboxReadiness(value): value
@@ -1199,6 +1208,14 @@ extension Components.Schemas.ClientRequestThreadRealtimeStopRequest: ClientReque
     }
 }
 
+extension Components.Schemas.ClientRequestThreadTimelineListRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ThreadTimelineListParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadTimelineList
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .threadTimelineList(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
 extension Components.Schemas.ClientRequestThreadRealtimeListVoicesRequest: ClientRequestable {
     public typealias Params = Components.Schemas.ThreadRealtimeListVoicesParams
     public typealias Response = AppServerModels.ClientRequest.Response.ThreadRealtimeListVoices
@@ -1380,6 +1397,22 @@ extension Components.Schemas.ClientRequestMcpServerResourceReadRequest: ClientRe
     public typealias Response = AppServerModels.ClientRequest.Response.McpServerResourceRead
     public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .mcpServerResourceRead(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestMcpServerEventStreamStartRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.McpServerEventStreamStartParams
+    public typealias Response = AppServerModels.ClientRequest.Response.McpServerEventStreamStart
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .mcpServerEventStreamStart(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestMcpServerEventStreamStopRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.McpServerEventStreamStopParams
+    public typealias Response = AppServerModels.ClientRequest.Response.McpServerEventStreamStop
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .mcpServerEventStreamStop(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
@@ -1839,6 +1872,7 @@ public extension AppServerModels.ServerNotification {
     typealias ItemMcpToolCallProgress = Components.Schemas.ServerNotificationItemMcpToolCallProgressNotification
     typealias McpServerOauthLoginCompleted = Components.Schemas.ServerNotificationMcpServerOauthLoginCompletedNotification
     typealias McpServerStartupStatusUpdated = Components.Schemas.ServerNotificationMcpServerStartupStatusUpdatedNotification
+    typealias McpServerEventStreamNotification = Components.Schemas.ServerNotificationMcpServerEventStreamNotificationNotification
     typealias AccountUpdated = Components.Schemas.ServerNotificationAccountUpdatedNotification
     typealias AccountRateLimitsUpdated = Components.Schemas.ServerNotificationAccountRateLimitsUpdatedNotification
     typealias AppListUpdated = Components.Schemas.ServerNotificationAppListUpdatedNotification
@@ -1862,6 +1896,9 @@ public extension AppServerModels.ServerNotification {
     typealias FuzzyFileSearchSessionCompleted = Components.Schemas.ServerNotificationFuzzyFileSearchSessionCompletedNotification
     typealias ThreadRealtimeStarted = Components.Schemas.ServerNotificationThreadRealtimeStartedNotification
     typealias ThreadRealtimeItemAdded = Components.Schemas.ServerNotificationThreadRealtimeItemAddedNotification
+    typealias ThreadRealtimeItemStarted = Components.Schemas.ServerNotificationThreadRealtimeItemStartedNotification
+    typealias ThreadRealtimeItemTranscriptDelta = Components.Schemas.ServerNotificationThreadRealtimeItemTranscriptDeltaNotification
+    typealias ThreadRealtimeItemCompleted = Components.Schemas.ServerNotificationThreadRealtimeItemCompletedNotification
     typealias ThreadRealtimeTranscriptDelta = Components.Schemas.ServerNotificationThreadRealtimeTranscriptDeltaNotification
     typealias ThreadRealtimeTranscriptDone = Components.Schemas.ServerNotificationThreadRealtimeTranscriptDoneNotification
     typealias ThreadRealtimeOutputAudioDelta = Components.Schemas.ServerNotificationThreadRealtimeOutputAudioDeltaNotification
@@ -1917,6 +1954,7 @@ public extension AppServerModels.ServerNotification {
         case let .itemMcpToolCallProgress(value): value
         case let .mcpServerOauthLoginCompleted(value): value
         case let .mcpServerStartupStatusUpdated(value): value
+        case let .mcpServerEventStreamNotification(value): value
         case let .accountUpdated(value): value
         case let .accountRateLimitsUpdated(value): value
         case let .appListUpdated(value): value
@@ -1940,6 +1978,9 @@ public extension AppServerModels.ServerNotification {
         case let .fuzzyFileSearchSessionCompleted(value): value
         case let .threadRealtimeStarted(value): value
         case let .threadRealtimeItemAdded(value): value
+        case let .threadRealtimeItemStarted(value): value
+        case let .threadRealtimeItemTranscriptDelta(value): value
+        case let .threadRealtimeItemCompleted(value): value
         case let .threadRealtimeTranscriptDelta(value): value
         case let .threadRealtimeTranscriptDone(value): value
         case let .threadRealtimeOutputAudioDelta(value): value
@@ -2254,6 +2295,13 @@ extension Components.Schemas.ServerNotificationMcpServerStartupStatusUpdatedNoti
     }
 }
 
+extension Components.Schemas.ServerNotificationMcpServerEventStreamNotificationNotification: ServerNotificationPayload {
+    public typealias Params = Components.Schemas.McpServerEventStreamNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
+        .mcpServerEventStreamNotification(.init(method: .allCases.first!, params: params))
+    }
+}
+
 extension Components.Schemas.ServerNotificationAccountUpdatedNotification: ServerNotificationPayload {
     public typealias Params = Components.Schemas.AccountUpdatedNotification
     public static func build(params: Params) -> AppServerModels.ServerNotification {
@@ -2412,6 +2460,27 @@ extension Components.Schemas.ServerNotificationThreadRealtimeItemAddedNotificati
     public typealias Params = Components.Schemas.ThreadRealtimeItemAddedNotification
     public static func build(params: Params) -> AppServerModels.ServerNotification {
         .threadRealtimeItemAdded(.init(method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ServerNotificationThreadRealtimeItemStartedNotification: ServerNotificationPayload {
+    public typealias Params = Components.Schemas.ThreadRealtimeItemStartedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
+        .threadRealtimeItemStarted(.init(method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ServerNotificationThreadRealtimeItemTranscriptDeltaNotification: ServerNotificationPayload {
+    public typealias Params = Components.Schemas.ThreadRealtimeItemTranscriptDeltaNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
+        .threadRealtimeItemTranscriptDelta(.init(method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ServerNotificationThreadRealtimeItemCompletedNotification: ServerNotificationPayload {
+    public typealias Params = Components.Schemas.ThreadRealtimeItemCompletedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
+        .threadRealtimeItemCompleted(.init(method: .allCases.first!, params: params))
     }
 }
 
