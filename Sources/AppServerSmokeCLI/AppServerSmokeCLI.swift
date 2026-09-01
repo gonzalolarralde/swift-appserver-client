@@ -29,7 +29,8 @@ struct Main {
         field("Requires OpenAI auth", account.requiresOpenaiAuth ? "yes" : "no")
 
         let usage = try await client.send(
-            request: AppServerModels.ClientRequest.AccountUsageRead.self
+            request: AppServerModels.ClientRequest.AccountUsageRead.self,
+            with: .none
         )
         section("Usage")
         field("Lifetime tokens", usage.summary.lifetimeTokens.map(formatNumber) ?? "unknown")

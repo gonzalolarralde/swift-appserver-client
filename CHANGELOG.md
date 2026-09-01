@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.148.0 — 2026-08-18
+
+- Schema provenance: regenerated and synchronized the exact experimental
+  (`--experimental`) export from stable public Codex tag `rust-v0.148.0`,
+  peeled commit
+  `3ba0f711642a888aec92a611a3f3b2211157ff89`.
+- Contract: the export grows from 361 to 380 JSON Schema files, with 19
+  additions, no removals, and 42 modified existing files. It adds server
+  diagnostics, thread queue management, and thread revert RPCs, plus queue
+  change and thread-reverted notifications. Existing account usage reads can
+  now accept optional parameters. Discriminated unions gain packaged-default
+  config layers, MCP-tool hook handlers, misalignment policy errors, and
+  persistent MCP policy approval.
+- Swift compatibility: updated the smoke client to pass an explicit empty
+  optional params value to `account/usage/read`, matching its new typed
+  optional params contract.
+- Verification: the generator was idempotent; `swift build --target
+  AppServerClient`, all 14 `swift test` cases, `git diff --check`, and the
+  `Package.resolved` unchanged check passed. `swift run appserver-smoke`
+  passed initialize, account, usage, and empty thread-list calls against the
+  exact public `@openai/codex@0.148.0` CLI in an isolated authenticated Codex
+  home; no turn-list coverage is claimed because that home had no threads.
+
 ## 0.147.0 — 2026-08-07
 
 - Schema provenance: regenerated and synchronized the exact experimental
