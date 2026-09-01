@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Codex App Server Protocol",
-    "version": "0.144.5"
+    "version": "0.144.6"
   },
   "paths": {},
   "components": {

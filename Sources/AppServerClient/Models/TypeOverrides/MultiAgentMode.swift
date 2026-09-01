@@ -1,6 +1,6 @@
 /// A stable Swift representation of the app-server multi-agent mode wire value.
 ///
-/// Codex 0.144.5 retains this value for compatibility but ignores it on thread
+/// Codex 0.144.6 retains this value for compatibility but ignores it on thread
 /// and turn requests. Ultra reasoning effort currently enables proactive mode.
 public enum MultiAgentModeValue: Codable, Hashable, Sendable {
     /// Spawn subagents only when explicitly requested by applicable instructions.

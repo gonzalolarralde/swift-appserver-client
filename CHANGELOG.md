@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.144.6 — 2026-07-18
+
+- Schema provenance: regenerated and synchronized the exact experimental
+  (`--experimental`) export from stable public Codex tag `rust-v0.144.6`,
+  peeled commit
+  `5d1fbf26c43abc65a203928b2e31561cb039e06d`.
+- Contract: no public contract change from 0.144.5. Canonical comparison of all
+  337 JSON Schema files found no additions, removals, or semantic changes.
+- Swift compatibility: advanced package metadata, the default client version,
+  and version-specific documentation to 0.144.6. No generator, override, or
+  call-site fixes were required.
+- Verification: the generator was idempotent; `swift build --target
+  AppServerClient`, all 13 `swift test` cases, `git diff --check`, and the
+  `Package.resolved` unchanged check passed. The exact public
+  `@openai/codex@0.144.6` CLI identified itself as `codex-cli 0.144.6`, but the
+  smoke gate stopped at `thread/list` with JSON-RPC `-32601` (`paginated_threads
+  is not supported yet`); the basic gate therefore did not pass and no smoke
+  call coverage is claimed.
+
 ## 0.144.5 — 2026-07-16
 
 - Schema provenance: regenerated and synchronized the exact experimental
