@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.153.1 — 2026-09-07
+
+- Schema provenance: official `@openai/codex@0.153.1` experimental export,
+  byte-for-byte verified against the clean stable public `rust-v0.153.1`
+  source bundle at peeled commit
+  `985641272869835d01d025ed2a218fbbce35fa9f`.
+- Contract: no public contract change from 0.153.0; all 416 schema files and
+  generated request mappings are unchanged. Upstream adds API configuration
+  support for GPT-6-Astra without changing the default or picker visibility.
+- Swift compatibility: updated version metadata; no compatibility fixes needed.
+- Verification: idempotent generation, `swift build --target AppServerClient`,
+  all 15 `swift test` cases, `git diff --check`, and unchanged `Package.resolved`
+  passed. Initialize, account, usage, and empty thread-list smoke calls passed
+  against the exact official CLI using an isolated authenticated home, removed
+  afterward. No turn-list or downstream iOS coverage is claimed.
+
 ## 0.153.0 — 2026-09-07
 
 - Schema provenance: experimental export from official `@openai/codex@0.153.0`,
