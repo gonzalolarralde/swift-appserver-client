@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.153.4 — 2026-09-07
+
+- Schema provenance: official `@openai/codex@0.153.4` experimental export,
+  byte-for-byte verified against the clean stable public `rust-v0.153.4`
+  source bundle at peeled commit
+  `3d2ee51ca2d5db578f328aa75e20aa22c0197c9a`.
+- Contract: no public contract change from 0.153.3; all 416 schema files and
+  generated request mappings are unchanged. Upstream updates Astra's bundled default and picker visibility and makes asynchronous-question guidance conditional on tool availability.
+- Swift compatibility: updated version metadata; no compatibility fixes needed.
+- Verification: idempotent generation, `swift build --target AppServerClient`,
+  all 15 `swift test` cases, `git diff --check`, and unchanged `Package.resolved`
+  passed. Initialize, account, usage, and empty thread-list smoke calls passed
+  against the exact official CLI using an isolated authenticated home, removed
+  afterward. No turn-list or downstream iOS coverage is claimed.
+
 ## 0.153.3 — 2026-09-07
 
 - Schema provenance: official `@openai/codex@0.153.3` experimental export,
