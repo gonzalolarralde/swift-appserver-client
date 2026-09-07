@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.152.1 — 2026-09-07
+
+- Schema provenance: experimental export from stable public Codex tag
+  `rust-v0.152.1`, peeled commit
+  `5adb68a49933ae446bf11935662c83dba55a0804`. Built the exact tag's CLI,
+  restored Cargo's workspace-version-only lockfile normalization, and exported
+  from the clean tag checkout with `--experimental`. The result also matches
+  the official `@openai/codex@0.152.1` export byte-for-byte.
+- Contract: no public contract change from 0.152.0; all 414 JSON Schema files
+  are unchanged. Upstream fixes Guardian review of model-provided Node REPL
+  policies; this does not change the exported app-server contract.
+- Swift compatibility: updated compatibility metadata and default client
+  version. No generator or hand-written compatibility fix was necessary.
+- Verification: idempotent generation, `swift build --target AppServerClient`,
+  all 15 `swift test` cases, `git diff --check`, and unchanged `Package.resolved`
+  passed. The smoke CLI passed initialize, account, usage, and empty thread-list
+  calls against official `@openai/codex@0.152.1` in an isolated authenticated
+  home, which was removed afterward. No turn-list coverage is claimed.
+- Release isolation: pending voice examples and stdio changes in the normal
+  checkout were excluded; this release was prepared in a clean worktree.
+
 ## 0.152.0 — 2026-09-01
 
 - Schema provenance: regenerated and synchronized the exact experimental
