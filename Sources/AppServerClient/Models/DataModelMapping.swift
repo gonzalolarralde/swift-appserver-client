@@ -65,6 +65,7 @@ public extension AppServerModels.ClientRequest {
     typealias PluginList = Components.Schemas.ClientRequestPluginListRequest
     typealias PluginSearch = Components.Schemas.ClientRequestPluginSearchRequest
     typealias PluginInstalled = Components.Schemas.ClientRequestPluginInstalledRequest
+    typealias PluginReconcile = Components.Schemas.ClientRequestPluginReconcileRequest
     typealias PluginRead = Components.Schemas.ClientRequestPluginReadRequest
     typealias PluginSkillRead = Components.Schemas.ClientRequestPluginSkillReadRequest
     typealias PluginShareSave = Components.Schemas.ClientRequestPluginShareSaveRequest
@@ -221,6 +222,7 @@ public extension AppServerModels.ClientRequest {
         public typealias PluginList = Components.Schemas.PluginListResponse
         public typealias PluginSearch = Components.Schemas.PluginSearchResponse
         public typealias PluginInstalled = Components.Schemas.PluginInstalledResponse
+        public typealias PluginReconcile = Components.Schemas.PluginReconcileResponse
         public typealias PluginRead = Components.Schemas.PluginReadResponse
         public typealias PluginSkillRead = Components.Schemas.PluginSkillReadResponse
         public typealias PluginShareSave = Components.Schemas.PluginShareSaveResponse
@@ -379,6 +381,7 @@ public extension AppServerModels.ClientRequest {
         case let .pluginList(value): value
         case let .pluginSearch(value): value
         case let .pluginInstalled(value): value
+        case let .pluginReconcile(value): value
         case let .pluginRead(value): value
         case let .pluginSkillRead(value): value
         case let .pluginShareSave(value): value
@@ -968,6 +971,14 @@ extension Components.Schemas.ClientRequestPluginInstalledRequest: ClientRequesta
     public typealias Response = AppServerModels.ClientRequest.Response.PluginInstalled
     public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .pluginInstalled(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestPluginReconcileRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.PluginReconcileParams
+    public typealias Response = AppServerModels.ClientRequest.Response.PluginReconcile
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .pluginReconcile(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 

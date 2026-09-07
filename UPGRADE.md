@@ -42,6 +42,13 @@ Stop if a checkout is dirty, the expected remote is missing, or `main` cannot
 fast-forward. Do not use `reset --hard`, force-push, or retag to work around a
 failed preflight.
 
+If the user approves leaving a dirty normal checkout untouched, create a clean
+release worktree from verified `origin/main` instead. Use that worktree for the
+entire backfill. Before each push, fetch and require `origin/main` to equal the
+release commit's parent, then push `HEAD:refs/heads/main` without force. Verify
+the remote commit before tagging. Do not switch, merge, or advance local `main`
+in the dirty checkout; tell the user it remains behind the published releases.
+
 ## 2. Discover stable releases and the parity gap
 
 Use official GitHub Releases as the source of truth. A raw Git tag is not enough
@@ -130,6 +137,33 @@ in the changelog:
 - public Codex tag and peeled commit;
 - the `--experimental` flag;
 - confirmation that the export worktree was the clean public tag.
+
+### Precomputed exports (Codex 0.153 and later)
+
+When the exact public tag contains
+`codex-rs/app-server-protocol/schema/precomputed/app-server-exports-experimental.json.zst`,
+the CLI exporter unpacks this bundle. An exact official npm CLI is an equivalent
+export route, provided its output is checked byte-for-byte against that clean
+tag's bundle. This avoids rebuilding the entire CLI for each patch release.
+Install `zstd` for the verification helper, then run from the client worktree:
+
+```sh
+npm exec --yes --package="@openai/codex@${release_version}" -- codex --version
+npm exec --yes --package="@openai/codex@${release_version}" -- \
+  codex app-server generate-json-schema --out "$schema_output" --experimental
+python3 Scripts/verify-precomputed-export.py "$codex_worktree" "$schema_output"
+```
+
+Require the version command to report the exact requested release. Record both
+the source tag/peeled commit and official CLI version in the changelog. The
+helper checks the entire export file set and raw contents, not only a stable
+schema subset. For tags without the bundle, keep the source-build route above.
+
+Some release tags retain `0.0.0` workspace entries in `Cargo.lock` while their
+manifest has the release version. Cargo normalizes these entries during build.
+Inspect that diff, restore only those generated workspace-version changes,
+verify a clean tag checkout, and invoke the built CLI directly into a new empty
+export directory. Do not accept dependency changes or export from a dirty tree.
 
 ## 5. Prepare the Swift release worktree
 

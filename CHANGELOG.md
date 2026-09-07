@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.153.0 — 2026-09-07
+
+- Schema provenance: experimental export from official `@openai/codex@0.153.0`,
+  verified byte-for-byte against all 416 files in the clean stable public tag
+  `rust-v0.153.0` at peeled commit
+  `41e22fee981a63b3698df7ed36bad393cda24715`. The tag's exporter
+  uses this precomputed experimental bundle.
+- Contract: adds `plugin/reconcile`, thread model and reasoning-effort
+  metadata, asynchronous questions on agent messages, per-account app approval
+  settings, raw-response usage metadata, and active-turn approval-reviewer
+  updates. Two schema files were added and 28 existing files changed, with no
+  removed files or RPCs. Existing fields retain their wire names and types.
+- Swift compatibility: regenerated the request mapping and models and updated
+  compatibility metadata. No generator or hand-written type repair was needed.
+  Added a source-bundle export verifier and documented the equivalent export
+  route and user-approved isolated release workflow.
+- Verification: idempotent generation, `swift build --target AppServerClient`,
+  all 15 `swift test` cases, `git diff --check`, and unchanged `Package.resolved`
+  passed. Basic smoke passed initialize, account, usage, and empty thread-list
+  calls against the exact official CLI in an isolated authenticated home,
+  removed afterward. No turn-list or downstream iOS coverage is claimed.
+
 ## 0.152.1 — 2026-09-07
 
 - Schema provenance: experimental export from stable public Codex tag
