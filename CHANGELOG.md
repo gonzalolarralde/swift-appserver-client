@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.159.3 — 2026-10-04
+
+- Schema provenance: official `@openai/codex@0.159.3` experimental export,
+  verified byte-for-byte against all 440 files in the clean stable public
+  `rust-v0.159.3` source bundle at peeled commit
+  `01fc69f4026735edfdf6789820549727a4867b11`.
+- Contract: no public contract change from 0.159.2; all schema files and
+  generated request mappings are unchanged. Upstream adds optional account
+  security setup reminders for eligible local ChatGPT sessions without
+  changing the exported API shape.
+- Swift compatibility: updated version metadata; no new compatibility fixes.
+- Verification: idempotent generation, `swift build --target AppServerClient`,
+  all 17 `swift test` cases, `git diff --check`, and unchanged
+  `Package.resolved` passed. Initialize, account, usage, and empty thread-list
+  smoke calls passed against the exact official CLI using an isolated
+  authenticated home; the copied credential was removed afterward.
+  No turn-list or downstream iOS coverage is claimed.
+
 ## 0.159.2 — 2026-10-04
 
 - Schema provenance: official `@openai/codex@0.159.2` experimental export,
