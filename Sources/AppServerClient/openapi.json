@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Codex App Server Protocol",
-    "version": "0.153.4"
+    "version": "0.154.0"
   },
   "paths": {},
   "components": {
@@ -133,6 +133,138 @@
           "params"
         ],
         "title": "Server/diagnosticsRequest",
+        "type": "object"
+      },
+      "UserVerificationStatusParams": {
+        "additionalProperties": false,
+        "type": "object"
+      },
+      "ClientRequestUserVerificationStatusRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "userVerification/status"
+            ],
+            "title": "UserVerification/statusRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/UserVerificationStatusParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "UserVerification/statusRequest",
+        "type": "object"
+      },
+      "UserVerificationEnrollParams": {
+        "additionalProperties": false,
+        "type": "object"
+      },
+      "ClientRequestUserVerificationEnrollRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "userVerification/enroll"
+            ],
+            "title": "UserVerification/enrollRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/UserVerificationEnrollParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "UserVerification/enrollRequest",
+        "type": "object"
+      },
+      "UserVerificationDeleteParams": {
+        "additionalProperties": false,
+        "type": "object"
+      },
+      "ClientRequestUserVerificationDeleteRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "userVerification/delete"
+            ],
+            "title": "UserVerification/deleteRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/UserVerificationDeleteParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "UserVerification/deleteRequest",
+        "type": "object"
+      },
+      "UserVerificationVerifyParams": {
+        "additionalProperties": false,
+        "description": "Local signing primitive, independent of any pending elicitation.",
+        "properties": {
+          "challenge": {
+            "description": "Unpadded base64url encoding of 1\u20134096 challenge bytes.",
+            "type": "string"
+          },
+          "description": {
+            "description": "Additional display context; at most 4096 UTF-8 bytes.",
+            "type": "string"
+          },
+          "title": {
+            "description": "Display context already approved by the UI; 1\u2013256 UTF-8 bytes.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "challenge",
+          "description",
+          "title"
+        ],
+        "type": "object"
+      },
+      "ClientRequestUserVerificationVerifyRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "userVerification/verify"
+            ],
+            "title": "UserVerification/verifyRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/UserVerificationVerifyParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "UserVerification/verifyRequest",
         "type": "object"
       },
       "AskForApproval": {
@@ -1608,6 +1740,44 @@
         "title": "CompactionResponseItem",
         "type": "object"
       },
+      "ReasoningEffort": {
+        "description": "A non-empty reasoning effort value advertised by the model.",
+        "minLength": 1,
+        "type": "string"
+      },
+      "ConfigurationReasoning": {
+        "description": "Reasoning settings interpreted by the backend for the routed model.",
+        "properties": {
+          "effort": {
+            "$ref": "#/components/schemas/ReasoningEffort"
+          }
+        },
+        "required": [
+          "effort"
+        ],
+        "type": "object"
+      },
+      "ResponseItemConfigurationUpdateResponseItem": {
+        "description": "A durable input control interpreted by the backend at its position in history.",
+        "properties": {
+          "reasoning": {
+            "$ref": "#/components/schemas/ConfigurationReasoning"
+          },
+          "type": {
+            "enum": [
+              "configuration_update"
+            ],
+            "title": "ConfigurationUpdateResponseItemType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reasoning",
+          "type"
+        ],
+        "title": "ConfigurationUpdateResponseItem",
+        "type": "object"
+      },
       "ResponseItemCompactionTriggerResponseItem": {
         "properties": {
           "type": {
@@ -1709,6 +1879,9 @@
             "$ref": "#/components/schemas/ResponseItemCompactionResponseItem"
           },
           {
+            "$ref": "#/components/schemas/ResponseItemConfigurationUpdateResponseItem"
+          },
+          {
             "$ref": "#/components/schemas/ResponseItemCompactionTriggerResponseItem"
           },
           {
@@ -1734,6 +1907,7 @@
             "web_search_call": "#/components/schemas/ResponseItemWebSearchCallResponseItem",
             "image_generation_call": "#/components/schemas/ResponseItemImageGenerationCallResponseItem",
             "compaction": "#/components/schemas/ResponseItemCompactionResponseItem",
+            "configuration_update": "#/components/schemas/ResponseItemConfigurationUpdateResponseItem",
             "compaction_trigger": "#/components/schemas/ResponseItemCompactionTriggerResponseItem",
             "context_compaction": "#/components/schemas/ResponseItemContextCompactionResponseItem",
             "other": "#/components/schemas/ResponseItemOtherResponseItem"
@@ -2862,6 +3036,11 @@
       },
       "ThreadMetadataUpdateParams": {
         "properties": {
+          "daybreakEnabled": {
+            "description": "Save the client's Daybreak choice for this persistent thread. Omitted or null leaves it unchanged. This does not select a turn's `cyberAccessProgram` or grant access.",
+            "type": "boolean",
+            "nullable": true
+          },
           "gitInfo": {
             "$ref": "#/components/schemas/ThreadMetadataGitInfoUpdateParams"
           },
@@ -2957,11 +3136,6 @@
           "plan",
           "default"
         ],
-        "type": "string"
-      },
-      "ReasoningEffort": {
-        "description": "A non-empty reasoning effort value advertised by the model.",
-        "minLength": 1,
         "type": "string"
       },
       "Settings": {
@@ -3706,6 +3880,13 @@
           },
           "modelProviders": {
             "description": "Optional provider filter; when set, only sessions recorded under these providers are returned. When present but empty, includes all providers.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "originators": {
+            "description": "Optional originator allowlist, matching any supplied value exactly. Supported by hosted backends only; the local app-server rejects a nonempty list. Omitted or empty lists leave originators unrestricted.",
             "items": {
               "type": "string"
             },
@@ -8486,6 +8667,20 @@
         "title": "Account/logoutRequest",
         "type": "object"
       },
+      "GetAccountRateLimitsParams": {
+        "description": "Usage-read capabilities of the requesting client, never inferred from its experiment arm.",
+        "properties": {
+          "excludeResetCreditDetails": {
+            "description": "Skip the separate reset-credit detail lookup for background usage polls. The usage response still includes the available count; omitted/false preserves detailed reads.",
+            "type": "boolean"
+          },
+          "supportsLunaReserve": {
+            "description": "The client supports automatic Luna Reserve fallback. For eligible ChatGPT CLI users, allow the backend to record experiment exposure after ordinary usage is blocked.",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
       "ClientRequestAccountRateLimitsReadRequest": {
         "properties": {
           "id": {
@@ -8499,7 +8694,7 @@
             "type": "string"
           },
           "params": {
-            "nullable": true
+            "$ref": "#/components/schemas/GetAccountRateLimitsParams"
           }
         },
         "required": [
@@ -10050,6 +10245,18 @@
             "$ref": "#/components/schemas/ClientRequestServerDiagnosticsRequest"
           },
           {
+            "$ref": "#/components/schemas/ClientRequestUserVerificationStatusRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ClientRequestUserVerificationEnrollRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ClientRequestUserVerificationDeleteRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ClientRequestUserVerificationVerifyRequest"
+          },
+          {
             "$ref": "#/components/schemas/ClientRequestThreadStartRequest"
           },
           {
@@ -10514,6 +10721,10 @@
           "mapping": {
             "initialize": "#/components/schemas/ClientRequestInitializeRequest",
             "server/diagnostics": "#/components/schemas/ClientRequestServerDiagnosticsRequest",
+            "userVerification/status": "#/components/schemas/ClientRequestUserVerificationStatusRequest",
+            "userVerification/enroll": "#/components/schemas/ClientRequestUserVerificationEnrollRequest",
+            "userVerification/delete": "#/components/schemas/ClientRequestUserVerificationDeleteRequest",
+            "userVerification/verify": "#/components/schemas/ClientRequestUserVerificationVerifyRequest",
             "thread/start": "#/components/schemas/ClientRequestThreadStartRequest",
             "thread/resume": "#/components/schemas/ClientRequestThreadResumeRequest",
             "thread/fork": "#/components/schemas/ClientRequestThreadForkRequest",
@@ -11502,6 +11713,33 @@
         "title": "Item/tool/requestUserInputRequest",
         "type": "object"
       },
+      "McpServerElicitationRequestParamsOpenaiUserVerification": {
+        "description": "A device-authenticated approval; accepted responses contain the proof in `content`.",
+        "properties": {
+          "challenge": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "mode": {
+            "enum": [
+              "openai/userVerification"
+            ],
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "challenge",
+          "description",
+          "mode",
+          "title"
+        ],
+        "type": "object"
+      },
       "McpElicitationStringType": {
         "enum": [
           "string"
@@ -12065,6 +12303,9 @@
         "type": "object",
         "oneOf": [
           {
+            "$ref": "#/components/schemas/McpServerElicitationRequestParamsOpenaiUserVerification"
+          },
+          {
             "$ref": "#/components/schemas/McpServerElicitationRequestParamsForm"
           },
           {
@@ -12080,6 +12321,7 @@
         "discriminator": {
           "propertyName": "mode",
           "mapping": {
+            "openai/userVerification": "#/components/schemas/McpServerElicitationRequestParamsOpenaiUserVerification",
             "form": "#/components/schemas/McpServerElicitationRequestParamsForm",
             "openai/form": "#/components/schemas/McpServerElicitationRequestParamsOpenaiForm",
             "openaiForm": "#/components/schemas/McpServerElicitationRequestParamsOpenaiForm2",
@@ -12127,7 +12369,7 @@
       "PermissionsRequestApprovalParams": {
         "properties": {
           "cwd": {
-            "$ref": "#/components/schemas/AbsolutePathBuf"
+            "$ref": "#/components/schemas/LegacyAppPathString"
           },
           "environmentId": {
             "default": null,
@@ -12983,6 +13225,29 @@
           "params"
         ],
         "title": "ErrorNotification",
+        "type": "object"
+      },
+      "ThreadEnvironment": {
+        "description": "An environment selected by a loaded thread, independent of connection status.",
+        "properties": {
+          "cwd": {
+            "$ref": "#/components/schemas/LegacyAppPathString"
+          },
+          "environmentId": {
+            "type": "string"
+          },
+          "runtimeWorkspaceRoots": {
+            "items": {
+              "$ref": "#/components/schemas/LegacyAppPathString"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "cwd",
+          "environmentId",
+          "runtimeWorkspaceRoots"
+        ],
         "type": "object"
       },
       "ThreadExtra": {
@@ -14665,6 +14930,19 @@
             "$ref": "#/components/schemas/AbsolutePathBuf",
             "description": "Working directory captured for the thread."
           },
+          "daybreakEnabled": {
+            "description": "Saved Daybreak choice, independent of turn execution. Null if unset.",
+            "type": "boolean",
+            "nullable": true
+          },
+          "environments": {
+            "default": null,
+            "description": "Current environments for a loaded thread, in priority order, primary first. `null` means the thread is not loaded or the server does not expose its selection. An empty list means no environments are selected. This does not report connection status.",
+            "items": {
+              "$ref": "#/components/schemas/ThreadEnvironment"
+            },
+            "type": "array"
+          },
           "ephemeral": {
             "description": "Whether the thread is ephemeral and should not be materialized on disk.",
             "type": "boolean"
@@ -14700,6 +14978,11 @@
           },
           "name": {
             "description": "Optional user-facing thread title.",
+            "type": "string",
+            "nullable": true
+          },
+          "originator": {
+            "description": "Originator recorded when the thread was created, independent of its current client or executor. Null when the recorded originator is unavailable.",
             "type": "string",
             "nullable": true
           },
@@ -16026,7 +16309,7 @@
             "type": "string"
           },
           "cwd": {
-            "$ref": "#/components/schemas/AbsolutePathBuf"
+            "$ref": "#/components/schemas/LegacyAppPathString"
           },
           "source": {
             "$ref": "#/components/schemas/GuardianCommandSource"
@@ -16119,11 +16402,11 @@
       "GuardianApprovalReviewActionApplyPatchGuardianApprovalReviewAction": {
         "properties": {
           "cwd": {
-            "$ref": "#/components/schemas/AbsolutePathBuf"
+            "$ref": "#/components/schemas/LegacyAppPathString"
           },
           "files": {
             "items": {
-              "$ref": "#/components/schemas/AbsolutePathBuf"
+              "$ref": "#/components/schemas/LegacyAppPathString"
             },
             "type": "array"
           },
@@ -17379,6 +17662,11 @@
             "nullable": true
           },
           "limitName": {
+            "type": "string",
+            "nullable": true
+          },
+          "normalModelSlug": {
+            "description": "Normal model whose display name and reasoning options describe this quota alias.",
             "type": "string",
             "nullable": true
           },
@@ -21147,6 +21435,40 @@
         "title": "ConfigReadResponse",
         "type": "object"
       },
+      "NetworkDomainPermission": {
+        "enum": [
+          "allow",
+          "deny"
+        ],
+        "type": "string"
+      },
+      "ApplicationNetworkRequirements": {
+        "properties": {
+          "domains": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/NetworkDomainPermission"
+            },
+            "type": "object"
+          },
+          "enabled": {
+            "description": "When enabled, only explicitly allowed exact domains may be contacted.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "domains",
+          "enabled"
+        ],
+        "type": "object"
+      },
+      "ApplicationRequirements": {
+        "properties": {
+          "network": {
+            "$ref": "#/components/schemas/ApplicationNetworkRequirements"
+          }
+        },
+        "type": "object"
+      },
       "AutoReviewRequirements": {
         "properties": {
           "ignoreRules": {
@@ -21205,6 +21527,10 @@
             "nullable": true
           },
           "allowHistoryAccess": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "allowWebmcp": {
             "type": "boolean",
             "nullable": true
           },
@@ -21612,13 +21938,6 @@
         },
         "type": "object"
       },
-      "NetworkDomainPermission": {
-        "enum": [
-          "allow",
-          "deny"
-        ],
-        "type": "string"
-      },
       "NetworkUnixSocketPermission": {
         "enum": [
           "allow",
@@ -21764,6 +22083,9 @@
               "$ref": "#/components/schemas/WindowsSandboxSetupMode"
             },
             "type": "array"
+          },
+          "application": {
+            "$ref": "#/components/schemas/ApplicationRequirements"
           },
           "autoReview": {
             "$ref": "#/components/schemas/AutoReviewRequirements"
@@ -22446,6 +22768,11 @@
           "accountId": {
             "description": "Account associated with this usage snapshot, when supplied by the backend.",
             "type": "string",
+            "nullable": true
+          },
+          "ordinaryUsageAllowed": {
+            "description": "Backend permission for ordinary included usage, validated against the active account. Null means unavailable; clients must not infer recovery from percentages or reset times.",
+            "type": "boolean",
             "nullable": true
           },
           "rateLimitResetCredits": {
@@ -23196,6 +23523,11 @@
               "$ref": "#/components/schemas/Tool"
             },
             "type": "object"
+          },
+          "toolsError": {
+            "description": "Tool discovery failed and no catalog was returned. Null when a catalog is returned, including cached or empty catalogs.",
+            "type": "string",
+            "nullable": true
           }
         },
         "required": [
@@ -26777,6 +27109,78 @@
           "turnId"
         ],
         "title": "TurnSteerResponse",
+        "type": "object"
+      },
+      "UserVerificationDeleteResponse": {
+        "title": "UserVerificationDeleteResponse",
+        "type": "object"
+      },
+      "UserVerificationEnrollResponse": {
+        "properties": {
+          "credentialId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "credentialId"
+        ],
+        "title": "UserVerificationEnrollResponse",
+        "type": "object"
+      },
+      "UserVerificationUnavailableReason": {
+        "enum": [
+          "credentialMissing",
+          "biometricsUnavailable",
+          "providerUnavailable"
+        ],
+        "type": "string"
+      },
+      "UserVerificationStatusResponse": {
+        "description": "Local readiness only; this neither prompts nor queries server registration.",
+        "properties": {
+          "credentialId": {
+            "type": "string",
+            "nullable": true
+          },
+          "unavailableMessage": {
+            "type": "string",
+            "nullable": true
+          },
+          "unavailableReason": {
+            "$ref": "#/components/schemas/UserVerificationUnavailableReason"
+          }
+        },
+        "title": "UserVerificationStatusResponse",
+        "type": "object"
+      },
+      "UserVerificationProof": {
+        "additionalProperties": false,
+        "description": "A signature over the exact decoded challenge. The verifier validates and consumes it.",
+        "properties": {
+          "credentialId": {
+            "type": "string"
+          },
+          "signature": {
+            "description": "Unpadded base64url DER ECDSA signature using P-256 and SHA-256.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "credentialId",
+          "signature"
+        ],
+        "type": "object"
+      },
+      "UserVerificationVerifyResponse": {
+        "properties": {
+          "proof": {
+            "$ref": "#/components/schemas/UserVerificationProof"
+          }
+        },
+        "required": [
+          "proof"
+        ],
+        "title": "UserVerificationVerifyResponse",
         "type": "object"
       },
       "WindowsSandboxReadiness": {

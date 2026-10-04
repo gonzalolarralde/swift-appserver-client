@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.154.0 — 2026-10-04
+
+- Schema provenance: official `@openai/codex@0.154.0` experimental export,
+  verified byte-for-byte against all 426 files in the clean stable public
+  `rust-v0.154.0` source bundle at peeled commit
+  `6b9826e3aa83b1a5947db50f4332cb9c65f1b340`.
+- Contract: adds the four `userVerification/*` RPCs and the
+  `openai/userVerification` MCP elicitation mode, typed optional
+  `account/rateLimits/read` parameters, application network requirements,
+  browser WebMCP requirements, thread environments/originator/Daybreak metadata,
+  ordinary-usage eligibility, quota model aliases, MCP discovery errors, and
+  durable reasoning configuration items. Detached reviews are deprecated.
+  No schema files or RPCs were removed. Approval paths retain their string
+  wire representation while accepting target-native paths.
+- Swift compatibility: extends the handwritten MCP elicitation override with
+  the user-verification case and tests its full wire round trip.
+  `AccountRateLimitsRead.Params` is now `GetAccountRateLimitsParams?`;
+  exhaustive MCP-mode switches must handle `userVerification`.
+- Verification: generation, `swift build --target AppServerClient`, all
+  16 `swift test` cases, `git diff --check`, and unchanged `Package.resolved`
+  passed. Initialize, account, usage, and empty thread-list smoke calls passed
+  against the exact official CLI in an isolated authenticated home; the copied
+  credential was removed afterward. No turn-list or downstream iOS coverage
+  is claimed.
+
 ## 0.153.4 — 2026-09-07
 
 - Schema provenance: official `@openai/codex@0.153.4` experimental export,

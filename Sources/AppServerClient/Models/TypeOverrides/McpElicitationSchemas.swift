@@ -128,6 +128,7 @@ public enum McpElicitationPrimitiveSchemaValue: Codable, Hashable, Sendable {
 /// The wire values `openai/form` and `openaiForm` normalize to the same Swift
 /// case name in the generated model, so this override keeps them distinct.
 public enum McpServerElicitationRequestParamsValue: Codable, Hashable, Sendable {
+    case userVerification(Components.Schemas.McpServerElicitationRequestParamsOpenaiUserVerification)
     case form(Components.Schemas.McpServerElicitationRequestParamsForm)
     case legacyOpenaiForm(Components.Schemas.McpServerElicitationRequestParamsOpenaiForm)
     case openaiForm(Components.Schemas.McpServerElicitationRequestParamsOpenaiForm2)
@@ -141,6 +142,8 @@ public enum McpServerElicitationRequestParamsValue: Codable, Hashable, Sendable 
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let mode = try container.decode(String.self, forKey: .mode)
         switch mode {
+        case "openai/userVerification":
+            self = .userVerification(try .init(from: decoder))
         case "form":
             self = .form(try .init(from: decoder))
         case "openai/form":
@@ -160,6 +163,8 @@ public enum McpServerElicitationRequestParamsValue: Codable, Hashable, Sendable 
 
     public func encode(to encoder: any Encoder) throws {
         switch self {
+        case let .userVerification(value):
+            try value.encode(to: encoder)
         case let .form(value):
             try value.encode(to: encoder)
         case let .legacyOpenaiForm(value):

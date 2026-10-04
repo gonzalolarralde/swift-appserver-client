@@ -77,6 +77,25 @@ import Testing
     )
 }
 
+@Test func mcpServerElicitationUserVerificationRoundTrips() throws {
+    let input = Data(
+        #"{"challenge":"Y2hhbGxlbmdl","description":"Approve this operation","mode":"openai/userVerification","title":"Verify"}"#.utf8
+    )
+    let value = try JSONDecoder().decode(
+        Components.Schemas.McpServerElicitationRequestParams.self,
+        from: input
+    )
+    guard case .userVerification = value else {
+        Issue.record("Expected the user verification mode")
+        return
+    }
+    let actual = try #require(
+        JSONSerialization.jsonObject(with: JSONEncoder().encode(value)) as? [String: String]
+    )
+    let expected = try #require(JSONSerialization.jsonObject(with: input) as? [String: String])
+    #expect(actual == expected)
+}
+
 @Test func mcpServerElicitationOpenaiFormModesRemainDistinct() throws {
     let decoder = JSONDecoder()
     let encoder = JSONEncoder()

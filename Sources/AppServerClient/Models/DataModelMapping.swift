@@ -5,6 +5,10 @@ import OpenAPIRuntime
 public extension AppServerModels.ClientRequest {
     typealias Initialize = Components.Schemas.ClientRequestInitializeRequest
     typealias ServerDiagnostics = Components.Schemas.ClientRequestServerDiagnosticsRequest
+    typealias UserVerificationStatus = Components.Schemas.ClientRequestUserVerificationStatusRequest
+    typealias UserVerificationEnroll = Components.Schemas.ClientRequestUserVerificationEnrollRequest
+    typealias UserVerificationDelete = Components.Schemas.ClientRequestUserVerificationDeleteRequest
+    typealias UserVerificationVerify = Components.Schemas.ClientRequestUserVerificationVerifyRequest
     typealias ThreadStart = Components.Schemas.ClientRequestThreadStartRequest
     typealias ThreadResume = Components.Schemas.ClientRequestThreadResumeRequest
     typealias ThreadFork = Components.Schemas.ClientRequestThreadForkRequest
@@ -162,6 +166,10 @@ public extension AppServerModels.ClientRequest {
     enum Response {
         public typealias Initialize = Components.Schemas.InitializeResponse
         public typealias ServerDiagnostics = Components.Schemas.ServerDiagnosticsResponse
+        public typealias UserVerificationStatus = Components.Schemas.UserVerificationStatusResponse
+        public typealias UserVerificationEnroll = Components.Schemas.UserVerificationEnrollResponse
+        public typealias UserVerificationDelete = Components.Schemas.UserVerificationDeleteResponse
+        public typealias UserVerificationVerify = Components.Schemas.UserVerificationVerifyResponse
         public typealias ThreadStart = Components.Schemas.ThreadStartResponse
         public typealias ThreadResume = Components.Schemas.ThreadResumeResponse
         public typealias ThreadFork = Components.Schemas.ThreadForkResponse
@@ -321,6 +329,10 @@ public extension AppServerModels.ClientRequest {
         switch self {
         case let .initialize(value): value
         case let .serverDiagnostics(value): value
+        case let .userVerificationStatus(value): value
+        case let .userVerificationEnroll(value): value
+        case let .userVerificationDelete(value): value
+        case let .userVerificationVerify(value): value
         case let .threadStart(value): value
         case let .threadResume(value): value
         case let .threadFork(value): value
@@ -491,6 +503,38 @@ extension Components.Schemas.ClientRequestServerDiagnosticsRequest: ClientReques
     public typealias Response = AppServerModels.ClientRequest.Response.ServerDiagnostics
     public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .serverDiagnostics(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestUserVerificationStatusRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.UserVerificationStatusParams
+    public typealias Response = AppServerModels.ClientRequest.Response.UserVerificationStatus
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .userVerificationStatus(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestUserVerificationEnrollRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.UserVerificationEnrollParams
+    public typealias Response = AppServerModels.ClientRequest.Response.UserVerificationEnroll
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .userVerificationEnroll(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestUserVerificationDeleteRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.UserVerificationDeleteParams
+    public typealias Response = AppServerModels.ClientRequest.Response.UserVerificationDelete
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .userVerificationDelete(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestUserVerificationVerifyRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.UserVerificationVerifyParams
+    public typealias Response = AppServerModels.ClientRequest.Response.UserVerificationVerify
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .userVerificationVerify(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
@@ -1503,7 +1547,7 @@ extension Components.Schemas.ClientRequestAccountLogoutRequest: ClientRequestabl
 }
 
 extension Components.Schemas.ClientRequestAccountRateLimitsReadRequest: ClientRequestable {
-    public typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
+    public typealias Params = Components.Schemas.GetAccountRateLimitsParams?
     public typealias Response = AppServerModels.ClientRequest.Response.AccountRateLimitsRead
     public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .accountRateLimitsRead(.init(id: id, method: .allCases.first!, params: params))
