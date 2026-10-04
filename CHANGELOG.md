@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.156.0 — 2026-10-04
+
+- Schema provenance: official `@openai/codex@0.156.0` experimental export,
+  verified byte-for-byte against all 436 files in the clean stable public
+  `rust-v0.156.0` source bundle at peeled commit
+  `fe74a774532af67b5a4a3dec03ce9469e17f89af`.
+- Contract: removes `thread/rollback` and its request/response models;
+  `thread/revert` remains available. Adds `rollout/compress`, file-ID image
+  inputs alongside URL inputs, disabled plugin IDs, resume collaboration mode,
+  workspace account routing, managed login/provider requirements, program
+  access controls, MCP app UI/capabilities, verification enrollment keys,
+  elicitation metadata, and plugin onboarding skills.
+  Removes `windowsSandboxPrivateDesktop` from requirements; sandbox
+  implementations now use `WindowsSandboxImplementation`, adding `mxc`.
+- Swift compatibility: regenerated models and request mappings, including the
+  breaking rollback removal and image-union constructors. Existing URL wire
+  forms remain valid, and the handwritten local-image input builder is
+  unchanged and tested. No generator or override repairs were needed.
+- Verification: idempotent generation, `swift build --target AppServerClient`,
+  all 16 `swift test` cases, `git diff --check`, and unchanged
+  `Package.resolved` passed. Initialize, account, usage, and empty thread-list
+  smoke calls passed against the exact official CLI using an isolated
+  authenticated home; the copied credential was removed afterward.
+  No turn-list or downstream iOS coverage is claimed.
+
 ## 0.155.1 — 2026-10-04
 
 - Schema provenance: official `@openai/codex@0.155.1` experimental export,

@@ -37,6 +37,7 @@ public extension AppServerModels.ClientRequest {
     typealias ThreadMemoryModeSet = Components.Schemas.ClientRequestThreadMemoryModeSetRequest
     typealias MemoryStatus = Components.Schemas.ClientRequestMemoryStatusRequest
     typealias MemoryReset = Components.Schemas.ClientRequestMemoryResetRequest
+    typealias RolloutCompress = Components.Schemas.ClientRequestRolloutCompressRequest
     typealias ThreadUnarchive = Components.Schemas.ClientRequestThreadUnarchiveRequest
     typealias ThreadCompactStart = Components.Schemas.ClientRequestThreadCompactStartRequest
     typealias ThreadShellCommand = Components.Schemas.ClientRequestThreadShellCommandRequest
@@ -44,7 +45,6 @@ public extension AppServerModels.ClientRequest {
     typealias ThreadBackgroundTerminalsClean = Components.Schemas.ClientRequestThreadBackgroundTerminalsCleanRequest
     typealias ThreadBackgroundTerminalsList = Components.Schemas.ClientRequestThreadBackgroundTerminalsListRequest
     typealias ThreadBackgroundTerminalsTerminate = Components.Schemas.ClientRequestThreadBackgroundTerminalsTerminateRequest
-    typealias ThreadRollback = Components.Schemas.ClientRequestThreadRollbackRequest
     typealias ThreadRevert = Components.Schemas.ClientRequestThreadRevertRequest
     typealias ThreadList = Components.Schemas.ClientRequestThreadListRequest
     typealias ProjectList = Components.Schemas.ClientRequestProjectListRequest
@@ -203,6 +203,7 @@ public extension AppServerModels.ClientRequest {
         public typealias ThreadMemoryModeSet = Components.Schemas.ThreadMemoryModeSetResponse
         public typealias MemoryStatus = Components.Schemas.MemoryStatusResponse
         public typealias MemoryReset = Components.Schemas.MemoryResetResponse
+        public typealias RolloutCompress = Components.Schemas.RolloutCompressResponse
         public typealias ThreadUnarchive = Components.Schemas.ThreadUnarchiveResponse
         public typealias ThreadCompactStart = Components.Schemas.ThreadCompactStartResponse
         public typealias ThreadShellCommand = Components.Schemas.ThreadShellCommandResponse
@@ -210,7 +211,6 @@ public extension AppServerModels.ClientRequest {
         public typealias ThreadBackgroundTerminalsClean = Components.Schemas.ThreadBackgroundTerminalsCleanResponse
         public typealias ThreadBackgroundTerminalsList = Components.Schemas.ThreadBackgroundTerminalsListResponse
         public typealias ThreadBackgroundTerminalsTerminate = Components.Schemas.ThreadBackgroundTerminalsTerminateResponse
-        public typealias ThreadRollback = Components.Schemas.ThreadRollbackResponse
         public typealias ThreadRevert = Components.Schemas.ThreadRevertResponse
         public typealias ThreadList = Components.Schemas.ThreadListResponse
         public typealias ProjectList = Components.Schemas.ProjectListResponse
@@ -371,6 +371,7 @@ public extension AppServerModels.ClientRequest {
         case let .threadMemoryModeSet(value): value
         case let .memoryStatus(value): value
         case let .memoryReset(value): value
+        case let .rolloutCompress(value): value
         case let .threadUnarchive(value): value
         case let .threadCompactStart(value): value
         case let .threadShellCommand(value): value
@@ -378,7 +379,6 @@ public extension AppServerModels.ClientRequest {
         case let .threadBackgroundTerminalsClean(value): value
         case let .threadBackgroundTerminalsList(value): value
         case let .threadBackgroundTerminalsTerminate(value): value
-        case let .threadRollback(value): value
         case let .threadRevert(value): value
         case let .threadList(value): value
         case let .projectList(value): value
@@ -777,6 +777,14 @@ extension Components.Schemas.ClientRequestMemoryResetRequest: ClientRequestable 
     }
 }
 
+extension Components.Schemas.ClientRequestRolloutCompressRequest: ClientRequestable {
+    public typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
+    public typealias Response = AppServerModels.ClientRequest.Response.RolloutCompress
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .rolloutCompress(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
 extension Components.Schemas.ClientRequestThreadUnarchiveRequest: ClientRequestable {
     public typealias Params = Components.Schemas.ThreadUnarchiveParams
     public typealias Response = AppServerModels.ClientRequest.Response.ThreadUnarchive
@@ -830,14 +838,6 @@ extension Components.Schemas.ClientRequestThreadBackgroundTerminalsTerminateRequ
     public typealias Response = AppServerModels.ClientRequest.Response.ThreadBackgroundTerminalsTerminate
     public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadBackgroundTerminalsTerminate(.init(id: id, method: .allCases.first!, params: params))
-    }
-}
-
-extension Components.Schemas.ClientRequestThreadRollbackRequest: ClientRequestable {
-    public typealias Params = Components.Schemas.ThreadRollbackParams
-    public typealias Response = AppServerModels.ClientRequest.Response.ThreadRollback
-    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
-        .threadRollback(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
