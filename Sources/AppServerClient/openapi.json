@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Codex App Server Protocol",
-    "version": "0.157.1"
+    "version": "0.158.0"
   },
   "paths": {},
   "components": {
@@ -8127,6 +8127,11 @@
       },
       "EnvironmentAddParams": {
         "properties": {
+          "authBearerToken": {
+            "description": "Optional raw bearer token for executor authentication, including reconnects. Requires a secure transport or a loopback destination.",
+            "type": "string",
+            "nullable": true
+          },
           "connectTimeoutMs": {
             "description": "Optional WebSocket connection timeout. The server default applies when omitted.",
             "format": "uint64",
@@ -13415,6 +13420,7 @@
               "sessionBudgetExceeded",
               "usageLimitExceeded",
               "rateLimitExceeded",
+              "flexUnavailable",
               "serverOverloaded",
               "cyberPolicy",
               "misalignmentPolicyViolation",
@@ -18023,6 +18029,7 @@
           "plus",
           "pro",
           "prolite",
+          "promax",
           "team",
           "self_serve_business_prolite",
           "self_serve_business_usage_based",
@@ -24961,379 +24968,6 @@
         ],
         "type": "string"
       },
-      "PluginIcon": {
-        "properties": {
-          "mimeType": {
-            "type": "string",
-            "nullable": true
-          },
-          "sizes": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "src": {
-            "type": "string"
-          },
-          "theme": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "required": [
-          "src"
-        ],
-        "type": "object"
-      },
-      "PluginQuickActionTarget": {
-        "properties": {
-          "arguments": {},
-          "name": {
-            "type": "string"
-          },
-          "type": {
-            "enum": [
-              "tool"
-            ],
-            "title": "ToolPluginQuickActionTargetType",
-            "type": "string"
-          }
-        },
-        "required": [
-          "name",
-          "type"
-        ],
-        "title": "ToolPluginQuickActionTarget",
-        "type": "object"
-      },
-      "PluginQuickAction": {
-        "properties": {
-          "icons": {
-            "items": {
-              "$ref": "#/components/schemas/PluginIcon"
-            },
-            "type": "array"
-          },
-          "target": {
-            "$ref": "#/components/schemas/PluginQuickActionTarget"
-          },
-          "title": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "icons",
-          "target",
-          "title"
-        ],
-        "type": "object"
-      },
-      "PluginEntrypointGlobalPluginEntrypoint": {
-        "properties": {
-          "appId": {
-            "type": "string"
-          },
-          "icons": {
-            "items": {
-              "$ref": "#/components/schemas/PluginIcon"
-            },
-            "type": "array"
-          },
-          "quickAction": {
-            "$ref": "#/components/schemas/PluginQuickAction"
-          },
-          "resourceUri": {
-            "type": "string"
-          },
-          "title": {
-            "type": "string"
-          },
-          "toolName": {
-            "type": "string"
-          },
-          "type": {
-            "enum": [
-              "global"
-            ],
-            "title": "GlobalPluginEntrypointType",
-            "type": "string"
-          }
-        },
-        "required": [
-          "appId",
-          "icons",
-          "resourceUri",
-          "title",
-          "toolName",
-          "type"
-        ],
-        "title": "GlobalPluginEntrypoint",
-        "type": "object"
-      },
-      "PluginEntrypointSettingsPluginEntrypoint": {
-        "properties": {
-          "appId": {
-            "type": "string"
-          },
-          "icons": {
-            "items": {
-              "$ref": "#/components/schemas/PluginIcon"
-            },
-            "type": "array"
-          },
-          "resourceUri": {
-            "type": "string"
-          },
-          "searchTerms": {
-            "default": [],
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "title": {
-            "type": "string"
-          },
-          "toolName": {
-            "type": "string"
-          },
-          "type": {
-            "enum": [
-              "settings"
-            ],
-            "title": "SettingsPluginEntrypointType",
-            "type": "string"
-          }
-        },
-        "required": [
-          "appId",
-          "icons",
-          "resourceUri",
-          "title",
-          "toolName",
-          "type"
-        ],
-        "title": "SettingsPluginEntrypoint",
-        "type": "object"
-      },
-      "PluginEntrypointThreadPluginEntrypoint": {
-        "properties": {
-          "appId": {
-            "type": "string"
-          },
-          "icons": {
-            "items": {
-              "$ref": "#/components/schemas/PluginIcon"
-            },
-            "type": "array"
-          },
-          "resourceUri": {
-            "type": "string"
-          },
-          "title": {
-            "type": "string"
-          },
-          "toolName": {
-            "type": "string"
-          },
-          "type": {
-            "enum": [
-              "thread"
-            ],
-            "title": "ThreadPluginEntrypointType",
-            "type": "string"
-          }
-        },
-        "required": [
-          "appId",
-          "icons",
-          "resourceUri",
-          "title",
-          "toolName",
-          "type"
-        ],
-        "title": "ThreadPluginEntrypoint",
-        "type": "object"
-      },
-      "PluginEntrypointFilePluginEntrypoint": {
-        "properties": {
-          "appId": {
-            "type": "string"
-          },
-          "extensions": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array"
-          },
-          "icons": {
-            "items": {
-              "$ref": "#/components/schemas/PluginIcon"
-            },
-            "type": "array"
-          },
-          "resourceUri": {
-            "type": "string"
-          },
-          "title": {
-            "type": "string"
-          },
-          "toolName": {
-            "type": "string"
-          },
-          "type": {
-            "enum": [
-              "file"
-            ],
-            "title": "FilePluginEntrypointType",
-            "type": "string"
-          }
-        },
-        "required": [
-          "appId",
-          "extensions",
-          "icons",
-          "resourceUri",
-          "title",
-          "toolName",
-          "type"
-        ],
-        "title": "FilePluginEntrypoint",
-        "type": "object"
-      },
-      "PluginEntrypoint": {
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/PluginEntrypointGlobalPluginEntrypoint"
-          },
-          {
-            "$ref": "#/components/schemas/PluginEntrypointSettingsPluginEntrypoint"
-          },
-          {
-            "$ref": "#/components/schemas/PluginEntrypointThreadPluginEntrypoint"
-          },
-          {
-            "$ref": "#/components/schemas/PluginEntrypointFilePluginEntrypoint"
-          }
-        ],
-        "discriminator": {
-          "propertyName": "type",
-          "mapping": {
-            "global": "#/components/schemas/PluginEntrypointGlobalPluginEntrypoint",
-            "settings": "#/components/schemas/PluginEntrypointSettingsPluginEntrypoint",
-            "thread": "#/components/schemas/PluginEntrypointThreadPluginEntrypoint",
-            "file": "#/components/schemas/PluginEntrypointFilePluginEntrypoint"
-          }
-        }
-      },
-      "PluginSearchProviderCall": {
-        "properties": {
-          "_meta": {},
-          "arguments": {},
-          "name": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "_meta",
-          "arguments",
-          "name"
-        ],
-        "type": "object"
-      },
-      "PluginSearchProvider": {
-        "properties": {
-          "appId": {
-            "type": "string"
-          },
-          "call": {
-            "$ref": "#/components/schemas/PluginSearchProviderCall"
-          },
-          "linkId": {
-            "type": "string"
-          },
-          "title": {
-            "type": "string"
-          },
-          "toolName": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "appId",
-          "linkId",
-          "title",
-          "toolName"
-        ],
-        "type": "object"
-      },
-      "PluginSettings": {
-        "properties": {
-          "appId": {
-            "type": "string"
-          },
-          "readToolName": {
-            "type": "string"
-          },
-          "updateToolName": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "appId",
-          "readToolName",
-          "updateToolName"
-        ],
-        "type": "object"
-      },
-      "PluginExtensions": {
-        "properties": {
-          "entrypoints": {
-            "default": null,
-            "items": {
-              "$ref": "#/components/schemas/PluginEntrypoint"
-            },
-            "type": "array"
-          },
-          "fileHandlers": {
-            "default": [],
-            "items": {
-              "$ref": "#/components/schemas/PluginEntrypoint"
-            },
-            "type": "array"
-          },
-          "searchMentionProviders": {
-            "default": [],
-            "items": {
-              "$ref": "#/components/schemas/PluginSearchProvider"
-            },
-            "type": "array"
-          },
-          "settings": {
-            "default": [],
-            "items": {
-              "$ref": "#/components/schemas/PluginSettings"
-            },
-            "type": "array"
-          },
-          "settingsEntrypoints": {
-            "default": [],
-            "items": {
-              "$ref": "#/components/schemas/PluginEntrypoint"
-            },
-            "type": "array"
-          },
-          "threadEntrypoints": {
-            "default": [],
-            "items": {
-              "$ref": "#/components/schemas/PluginEntrypoint"
-            },
-            "type": "array"
-          }
-        },
-        "type": "object"
-      },
       "PluginInstallPolicy": {
         "enum": [
           "NOT_AVAILABLE",
@@ -25667,9 +25301,6 @@
           },
           "enabled": {
             "type": "boolean"
-          },
-          "extensions": {
-            "$ref": "#/components/schemas/PluginExtensions"
           },
           "id": {
             "type": "string"

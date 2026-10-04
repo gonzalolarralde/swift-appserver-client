@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.158.0 — 2026-10-04
+
+- Schema provenance: official `@openai/codex@0.158.0` experimental export,
+  verified byte-for-byte against all 440 files in the clean stable public
+  `rust-v0.158.0` source bundle at peeled commit
+  `064c6b8c737f5b41d171fdda80bd9ef10ad06eb3`.
+- Contract: removes `PluginSummary.extensions` and the eight plugin-extension
+  schema definitions introduced in 0.157.0, including their generated Swift
+  models. Adds optional `EnvironmentAddParams.authBearerToken` for secure or
+  loopback executor connections, `PlanType.promax`, and the
+  `flexUnavailable` error value. No RPCs or exported schema files were removed.
+- Swift compatibility: regenerated the breaking plugin-model removal and new
+  authentication/error/plan fields. Existing source compiles without additional
+  handwritten compatibility fixes; gateway OAuth mappings remain covered.
+- Verification: idempotent generation, `swift build --target AppServerClient`,
+  all 16 `swift test` cases, `git diff --check`, and unchanged
+  `Package.resolved` passed. Initialize, account, usage, and empty thread-list
+  smoke calls passed against the exact official CLI using an isolated
+  authenticated home; the copied credential was removed afterward.
+  No turn-list or downstream iOS coverage is claimed.
+
 ## 0.157.1 — 2026-10-04
 
 - Schema provenance: official `@openai/codex@0.157.1` experimental export,
