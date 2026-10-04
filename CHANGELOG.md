@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.159.0 — 2026-10-04
+
+- Schema provenance: official `@openai/codex@0.159.0` experimental export,
+  verified byte-for-byte against all 440 files in the clean stable public
+  `rust-v0.159.0` source bundle at peeled commit
+  `687a119f0fcaace47e1f1abcc77cec6c813fd6da`.
+- Contract: `thread/items/list` cursors now accept an opaque string or a tagged
+  item anchor. Adds optional MCP server-name filtering and the
+  `tooManyDenials` error value. No RPCs, schema files, or definitions were
+  removed; opaque string cursors remain valid on the wire.
+- Swift compatibility: the item cursor parameter now takes a generated
+  `ThreadItemsListCursor`, a source-level change for callers passing strings
+  directly. Use `.init(value1: cursorString)` for an opaque cursor or
+  `.init(value2: .init(itemId: itemID, _type: .item))` for an anchor.
+  Added a serialization/decode regression test covering both complete request
+  payloads. No generator or handwritten model repair was required.
+- Verification: idempotent generation, `swift build --target AppServerClient`,
+  all 17 `swift test` cases, `git diff --check`, and unchanged
+  `Package.resolved` passed. Initialize, account, usage, and empty thread-list
+  smoke calls passed against the exact official CLI using an isolated
+  authenticated home; the copied credential was removed afterward.
+  No turn-list or downstream iOS coverage is claimed.
+
 ## 0.158.0 — 2026-10-04
 
 - Schema provenance: official `@openai/codex@0.158.0` experimental export,

@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Codex App Server Protocol",
-    "version": "0.158.0"
+    "version": "0.159.0"
   },
   "paths": {},
   "components": {
@@ -5000,12 +5000,42 @@
         "title": "Thread/turns/listRequest",
         "type": "object"
       },
+      "ThreadItemsListAnchor": {
+        "properties": {
+          "itemId": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "item"
+            ],
+            "title": "ItemThreadItemsListAnchorType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "itemId",
+          "type"
+        ],
+        "title": "ItemThreadItemsListAnchor",
+        "type": "object",
+        "description": "An exclusive item position within the requested visible turn."
+      },
+      "ThreadItemsListCursor": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "$ref": "#/components/schemas/ThreadItemsListAnchor"
+          }
+        ],
+        "description": "Starting position for an item-history page."
+      },
       "ThreadItemsListParams": {
         "properties": {
           "cursor": {
-            "description": "Opaque cursor to pass to the next call to continue after the last item.",
-            "type": "string",
-            "nullable": true
+            "$ref": "#/components/schemas/ThreadItemsListCursor"
           },
           "limit": {
             "description": "Optional item page size.",
@@ -8357,6 +8387,11 @@
             "format": "uint32",
             "minimum": 0.0,
             "type": "integer",
+            "nullable": true
+          },
+          "serverName": {
+            "description": "Limit discovery to one server. With a thread ID, reuse that thread's MCP connection.",
+            "type": "string",
             "nullable": true
           },
           "threadId": {
@@ -13424,6 +13459,7 @@
               "serverOverloaded",
               "cyberPolicy",
               "misalignmentPolicyViolation",
+              "tooManyDenials",
               "internalServerError",
               "unauthorized",
               "badRequest",

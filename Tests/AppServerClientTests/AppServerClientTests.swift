@@ -181,6 +181,37 @@ import Testing
     )
 }
 
+@Test func threadItemsCursorPreservesStringAndItemAnchorWireForms() throws {
+    let examples: [(Components.Schemas.ThreadItemsListCursor, Any)] = [
+        (.init(value1: "next-page"), "next-page"),
+        (
+            .init(value2: .init(itemId: "item-2", _type: .item)),
+            ["type": "item", "itemId": "item-2"]
+        ),
+    ]
+    for (cursor, wireCursor) in examples {
+        let params = Components.Schemas.ThreadItemsListParams(
+            cursor: cursor,
+            threadId: "thread-1",
+            turnId: "turn-1"
+        )
+        let encoded = try JSONEncoder().encode(params)
+        let object = try #require(
+            JSONSerialization.jsonObject(with: encoded) as? NSDictionary
+        )
+        let expected: NSDictionary = [
+            "cursor": wireCursor,
+            "threadId": "thread-1",
+            "turnId": "turn-1",
+        ]
+        #expect(object == expected)
+        #expect(try JSONDecoder().decode(
+            Components.Schemas.ThreadItemsListParams.self,
+            from: encoded
+        ) == params)
+    }
+}
+
 @Test func fileUploaderCopiesDataAndReportsProgress() async throws {
     let root = FileManager.default.temporaryDirectory
         .appendingPathComponent(UUID().uuidString, isDirectory: true)
