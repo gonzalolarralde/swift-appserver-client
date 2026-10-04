@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Codex App Server Protocol",
-    "version": "0.156.1"
+    "version": "0.157.0"
   },
   "paths": {},
   "components": {
@@ -24,6 +24,10 @@
           "experimentalApi": {
             "default": false,
             "description": "Opt into receiving experimental API methods and fields.",
+            "type": "boolean"
+          },
+          "explicitGatewayOauth": {
+            "description": "Use explicit gateway OAuth login instead of automatic browser authorization. Applies to this app-server's gateway runtime; later connections cannot undo it.",
             "type": "boolean"
           },
           "extensions": {
@@ -6985,6 +6989,10 @@
       "ThreadRealtimeStartParams": {
         "description": "EXPERIMENTAL - start a thread-scoped realtime session.",
         "properties": {
+          "backendReasoningStatus": {
+            "description": "Relays public reasoning summaries as quiet context for realtime V3 delegations. Defaults to false.",
+            "type": "boolean"
+          },
           "clientManagedHandoffs": {
             "description": "Leaves Codex response handoffs to the client's explicit append calls instead of forwarding them automatically. Defaults to false.",
             "type": "boolean",
@@ -7576,6 +7584,75 @@
           "params"
         ],
         "title": "Model/listRequest",
+        "type": "object"
+      },
+      "ClientRequestAccountGatewayOAuthReadRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "account/gatewayOAuth/read"
+            ],
+            "title": "Account/gatewayOAuth/readRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "method"
+        ],
+        "title": "Account/gatewayOAuth/readRequest",
+        "type": "object"
+      },
+      "ClientRequestAccountGatewayOAuthLoginRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "account/gatewayOAuth/login"
+            ],
+            "title": "Account/gatewayOAuth/loginRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "method"
+        ],
+        "title": "Account/gatewayOAuth/loginRequest",
+        "type": "object"
+      },
+      "ClientRequestAccountGatewayOAuthCancelRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "account/gatewayOAuth/cancel"
+            ],
+            "title": "Account/gatewayOAuth/cancelRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "method"
+        ],
+        "title": "Account/gatewayOAuth/cancelRequest",
         "type": "object"
       },
       "ModelProviderCapabilitiesReadParams": {
@@ -8308,6 +8385,23 @@
         "title": "McpServerStatus/listRequest",
         "type": "object"
       },
+      "McpResourceReadTarget": {
+        "properties": {
+          "connectorId": {
+            "type": "string"
+          },
+          "linkId": {
+            "description": "Null explicitly requests no-auth access, subject to the app's resource policy.",
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "connectorId",
+          "linkId"
+        ],
+        "type": "object"
+      },
       "McpResourceReadParams": {
         "properties": {
           "connectorId": {
@@ -8321,6 +8415,9 @@
           },
           "server": {
             "type": "string"
+          },
+          "target": {
+            "$ref": "#/components/schemas/McpResourceReadTarget"
           },
           "threadId": {
             "type": "string",
@@ -10836,6 +10933,15 @@
             "$ref": "#/components/schemas/ClientRequestModelListRequest"
           },
           {
+            "$ref": "#/components/schemas/ClientRequestAccountGatewayOAuthReadRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ClientRequestAccountGatewayOAuthLoginRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ClientRequestAccountGatewayOAuthCancelRequest"
+          },
+          {
             "$ref": "#/components/schemas/ClientRequestModelProviderCapabilitiesReadRequest"
           },
           {
@@ -11117,6 +11223,9 @@
             "thread/realtime/listVoices": "#/components/schemas/ClientRequestThreadRealtimeListVoicesRequest",
             "review/start": "#/components/schemas/ClientRequestReviewStartRequest",
             "model/list": "#/components/schemas/ClientRequestModelListRequest",
+            "account/gatewayOAuth/read": "#/components/schemas/ClientRequestAccountGatewayOAuthReadRequest",
+            "account/gatewayOAuth/login": "#/components/schemas/ClientRequestAccountGatewayOAuthLoginRequest",
+            "account/gatewayOAuth/cancel": "#/components/schemas/ClientRequestAccountGatewayOAuthCancelRequest",
             "modelProvider/capabilities/read": "#/components/schemas/ClientRequestModelProviderCapabilitiesReadRequest",
             "experimentalFeature/list": "#/components/schemas/ClientRequestExperimentalFeatureListRequest",
             "permissionProfile/list": "#/components/schemas/ClientRequestPermissionProfileListRequest",
@@ -17960,6 +18069,59 @@
         "title": "Account/updatedNotification",
         "type": "object"
       },
+      "GatewayOAuthStatus": {
+        "enum": [
+          "notReady",
+          "started",
+          "succeeded",
+          "failed"
+        ],
+        "type": "string"
+      },
+      "GatewayOAuthChangedNotification": {
+        "properties": {
+          "authUrl": {
+            "description": "Authorization handoff, sent only to the connection that started login.",
+            "type": "string",
+            "nullable": true
+          },
+          "error": {
+            "type": "string",
+            "nullable": true
+          },
+          "providerId": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/GatewayOAuthStatus"
+          }
+        },
+        "required": [
+          "providerId",
+          "status"
+        ],
+        "type": "object"
+      },
+      "ServerNotificationAccountGatewayOAuthChangedNotification": {
+        "properties": {
+          "method": {
+            "enum": [
+              "account/gatewayOAuth/changed"
+            ],
+            "title": "Account/gatewayOAuth/changedNotificationMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/GatewayOAuthChangedNotification"
+          }
+        },
+        "required": [
+          "method",
+          "params"
+        ],
+        "title": "Account/gatewayOAuth/changedNotification",
+        "type": "object"
+      },
       "CreditsSnapshot": {
         "properties": {
           "balance": {
@@ -20220,6 +20382,9 @@
             "$ref": "#/components/schemas/ServerNotificationAccountUpdatedNotification"
           },
           {
+            "$ref": "#/components/schemas/ServerNotificationAccountGatewayOAuthChangedNotification"
+          },
+          {
             "$ref": "#/components/schemas/ServerNotificationAccountRateLimitsUpdatedNotification"
           },
           {
@@ -20377,6 +20542,7 @@
             "mcpServer/startupStatus/updated": "#/components/schemas/ServerNotificationMcpServerStartupStatusUpdatedNotification",
             "mcpServer/event/stream/notification": "#/components/schemas/ServerNotificationMcpServerEventStreamNotificationNotification",
             "account/updated": "#/components/schemas/ServerNotificationAccountUpdatedNotification",
+            "account/gatewayOAuth/changed": "#/components/schemas/ServerNotificationAccountGatewayOAuthChangedNotification",
             "account/rateLimits/updated": "#/components/schemas/ServerNotificationAccountRateLimitsUpdatedNotification",
             "app/list/updated": "#/components/schemas/ServerNotificationAppListUpdatedNotification",
             "remoteControl/status/changed": "#/components/schemas/ServerNotificationRemoteControlStatusChangedNotification",
@@ -23104,6 +23270,43 @@
         "title": "FsWriteFileResponse",
         "type": "object"
       },
+      "GatewayOAuthCancelResponse": {
+        "title": "GatewayOAuthCancelResponse",
+        "type": "object"
+      },
+      "GatewayOAuthLoginResponse": {
+        "title": "GatewayOAuthLoginResponse",
+        "type": "object"
+      },
+      "GatewayOAuthReadResponse": {
+        "description": "Current effective gateway policy and credential readiness; never contains credentials.",
+        "properties": {
+          "error": {
+            "type": "string",
+            "nullable": true
+          },
+          "providerId": {
+            "type": "string"
+          },
+          "providerName": {
+            "type": "string"
+          },
+          "required": {
+            "description": "Whether the selected provider uses gateway OAuth, even when already signed in.",
+            "type": "boolean"
+          },
+          "status": {
+            "$ref": "#/components/schemas/GatewayOAuthStatus"
+          }
+        },
+        "required": [
+          "providerId",
+          "providerName",
+          "required"
+        ],
+        "title": "GatewayOAuthReadResponse",
+        "type": "object"
+      },
       "RateLimitResetType": {
         "enum": [
           "codexRateLimits",
@@ -23942,6 +24145,11 @@
           "authStatus": {
             "$ref": "#/components/schemas/McpAuthStatus"
           },
+          "httpOrigin": {
+            "description": "HTTP origin of the effective configured endpoint, including plugin servers. Excludes credentials, path, query, and fragment; null for non-HTTP transports.",
+            "type": "string",
+            "nullable": true
+          },
           "name": {
             "type": "string"
           },
@@ -24753,6 +24961,379 @@
         ],
         "type": "string"
       },
+      "PluginIcon": {
+        "properties": {
+          "mimeType": {
+            "type": "string",
+            "nullable": true
+          },
+          "sizes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "src": {
+            "type": "string"
+          },
+          "theme": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "src"
+        ],
+        "type": "object"
+      },
+      "PluginQuickActionTarget": {
+        "properties": {
+          "arguments": {},
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "tool"
+            ],
+            "title": "ToolPluginQuickActionTargetType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "type"
+        ],
+        "title": "ToolPluginQuickActionTarget",
+        "type": "object"
+      },
+      "PluginQuickAction": {
+        "properties": {
+          "icons": {
+            "items": {
+              "$ref": "#/components/schemas/PluginIcon"
+            },
+            "type": "array"
+          },
+          "target": {
+            "$ref": "#/components/schemas/PluginQuickActionTarget"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "icons",
+          "target",
+          "title"
+        ],
+        "type": "object"
+      },
+      "PluginEntrypointGlobalPluginEntrypoint": {
+        "properties": {
+          "appId": {
+            "type": "string"
+          },
+          "icons": {
+            "items": {
+              "$ref": "#/components/schemas/PluginIcon"
+            },
+            "type": "array"
+          },
+          "quickAction": {
+            "$ref": "#/components/schemas/PluginQuickAction"
+          },
+          "resourceUri": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "toolName": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "global"
+            ],
+            "title": "GlobalPluginEntrypointType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "appId",
+          "icons",
+          "resourceUri",
+          "title",
+          "toolName",
+          "type"
+        ],
+        "title": "GlobalPluginEntrypoint",
+        "type": "object"
+      },
+      "PluginEntrypointSettingsPluginEntrypoint": {
+        "properties": {
+          "appId": {
+            "type": "string"
+          },
+          "icons": {
+            "items": {
+              "$ref": "#/components/schemas/PluginIcon"
+            },
+            "type": "array"
+          },
+          "resourceUri": {
+            "type": "string"
+          },
+          "searchTerms": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": {
+            "type": "string"
+          },
+          "toolName": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "settings"
+            ],
+            "title": "SettingsPluginEntrypointType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "appId",
+          "icons",
+          "resourceUri",
+          "title",
+          "toolName",
+          "type"
+        ],
+        "title": "SettingsPluginEntrypoint",
+        "type": "object"
+      },
+      "PluginEntrypointThreadPluginEntrypoint": {
+        "properties": {
+          "appId": {
+            "type": "string"
+          },
+          "icons": {
+            "items": {
+              "$ref": "#/components/schemas/PluginIcon"
+            },
+            "type": "array"
+          },
+          "resourceUri": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "toolName": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "thread"
+            ],
+            "title": "ThreadPluginEntrypointType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "appId",
+          "icons",
+          "resourceUri",
+          "title",
+          "toolName",
+          "type"
+        ],
+        "title": "ThreadPluginEntrypoint",
+        "type": "object"
+      },
+      "PluginEntrypointFilePluginEntrypoint": {
+        "properties": {
+          "appId": {
+            "type": "string"
+          },
+          "extensions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "icons": {
+            "items": {
+              "$ref": "#/components/schemas/PluginIcon"
+            },
+            "type": "array"
+          },
+          "resourceUri": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "toolName": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "file"
+            ],
+            "title": "FilePluginEntrypointType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "appId",
+          "extensions",
+          "icons",
+          "resourceUri",
+          "title",
+          "toolName",
+          "type"
+        ],
+        "title": "FilePluginEntrypoint",
+        "type": "object"
+      },
+      "PluginEntrypoint": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/PluginEntrypointGlobalPluginEntrypoint"
+          },
+          {
+            "$ref": "#/components/schemas/PluginEntrypointSettingsPluginEntrypoint"
+          },
+          {
+            "$ref": "#/components/schemas/PluginEntrypointThreadPluginEntrypoint"
+          },
+          {
+            "$ref": "#/components/schemas/PluginEntrypointFilePluginEntrypoint"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "global": "#/components/schemas/PluginEntrypointGlobalPluginEntrypoint",
+            "settings": "#/components/schemas/PluginEntrypointSettingsPluginEntrypoint",
+            "thread": "#/components/schemas/PluginEntrypointThreadPluginEntrypoint",
+            "file": "#/components/schemas/PluginEntrypointFilePluginEntrypoint"
+          }
+        }
+      },
+      "PluginSearchProviderCall": {
+        "properties": {
+          "_meta": {},
+          "arguments": {},
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "_meta",
+          "arguments",
+          "name"
+        ],
+        "type": "object"
+      },
+      "PluginSearchProvider": {
+        "properties": {
+          "appId": {
+            "type": "string"
+          },
+          "call": {
+            "$ref": "#/components/schemas/PluginSearchProviderCall"
+          },
+          "linkId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "toolName": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "appId",
+          "linkId",
+          "title",
+          "toolName"
+        ],
+        "type": "object"
+      },
+      "PluginSettings": {
+        "properties": {
+          "appId": {
+            "type": "string"
+          },
+          "readToolName": {
+            "type": "string"
+          },
+          "updateToolName": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "appId",
+          "readToolName",
+          "updateToolName"
+        ],
+        "type": "object"
+      },
+      "PluginExtensions": {
+        "properties": {
+          "entrypoints": {
+            "default": null,
+            "items": {
+              "$ref": "#/components/schemas/PluginEntrypoint"
+            },
+            "type": "array"
+          },
+          "fileHandlers": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/PluginEntrypoint"
+            },
+            "type": "array"
+          },
+          "searchMentionProviders": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/PluginSearchProvider"
+            },
+            "type": "array"
+          },
+          "settings": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/PluginSettings"
+            },
+            "type": "array"
+          },
+          "settingsEntrypoints": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/PluginEntrypoint"
+            },
+            "type": "array"
+          },
+          "threadEntrypoints": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/PluginEntrypoint"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
       "PluginInstallPolicy": {
         "enum": [
           "NOT_AVAILABLE",
@@ -25086,6 +25667,9 @@
           },
           "enabled": {
             "type": "boolean"
+          },
+          "extensions": {
+            "$ref": "#/components/schemas/PluginExtensions"
           },
           "id": {
             "type": "string"
@@ -26739,8 +27323,20 @@
       },
       "ThreadItemEntry": {
         "properties": {
+          "completedAtMs": {
+            "description": "Unix timestamp (milliseconds) when the item completed, if recorded by the producer.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
+          },
           "item": {
             "$ref": "#/components/schemas/ThreadItem"
+          },
+          "startedAtMs": {
+            "description": "Unix timestamp (milliseconds) when the item started, if recorded by the producer.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
           },
           "turnId": {
             "description": "Turn containing this item.",

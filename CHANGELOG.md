@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.157.0 — 2026-10-04
+
+- Schema provenance: official `@openai/codex@0.157.0` experimental export,
+  verified byte-for-byte against all 440 files in the clean stable public
+  `rust-v0.157.0` source bundle at peeled commit
+  `00c972ed5d6ff6499317fd41b7f23605b8e6850d`.
+- Contract: adds `account/gatewayOAuth/read`, `login`, and `cancel` RPCs
+  plus `account/gatewayOAuth/changed`; initialization gains
+  `explicitGatewayOauth`. Adds optional MCP resource targets (with required,
+  nullable link IDs), MCP HTTP origins, structured plugin extensions and
+  entrypoints, int64 item start/completion timestamps, and realtime backend
+  reasoning status. No existing RPCs, schema files, or wire fields were removed.
+- Swift compatibility: adds narrow generator response mappings for the three
+  gateway OAuth RPCs and compile-time regression coverage in the response-type
+  test. Regenerated null-parameter request support and all new models; existing
+  handwritten wire overrides remain unchanged.
+- Verification: idempotent generation, `swift build --target AppServerClient`,
+  all 16 `swift test` cases, `git diff --check`, and unchanged
+  `Package.resolved` passed. Initialize, account, usage, and empty thread-list
+  smoke calls passed against the exact official CLI using an isolated
+  authenticated home; the copied credential was removed afterward.
+  No turn-list or downstream iOS coverage is claimed.
+
 ## 0.156.1 — 2026-10-04
 
 - Schema provenance: official `@openai/codex@0.156.1` experimental export,

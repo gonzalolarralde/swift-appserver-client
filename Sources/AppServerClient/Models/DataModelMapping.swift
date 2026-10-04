@@ -110,6 +110,9 @@ public extension AppServerModels.ClientRequest {
     typealias ThreadRealtimeListVoices = Components.Schemas.ClientRequestThreadRealtimeListVoicesRequest
     typealias ReviewStart = Components.Schemas.ClientRequestReviewStartRequest
     typealias ModelList = Components.Schemas.ClientRequestModelListRequest
+    typealias AccountGatewayOAuthRead = Components.Schemas.ClientRequestAccountGatewayOAuthReadRequest
+    typealias AccountGatewayOAuthLogin = Components.Schemas.ClientRequestAccountGatewayOAuthLoginRequest
+    typealias AccountGatewayOAuthCancel = Components.Schemas.ClientRequestAccountGatewayOAuthCancelRequest
     typealias ModelProviderCapabilitiesRead = Components.Schemas.ClientRequestModelProviderCapabilitiesReadRequest
     typealias ExperimentalFeatureList = Components.Schemas.ClientRequestExperimentalFeatureListRequest
     typealias PermissionProfileList = Components.Schemas.ClientRequestPermissionProfileListRequest
@@ -276,6 +279,9 @@ public extension AppServerModels.ClientRequest {
         public typealias ThreadRealtimeListVoices = Components.Schemas.ThreadRealtimeListVoicesResponse
         public typealias ReviewStart = Components.Schemas.ReviewStartResponse
         public typealias ModelList = Components.Schemas.ModelListResponse
+        public typealias AccountGatewayOAuthRead = Components.Schemas.GatewayOAuthReadResponse
+        public typealias AccountGatewayOAuthLogin = Components.Schemas.GatewayOAuthLoginResponse
+        public typealias AccountGatewayOAuthCancel = Components.Schemas.GatewayOAuthCancelResponse
         public typealias ModelProviderCapabilitiesRead = Components.Schemas.ModelProviderCapabilitiesReadResponse
         public typealias ExperimentalFeatureList = Components.Schemas.ExperimentalFeatureListResponse
         public typealias PermissionProfileList = Components.Schemas.PermissionProfileListResponse
@@ -444,6 +450,9 @@ public extension AppServerModels.ClientRequest {
         case let .threadRealtimeListVoices(value): value
         case let .reviewStart(value): value
         case let .modelList(value): value
+        case let .accountGatewayOAuthRead(value): value
+        case let .accountGatewayOAuthLogin(value): value
+        case let .accountGatewayOAuthCancel(value): value
         case let .modelProviderCapabilitiesRead(value): value
         case let .experimentalFeatureList(value): value
         case let .permissionProfileList(value): value
@@ -1361,6 +1370,30 @@ extension Components.Schemas.ClientRequestModelListRequest: ClientRequestable {
     }
 }
 
+extension Components.Schemas.ClientRequestAccountGatewayOAuthReadRequest: ClientRequestable {
+    public typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
+    public typealias Response = AppServerModels.ClientRequest.Response.AccountGatewayOAuthRead
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .accountGatewayOAuthRead(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestAccountGatewayOAuthLoginRequest: ClientRequestable {
+    public typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
+    public typealias Response = AppServerModels.ClientRequest.Response.AccountGatewayOAuthLogin
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .accountGatewayOAuthLogin(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestAccountGatewayOAuthCancelRequest: ClientRequestable {
+    public typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
+    public typealias Response = AppServerModels.ClientRequest.Response.AccountGatewayOAuthCancel
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .accountGatewayOAuthCancel(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
 extension Components.Schemas.ClientRequestModelProviderCapabilitiesReadRequest: ClientRequestable {
     public typealias Params = Components.Schemas.ModelProviderCapabilitiesReadParams
     public typealias Response = AppServerModels.ClientRequest.Response.ModelProviderCapabilitiesRead
@@ -1996,6 +2029,7 @@ public extension AppServerModels.ServerNotification {
     typealias McpServerStartupStatusUpdated = Components.Schemas.ServerNotificationMcpServerStartupStatusUpdatedNotification
     typealias McpServerEventStreamNotification = Components.Schemas.ServerNotificationMcpServerEventStreamNotificationNotification
     typealias AccountUpdated = Components.Schemas.ServerNotificationAccountUpdatedNotification
+    typealias AccountGatewayOAuthChanged = Components.Schemas.ServerNotificationAccountGatewayOAuthChangedNotification
     typealias AccountRateLimitsUpdated = Components.Schemas.ServerNotificationAccountRateLimitsUpdatedNotification
     typealias AppListUpdated = Components.Schemas.ServerNotificationAppListUpdatedNotification
     typealias RemoteControlStatusChanged = Components.Schemas.ServerNotificationRemoteControlStatusChangedNotification
@@ -2081,6 +2115,7 @@ public extension AppServerModels.ServerNotification {
         case let .mcpServerStartupStatusUpdated(value): value
         case let .mcpServerEventStreamNotification(value): value
         case let .accountUpdated(value): value
+        case let .accountGatewayOAuthChanged(value): value
         case let .accountRateLimitsUpdated(value): value
         case let .appListUpdated(value): value
         case let .remoteControlStatusChanged(value): value
@@ -2440,6 +2475,13 @@ extension Components.Schemas.ServerNotificationAccountUpdatedNotification: Serve
     public typealias Params = Components.Schemas.AccountUpdatedNotification
     public static func build(params: Params) -> AppServerModels.ServerNotification {
         .accountUpdated(.init(method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ServerNotificationAccountGatewayOAuthChangedNotification: ServerNotificationPayload {
+    public typealias Params = Components.Schemas.GatewayOAuthChangedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
+        .accountGatewayOAuthChanged(.init(method: .allCases.first!, params: params))
     }
 }
 

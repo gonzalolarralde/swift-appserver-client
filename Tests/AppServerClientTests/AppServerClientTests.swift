@@ -148,6 +148,18 @@ import Testing
 
 @Test func appRequestsUseTheirExportedResponseTypes() {
     requireResponseType(
+        AppServerModels.ClientRequest.AccountGatewayOAuthRead.self,
+        Components.Schemas.GatewayOAuthReadResponse.self
+    )
+    requireResponseType(
+        AppServerModels.ClientRequest.AccountGatewayOAuthLogin.self,
+        Components.Schemas.GatewayOAuthLoginResponse.self
+    )
+    requireResponseType(
+        AppServerModels.ClientRequest.AccountGatewayOAuthCancel.self,
+        Components.Schemas.GatewayOAuthCancelResponse.self
+    )
+    requireResponseType(
         AppServerModels.ClientRequest.AppRead.self,
         Components.Schemas.AppsReadResponse.self
     )
