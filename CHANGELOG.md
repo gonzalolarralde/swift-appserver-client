@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.155.1 — 2026-10-04
+
+- Schema provenance: official `@openai/codex@0.155.1` experimental export,
+  verified byte-for-byte against all 437 files in the clean stable public
+  `rust-v0.155.1` source bundle at peeled commit
+  `be2951ea34f0d295ed0becf97079f92fa5f6950e`.
+- Contract: no public contract change from 0.155.0; all schema files and
+  generated request mappings are unchanged. Upstream restores the TUI's
+  default reasoning summary to none for providers that do not support it.
+- Swift compatibility: updated version metadata; no new compatibility fixes.
+- Verification: idempotent generation, `swift build --target AppServerClient`,
+  all 16 `swift test` cases, `git diff --check`, and unchanged
+  `Package.resolved` passed. Initialize, account, usage, and empty thread-list
+  smoke calls passed against the exact official CLI using an isolated
+  authenticated home; the copied credential was removed afterward.
+  No turn-list or downstream iOS coverage is claimed.
+
 ## 0.155.0 — 2026-10-04
 
 - Schema provenance: official `@openai/codex@0.155.0` experimental export,
