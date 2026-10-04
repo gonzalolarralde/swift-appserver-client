@@ -9,6 +9,7 @@ public extension AppServerModels.ClientRequest {
     typealias UserVerificationEnroll = Components.Schemas.ClientRequestUserVerificationEnrollRequest
     typealias UserVerificationDelete = Components.Schemas.ClientRequestUserVerificationDeleteRequest
     typealias UserVerificationVerify = Components.Schemas.ClientRequestUserVerificationVerifyRequest
+    typealias UserVerificationCancel = Components.Schemas.ClientRequestUserVerificationCancelRequest
     typealias ThreadStart = Components.Schemas.ClientRequestThreadStartRequest
     typealias ThreadResume = Components.Schemas.ClientRequestThreadResumeRequest
     typealias ThreadFork = Components.Schemas.ClientRequestThreadForkRequest
@@ -28,9 +29,13 @@ public extension AppServerModels.ClientRequest {
     typealias ThreadQueueReorder = Components.Schemas.ClientRequestThreadQueueReorderRequest
     typealias ThreadQueueStart = Components.Schemas.ClientRequestThreadQueueStartRequest
     typealias ThreadMetadataUpdate = Components.Schemas.ClientRequestThreadMetadataUpdateRequest
+    typealias ThreadAttachmentAdd = Components.Schemas.ClientRequestThreadAttachmentAddRequest
+    typealias ThreadAttachmentList = Components.Schemas.ClientRequestThreadAttachmentListRequest
+    typealias ThreadAttachmentRemove = Components.Schemas.ClientRequestThreadAttachmentRemoveRequest
     typealias ThreadSectionMove = Components.Schemas.ClientRequestThreadSectionMoveRequest
     typealias ThreadSettingsUpdate = Components.Schemas.ClientRequestThreadSettingsUpdateRequest
     typealias ThreadMemoryModeSet = Components.Schemas.ClientRequestThreadMemoryModeSetRequest
+    typealias MemoryStatus = Components.Schemas.ClientRequestMemoryStatusRequest
     typealias MemoryReset = Components.Schemas.ClientRequestMemoryResetRequest
     typealias ThreadUnarchive = Components.Schemas.ClientRequestThreadUnarchiveRequest
     typealias ThreadCompactStart = Components.Schemas.ClientRequestThreadCompactStartRequest
@@ -170,6 +175,7 @@ public extension AppServerModels.ClientRequest {
         public typealias UserVerificationEnroll = Components.Schemas.UserVerificationEnrollResponse
         public typealias UserVerificationDelete = Components.Schemas.UserVerificationDeleteResponse
         public typealias UserVerificationVerify = Components.Schemas.UserVerificationVerifyResponse
+        public typealias UserVerificationCancel = Components.Schemas.UserVerificationCancelResponse
         public typealias ThreadStart = Components.Schemas.ThreadStartResponse
         public typealias ThreadResume = Components.Schemas.ThreadResumeResponse
         public typealias ThreadFork = Components.Schemas.ThreadForkResponse
@@ -189,9 +195,13 @@ public extension AppServerModels.ClientRequest {
         public typealias ThreadQueueReorder = Components.Schemas.ThreadQueueReorderResponse
         public typealias ThreadQueueStart = Components.Schemas.ThreadQueueStartResponse
         public typealias ThreadMetadataUpdate = Components.Schemas.ThreadMetadataUpdateResponse
+        public typealias ThreadAttachmentAdd = Components.Schemas.ThreadAttachmentAddResponse
+        public typealias ThreadAttachmentList = Components.Schemas.ThreadAttachmentListResponse
+        public typealias ThreadAttachmentRemove = Components.Schemas.ThreadAttachmentRemoveResponse
         public typealias ThreadSectionMove = Components.Schemas.ThreadSectionMoveResponse
         public typealias ThreadSettingsUpdate = Components.Schemas.ThreadSettingsUpdateResponse
         public typealias ThreadMemoryModeSet = Components.Schemas.ThreadMemoryModeSetResponse
+        public typealias MemoryStatus = Components.Schemas.MemoryStatusResponse
         public typealias MemoryReset = Components.Schemas.MemoryResetResponse
         public typealias ThreadUnarchive = Components.Schemas.ThreadUnarchiveResponse
         public typealias ThreadCompactStart = Components.Schemas.ThreadCompactStartResponse
@@ -333,6 +343,7 @@ public extension AppServerModels.ClientRequest {
         case let .userVerificationEnroll(value): value
         case let .userVerificationDelete(value): value
         case let .userVerificationVerify(value): value
+        case let .userVerificationCancel(value): value
         case let .threadStart(value): value
         case let .threadResume(value): value
         case let .threadFork(value): value
@@ -352,9 +363,13 @@ public extension AppServerModels.ClientRequest {
         case let .threadQueueReorder(value): value
         case let .threadQueueStart(value): value
         case let .threadMetadataUpdate(value): value
+        case let .threadAttachmentAdd(value): value
+        case let .threadAttachmentList(value): value
+        case let .threadAttachmentRemove(value): value
         case let .threadSectionMove(value): value
         case let .threadSettingsUpdate(value): value
         case let .threadMemoryModeSet(value): value
+        case let .memoryStatus(value): value
         case let .memoryReset(value): value
         case let .threadUnarchive(value): value
         case let .threadCompactStart(value): value
@@ -538,6 +553,14 @@ extension Components.Schemas.ClientRequestUserVerificationVerifyRequest: ClientR
     }
 }
 
+extension Components.Schemas.ClientRequestUserVerificationCancelRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.UserVerificationCancelParams
+    public typealias Response = AppServerModels.ClientRequest.Response.UserVerificationCancel
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .userVerificationCancel(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
 extension Components.Schemas.ClientRequestThreadStartRequest: ClientRequestable {
     public typealias Params = Components.Schemas.ThreadStartParams
     public typealias Response = AppServerModels.ClientRequest.Response.ThreadStart
@@ -690,6 +713,30 @@ extension Components.Schemas.ClientRequestThreadMetadataUpdateRequest: ClientReq
     }
 }
 
+extension Components.Schemas.ClientRequestThreadAttachmentAddRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ThreadAttachmentAddParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadAttachmentAdd
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .threadAttachmentAdd(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestThreadAttachmentListRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ThreadAttachmentListParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadAttachmentList
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .threadAttachmentList(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestThreadAttachmentRemoveRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ThreadAttachmentRemoveParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadAttachmentRemove
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .threadAttachmentRemove(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
 extension Components.Schemas.ClientRequestThreadSectionMoveRequest: ClientRequestable {
     public typealias Params = Components.Schemas.ThreadSectionMoveParams
     public typealias Response = AppServerModels.ClientRequest.Response.ThreadSectionMove
@@ -711,6 +758,14 @@ extension Components.Schemas.ClientRequestThreadMemoryModeSetRequest: ClientRequ
     public typealias Response = AppServerModels.ClientRequest.Response.ThreadMemoryModeSet
     public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadMemoryModeSet(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestMemoryStatusRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.MemoryStatusParams
+    public typealias Response = AppServerModels.ClientRequest.Response.MemoryStatus
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .memoryStatus(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
@@ -1905,6 +1960,7 @@ public extension AppServerModels.ServerNotification {
     typealias ThreadReverted = Components.Schemas.ServerNotificationThreadRevertedNotification
     typealias SkillsChanged = Components.Schemas.ServerNotificationSkillsChangedNotification
     typealias ThreadNameUpdated = Components.Schemas.ServerNotificationThreadNameUpdatedNotification
+    typealias ThreadAttachmentUpdated = Components.Schemas.ServerNotificationThreadAttachmentUpdatedNotification
     typealias ThreadGoalUpdated = Components.Schemas.ServerNotificationThreadGoalUpdatedNotification
     typealias ThreadGoalCleared = Components.Schemas.ServerNotificationThreadGoalClearedNotification
     typealias ThreadQueueChanged = Components.Schemas.ServerNotificationThreadQueueChangedNotification
@@ -1989,6 +2045,7 @@ public extension AppServerModels.ServerNotification {
         case let .threadReverted(value): value
         case let .skillsChanged(value): value
         case let .threadNameUpdated(value): value
+        case let .threadAttachmentUpdated(value): value
         case let .threadGoalUpdated(value): value
         case let .threadGoalCleared(value): value
         case let .threadQueueChanged(value): value
@@ -2131,6 +2188,13 @@ extension Components.Schemas.ServerNotificationThreadNameUpdatedNotification: Se
     public typealias Params = Components.Schemas.ThreadNameUpdatedNotification
     public static func build(params: Params) -> AppServerModels.ServerNotification {
         .threadNameUpdated(.init(method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ServerNotificationThreadAttachmentUpdatedNotification: ServerNotificationPayload {
+    public typealias Params = Components.Schemas.ThreadAttachmentUpdatedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
+        .threadAttachmentUpdated(.init(method: .allCases.first!, params: params))
     }
 }
 

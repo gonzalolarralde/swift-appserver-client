@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.155.0 — 2026-10-04
+
+- Schema provenance: official `@openai/codex@0.155.0` experimental export,
+  verified byte-for-byte against all 437 files in the clean stable public
+  `rust-v0.155.0` source bundle at peeled commit
+  `f0a1b8f0849d90960bc406b848f32e5a129b0457`.
+- Contract: adds `memory/status`, `thread/attachment/add`,
+  `thread/attachment/list`, `thread/attachment/remove`,
+  `thread/attachment/updated`, and `userVerification/cancel`.
+  Feedback uploads gain an optional prompt hash. Eleven schema files were added;
+  no files or RPCs were removed, and existing wire fields retain their names
+  and types. Upstream also introduces experimental voice conversations and
+  native MCP verification on supported builds.
+- Swift compatibility: regenerated the request/response mappings and models,
+  retaining the tested MCP verification-mode override from 0.154.0.
+  No new generator or handwritten type repairs were needed.
+- Verification: idempotent generation, `swift build --target AppServerClient`,
+  all 16 `swift test` cases, `git diff --check`, and unchanged
+  `Package.resolved` passed. Initialize, account, usage, and empty thread-list
+  smoke calls passed against the exact official CLI in an isolated authenticated
+  home; the copied credential was removed afterward. No turn-list or downstream
+  iOS coverage is claimed.
+
 ## 0.154.0 — 2026-10-04
 
 - Schema provenance: official `@openai/codex@0.154.0` experimental export,

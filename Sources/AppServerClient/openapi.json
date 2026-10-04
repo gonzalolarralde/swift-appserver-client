@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Codex App Server Protocol",
-    "version": "0.154.0"
+    "version": "0.155.0"
   },
   "paths": {},
   "components": {
@@ -265,6 +265,43 @@
           "params"
         ],
         "title": "UserVerification/verifyRequest",
+        "type": "object"
+      },
+      "UserVerificationCancelParams": {
+        "additionalProperties": false,
+        "description": "Cancels a native verification RPC issued on this connection, not an elicitation. Use a fresh request ID for each operation and a distinct ID for this cancellation RPC.",
+        "properties": {
+          "requestId": {
+            "$ref": "#/components/schemas/RequestId"
+          }
+        },
+        "required": [
+          "requestId"
+        ],
+        "type": "object"
+      },
+      "ClientRequestUserVerificationCancelRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "userVerification/cancel"
+            ],
+            "title": "UserVerification/cancelRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/UserVerificationCancelParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "UserVerification/cancelRequest",
         "type": "object"
       },
       "AskForApproval": {
@@ -3082,6 +3119,142 @@
         "title": "Thread/metadata/updateRequest",
         "type": "object"
       },
+      "ThreadAttachmentAddParams": {
+        "description": "Parameters for creating or locating an attachment on its owning thread.",
+        "properties": {
+          "attachmentType": {
+            "type": "string"
+          },
+          "identityKey": {
+            "type": "string"
+          },
+          "payload": {},
+          "threadId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "attachmentType",
+          "identityKey",
+          "payload",
+          "threadId"
+        ],
+        "type": "object"
+      },
+      "ClientRequestThreadAttachmentAddRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "thread/attachment/add"
+            ],
+            "title": "Thread/attachment/addRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ThreadAttachmentAddParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "Thread/attachment/addRequest",
+        "type": "object"
+      },
+      "ThreadAttachmentListParams": {
+        "description": "Parameters for listing attachments from one thread.",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "nullable": true
+          },
+          "limit": {
+            "format": "uint32",
+            "minimum": 0.0,
+            "type": "integer",
+            "nullable": true
+          },
+          "threadId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "threadId"
+        ],
+        "type": "object"
+      },
+      "ClientRequestThreadAttachmentListRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "thread/attachment/list"
+            ],
+            "title": "Thread/attachment/listRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ThreadAttachmentListParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "Thread/attachment/listRequest",
+        "type": "object"
+      },
+      "ThreadAttachmentRemoveParams": {
+        "description": "Parameters for deleting an attachment by its stable thread-local identity.",
+        "properties": {
+          "attachmentType": {
+            "type": "string"
+          },
+          "identityKey": {
+            "type": "string"
+          },
+          "threadId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "attachmentType",
+          "identityKey",
+          "threadId"
+        ],
+        "type": "object"
+      },
+      "ClientRequestThreadAttachmentRemoveRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "thread/attachment/remove"
+            ],
+            "title": "Thread/attachment/removeRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ThreadAttachmentRemoveParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "Thread/attachment/removeRequest",
+        "type": "object"
+      },
       "ThreadSectionMoveParams": {
         "description": "Parameters for moving a thread within a server-owned section ordering.",
         "properties": {
@@ -3429,6 +3602,42 @@
           "params"
         ],
         "title": "Thread/memoryMode/setRequest",
+        "type": "object"
+      },
+      "MemoryStatusParams": {
+        "properties": {
+          "minConsolidatedThreads": {
+            "description": "Required distinct consolidated threads. Defaults to 20; supported range is 1..=4096.",
+            "format": "uint32",
+            "minimum": 0.0,
+            "type": "integer",
+            "nullable": true
+          }
+        },
+        "type": "object"
+      },
+      "ClientRequestMemoryStatusRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "memory/status"
+            ],
+            "title": "Memory/statusRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/MemoryStatusParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "Memory/statusRequest",
         "type": "object"
       },
       "ClientRequestMemoryResetRequest": {
@@ -10257,6 +10466,9 @@
             "$ref": "#/components/schemas/ClientRequestUserVerificationVerifyRequest"
           },
           {
+            "$ref": "#/components/schemas/ClientRequestUserVerificationCancelRequest"
+          },
+          {
             "$ref": "#/components/schemas/ClientRequestThreadStartRequest"
           },
           {
@@ -10314,6 +10526,15 @@
             "$ref": "#/components/schemas/ClientRequestThreadMetadataUpdateRequest"
           },
           {
+            "$ref": "#/components/schemas/ClientRequestThreadAttachmentAddRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ClientRequestThreadAttachmentListRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ClientRequestThreadAttachmentRemoveRequest"
+          },
+          {
             "$ref": "#/components/schemas/ClientRequestThreadSectionMoveRequest"
           },
           {
@@ -10321,6 +10542,9 @@
           },
           {
             "$ref": "#/components/schemas/ClientRequestThreadMemoryModeSetRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ClientRequestMemoryStatusRequest"
           },
           {
             "$ref": "#/components/schemas/ClientRequestMemoryResetRequest"
@@ -10725,6 +10949,7 @@
             "userVerification/enroll": "#/components/schemas/ClientRequestUserVerificationEnrollRequest",
             "userVerification/delete": "#/components/schemas/ClientRequestUserVerificationDeleteRequest",
             "userVerification/verify": "#/components/schemas/ClientRequestUserVerificationVerifyRequest",
+            "userVerification/cancel": "#/components/schemas/ClientRequestUserVerificationCancelRequest",
             "thread/start": "#/components/schemas/ClientRequestThreadStartRequest",
             "thread/resume": "#/components/schemas/ClientRequestThreadResumeRequest",
             "thread/fork": "#/components/schemas/ClientRequestThreadForkRequest",
@@ -10744,9 +10969,13 @@
             "thread/queue/reorder": "#/components/schemas/ClientRequestThreadQueueReorderRequest",
             "thread/queue/start": "#/components/schemas/ClientRequestThreadQueueStartRequest",
             "thread/metadata/update": "#/components/schemas/ClientRequestThreadMetadataUpdateRequest",
+            "thread/attachment/add": "#/components/schemas/ClientRequestThreadAttachmentAddRequest",
+            "thread/attachment/list": "#/components/schemas/ClientRequestThreadAttachmentListRequest",
+            "thread/attachment/remove": "#/components/schemas/ClientRequestThreadAttachmentRemoveRequest",
             "thread/section/move": "#/components/schemas/ClientRequestThreadSectionMoveRequest",
             "thread/settings/update": "#/components/schemas/ClientRequestThreadSettingsUpdateRequest",
             "thread/memoryMode/set": "#/components/schemas/ClientRequestThreadMemoryModeSetRequest",
+            "memory/status": "#/components/schemas/ClientRequestMemoryStatusRequest",
             "memory/reset": "#/components/schemas/ClientRequestMemoryResetRequest",
             "thread/unarchive": "#/components/schemas/ClientRequestThreadUnarchiveRequest",
             "thread/compact/start": "#/components/schemas/ClientRequestThreadCompactStartRequest",
@@ -15349,6 +15578,62 @@
         "title": "Thread/name/updatedNotification",
         "type": "object"
       },
+      "ThreadAttachmentOperation": {
+        "description": "The persisted attachment change represented by a notification.",
+        "enum": [
+          "created",
+          "deleted"
+        ],
+        "type": "string"
+      },
+      "ThreadAttachmentUpdatedNotification": {
+        "description": "Notification published after a thread attachment is created or deleted.",
+        "properties": {
+          "attachmentId": {
+            "type": "string"
+          },
+          "attachmentType": {
+            "type": "string"
+          },
+          "identityKey": {
+            "type": "string"
+          },
+          "operation": {
+            "$ref": "#/components/schemas/ThreadAttachmentOperation"
+          },
+          "threadId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "attachmentId",
+          "attachmentType",
+          "identityKey",
+          "operation",
+          "threadId"
+        ],
+        "type": "object"
+      },
+      "ServerNotificationThreadAttachmentUpdatedNotification": {
+        "properties": {
+          "method": {
+            "enum": [
+              "thread/attachment/updated"
+            ],
+            "title": "Thread/attachment/updatedNotificationMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ThreadAttachmentUpdatedNotification"
+          }
+        },
+        "required": [
+          "method",
+          "params"
+        ],
+        "title": "Thread/attachment/updatedNotification",
+        "type": "object"
+      },
       "ThreadGoal": {
         "properties": {
           "createdAt": {
@@ -19725,6 +20010,9 @@
             "$ref": "#/components/schemas/ServerNotificationThreadNameUpdatedNotification"
           },
           {
+            "$ref": "#/components/schemas/ServerNotificationThreadAttachmentUpdatedNotification"
+          },
+          {
             "$ref": "#/components/schemas/ServerNotificationThreadGoalUpdatedNotification"
           },
           {
@@ -19951,6 +20239,7 @@
             "thread/reverted": "#/components/schemas/ServerNotificationThreadRevertedNotification",
             "skills/changed": "#/components/schemas/ServerNotificationSkillsChangedNotification",
             "thread/name/updated": "#/components/schemas/ServerNotificationThreadNameUpdatedNotification",
+            "thread/attachment/updated": "#/components/schemas/ServerNotificationThreadAttachmentUpdatedNotification",
             "thread/goal/updated": "#/components/schemas/ServerNotificationThreadGoalUpdatedNotification",
             "thread/goal/cleared": "#/components/schemas/ServerNotificationThreadGoalClearedNotification",
             "thread/queue/changed": "#/components/schemas/ServerNotificationThreadQueueChangedNotification",
@@ -22547,6 +22836,12 @@
       },
       "FeedbackUploadResponse": {
         "properties": {
+          "promptHash": {
+            "default": null,
+            "description": "Whitespace-normalized SHA-256 of the session base instructions, matching the uploaded `prompt_hash` tag. Does not include later developer messages. Null when the reported rollout has no prompt metadata.",
+            "type": "string",
+            "nullable": true
+          },
           "threadId": {
             "type": "string"
           }
@@ -23887,6 +24182,24 @@
       },
       "MemoryResetResponse": {
         "title": "MemoryResetResponse",
+        "type": "object"
+      },
+      "MemoryStatusResponse": {
+        "properties": {
+          "v2ConsolidatedThreads": {
+            "format": "uint32",
+            "minimum": 0.0,
+            "type": "integer"
+          },
+          "v2Ready": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "v2ConsolidatedThreads",
+          "v2Ready"
+        ],
+        "title": "MemoryStatusResponse",
         "type": "object"
       },
       "MockExperimentalMethodResponse": {
@@ -25924,6 +26237,83 @@
         "title": "ThreadArchiveResponse",
         "type": "object"
       },
+      "ThreadAttachment": {
+        "description": "An independently persisted attachment associated with a thread.",
+        "properties": {
+          "attachmentType": {
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "id": {
+            "type": "string"
+          },
+          "identityKey": {
+            "type": "string"
+          },
+          "payload": {}
+        },
+        "required": [
+          "attachmentType",
+          "createdAt",
+          "id",
+          "identityKey",
+          "payload"
+        ],
+        "type": "object"
+      },
+      "ThreadAttachmentAddOutcome": {
+        "description": "Result of attempting to associate an attachment with a thread.",
+        "enum": [
+          "created",
+          "existing"
+        ],
+        "type": "string"
+      },
+      "ThreadAttachmentAddResponse": {
+        "description": "The created or existing attachment.",
+        "properties": {
+          "attachment": {
+            "$ref": "#/components/schemas/ThreadAttachment"
+          },
+          "outcome": {
+            "$ref": "#/components/schemas/ThreadAttachmentAddOutcome"
+          }
+        },
+        "required": [
+          "attachment",
+          "outcome"
+        ],
+        "title": "ThreadAttachmentAddResponse",
+        "type": "object"
+      },
+      "ThreadAttachmentListResponse": {
+        "description": "One page of attachments associated with the requested thread.",
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/ThreadAttachment"
+            },
+            "type": "array"
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "title": "ThreadAttachmentListResponse",
+        "type": "object"
+      },
+      "ThreadAttachmentRemoveResponse": {
+        "description": "Successful deletion does not return additional attachment data.",
+        "title": "ThreadAttachmentRemoveResponse",
+        "type": "object"
+      },
       "ThreadBackgroundTerminalsCleanResponse": {
         "title": "ThreadBackgroundTerminalsCleanResponse",
         "type": "object"
@@ -27109,6 +27499,11 @@
           "turnId"
         ],
         "title": "TurnSteerResponse",
+        "type": "object"
+      },
+      "UserVerificationCancelResponse": {
+        "description": "Acknowledges the cancellation signal; native work may still be finishing. Unknown or finished requests are a no-op, and completed effects are not rolled back.",
+        "title": "UserVerificationCancelResponse",
         "type": "object"
       },
       "UserVerificationDeleteResponse": {
