@@ -26,6 +26,33 @@ Release `0.160.0` is generated from the experimental app-server schema exposed
 by the stable public Codex tag `rust-v0.160.0`. App-server experimental APIs can
 change between Codex releases, so matching these versions is recommended.
 
+### Removed APIs on main
+
+The following compatibility additions are on `main` for the next stable
+release; the published `0.160.0` tag is unchanged.
+
+Removed request and data-model symbols are retained instead of disappearing
+from Swift source. `ThreadRollback` and its params/response types are
+deprecated. Calling `send(request: ThreadRollback.self, with: ...)` throws
+`AppServerClientError.unsupportedMethod("thread/rollback")` before allocating
+a request ID or writing to the connection. The SDK does not substitute another
+operation or restore server-side rollback support.
+
+Historical plugin extension models, `PluginSummary.extensions`, and
+`ConfigRequirements.windowsSandboxPrivateDesktop` remain Codable for older
+stored responses. The removed fields are optional and are normally absent
+from current responses; retaining them does not imply current server support.
+Their generated structs and properties emit deprecation warnings.
+`PluginEntrypoint` is documented as deprecated and uses deprecated payload
+types; the current Swift OpenAPI generator does not emit availability
+annotations for union enums themselves.
+
+The generator applies `Scripts/openapi_codegen/legacy-schemas.json` as a
+separate Swift compatibility overlay. The unmodified public-tag export in
+`JSONSchema/` remains the source of truth for the current upstream contract.
+An upstream symbol reintroduced in a future release takes precedence over
+the historical overlay.
+
 ## Requirements
 
 - Swift 6.2 or newer.

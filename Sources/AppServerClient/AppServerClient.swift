@@ -5,11 +5,17 @@ private struct InitializedNotification: Encodable {
     let method = "initialized"
 }
 
-public enum AppServerClientError: Error, LocalizedError, Sendable {
+public enum AppServerClientError: Error, LocalizedError, Sendable, Equatable {
     case connectionClosed
+    case unsupportedMethod(String)
 
     public var errorDescription: String? {
-        "The app-server connection closed"
+        switch self {
+        case .connectionClosed:
+            "The app-server connection closed"
+        case let .unsupportedMethod(method):
+            "The RPC \(method) was removed upstream and is unsupported by this SDK."
+        }
     }
 }
 
@@ -92,6 +98,9 @@ public actor AppServerClient<Connection: AppServerConnection> {
         request: Requestable.Type,
         with params: Requestable.Params
     ) async throws -> Requestable.Response {
+        if let method = Requestable.unsupportedMethod {
+            throw AppServerClientError.unsupportedMethod(method)
+        }
         let decoder = JSONDecoder()
 
         let id = AppServerModels.ID.integer(nextRequestID)

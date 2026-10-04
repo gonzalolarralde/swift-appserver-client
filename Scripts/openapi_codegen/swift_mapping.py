@@ -95,6 +95,7 @@ class SchemaIntrospector:
                 else None
             ),
             properties=tuple(properties),
+            unsupported_method=component.get("x-swift-unsupported-method"),
         )
 
     def response_type_for_component(self, schema_name: str, component_name: str) -> str:
@@ -190,6 +191,8 @@ class SwiftMappingGenerator:
     def union_extension(self, mapping: UnionMapping) -> list[str]:
         lines = [f"public extension AppServerModels.{mapping.schema_name} {{"]
         for case in mapping.cases:
+            if case.unsupported_method is not None:
+                lines.append('    @available(*, deprecated, message: "Removed upstream; sending this request throws unsupportedMethod.")')
             lines.append(
                 f"    typealias {case.alias_name} = Components.Schemas.{case.component_name}"
             )
@@ -197,6 +200,8 @@ class SwiftMappingGenerator:
         if response_cases:
             lines.extend(["", "    enum Response {"])
             for case in response_cases:
+                if case.unsupported_method is not None:
+                    lines.append('        @available(*, deprecated, message: "Removed upstream.")')
                 lines.append(f"        public typealias {case.alias_name} = {case.response_type}")
             lines.append("    }")
         lines.extend([
@@ -230,6 +235,8 @@ class SwiftMappingGenerator:
             lines.append(
                 f"    public typealias Response = AppServerModels.{mapping.schema_name}.Response.{case.alias_name}"
             )
+        if case.unsupported_method is not None:
+            lines.append(f'    public static var unsupportedMethod: String? {{ "{case.unsupported_method}" }}')
         if mapping.has_id:
             lines.extend([
                 f"    public static func build(id: Components.Schemas.RequestId, params: Params) -> {mapping.build_return_type} {{",

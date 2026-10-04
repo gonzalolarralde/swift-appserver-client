@@ -1,5 +1,24 @@
 # Changelog
 
+## Unreleased — source compatibility
+
+- Retain deprecated `thread/rollback` request/params/response symbols removed
+  in Codex 0.156.0. Sending the request fails locally with
+  `AppServerClientError.unsupportedMethod` without any transport write.
+- Retain historical plugin extension types and `PluginSummary.extensions`
+  removed in Codex 0.158.0, plus the Windows private-desktop requirement
+  removed in 0.156.0. Preserve historical Codable data; absent fields stay nil.
+- Keep the compatibility overlay separate from the unchanged exact public
+  0.160.0 JSON Schema export. Current/future upstream definitions take
+  precedence. Published stable tags remain immutable.
+- Generated structs/properties and rollback aliases emit deprecation warnings.
+  The plugin entrypoint union has deprecated documentation/payload types;
+  the pinned generator does not annotate union enums themselves.
+- Verification: library build, all 22 Swift tests, both generator tests,
+  idempotent regeneration, unchanged `Package.resolved` and upstream
+  `JSONSchema/`, and the exact official 0.160.0 CLI smoke gate passed
+  (initialize/account/usage/empty thread-list; no turn-list coverage).
+
 ## 0.160.0 — 2026-10-04
 
 - Schema provenance: official `@openai/codex@0.160.0` experimental export,

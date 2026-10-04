@@ -8,6 +8,7 @@ import json
 from pathlib import Path
 
 from openapi_codegen.schema_bundler import Bundler
+from openapi_codegen.legacy_compatibility import retain_legacy_symbols
 from openapi_codegen.swift_mapping import SwiftMappingGenerator
 
 
@@ -27,6 +28,7 @@ def main() -> None:
 
     bundler = Bundler(args.template)
     output = bundler.bundle()
+    retain_legacy_symbols(output)
     args.output.write_text(json.dumps(output, indent=2) + "\n", encoding="utf-8")
 
     if not args.no_mapping:

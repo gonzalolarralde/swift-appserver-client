@@ -12,6 +12,7 @@ class UnionCase:
     params_type: str
     response_type: str | None
     properties: tuple[str, ...]
+    unsupported_method: str | None
 
 
 @dataclass(frozen=True)

@@ -170,6 +170,8 @@ public extension AppServerModels.ClientRequest {
     typealias FuzzyFileSearchSessionStart = Components.Schemas.ClientRequestFuzzyFileSearchSessionStartRequest
     typealias FuzzyFileSearchSessionUpdate = Components.Schemas.ClientRequestFuzzyFileSearchSessionUpdateRequest
     typealias FuzzyFileSearchSessionStop = Components.Schemas.ClientRequestFuzzyFileSearchSessionStopRequest
+    @available(*, deprecated, message: "Removed upstream; sending this request throws unsupportedMethod.")
+    typealias ThreadRollback = Components.Schemas.ClientRequestThreadRollbackRequest
 
     enum Response {
         public typealias Initialize = Components.Schemas.InitializeResponse
@@ -339,6 +341,8 @@ public extension AppServerModels.ClientRequest {
         public typealias FuzzyFileSearchSessionStart = Components.Schemas.FuzzyFileSearchSessionStartResponse
         public typealias FuzzyFileSearchSessionUpdate = Components.Schemas.FuzzyFileSearchSessionUpdateResponse
         public typealias FuzzyFileSearchSessionStop = Components.Schemas.FuzzyFileSearchSessionStopResponse
+        @available(*, deprecated, message: "Removed upstream.")
+        public typealias ThreadRollback = Components.Schemas.ThreadRollbackResponse
     }
 
     var asClientRequest: any ClientRequestable {
@@ -510,6 +514,7 @@ public extension AppServerModels.ClientRequest {
         case let .fuzzyFileSearchSessionStart(value): value
         case let .fuzzyFileSearchSessionUpdate(value): value
         case let .fuzzyFileSearchSessionStop(value): value
+        case let .threadRollback(value): value
         }
     }
 }
@@ -1847,6 +1852,15 @@ extension Components.Schemas.ClientRequestFuzzyFileSearchSessionStopRequest: Cli
     public typealias Response = AppServerModels.ClientRequest.Response.FuzzyFileSearchSessionStop
     public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .fuzzyFileSearchSessionStop(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestThreadRollbackRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ThreadRollbackParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadRollback
+    public static var unsupportedMethod: String? { "thread/rollback" }
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .threadRollback(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 

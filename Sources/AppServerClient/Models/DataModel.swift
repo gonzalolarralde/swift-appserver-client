@@ -36,9 +36,13 @@ public protocol ClientRequestable: Identifiable {
     static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest
     var id: Components.Schemas.RequestId { get }
     var params: Params { get }
+    /// A removed upstream RPC, rejected before encoding or writing to the connection.
+    static var unsupportedMethod: String? { get }
 }
 
 extension ClientRequestable {
+    public static var unsupportedMethod: String? { nil }
+
     func parse(response: Data) throws -> Response {
         let decoder = JSONDecoder()
         let callResult = try decoder.decode(CallResult<Response>.self, from: response)

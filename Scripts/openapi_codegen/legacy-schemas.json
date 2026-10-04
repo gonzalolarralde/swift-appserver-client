@@ -1,0 +1,484 @@
+{
+  "description": "Swift source-compatibility only. Historical normalized schemas from SDK 0.155.1 (rollback and Windows field) and 0.157.1 (plugin models). Not part of the current upstream wire contract.",
+  "components": {
+    "ThreadRollbackParams": {
+      "description": "Deprecated compatibility model. thread/rollback was removed in Codex 0.156.0; sending it throws AppServerClientError.unsupportedMethod.",
+      "properties": {
+        "numTurns": {
+          "description": "The number of turns to drop from the end of the thread. Must be >= 1.\n\nThis only modifies the thread's history and does not revert local file changes that have been made by the agent. Clients are responsible for reverting these changes.",
+          "format": "uint32",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "threadId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "numTurns",
+        "threadId"
+      ],
+      "type": "object",
+      "deprecated": true
+    },
+    "ClientRequestThreadRollbackRequest": {
+      "properties": {
+        "id": {
+          "$ref": "#/components/schemas/RequestId"
+        },
+        "method": {
+          "enum": [
+            "thread/rollback"
+          ],
+          "title": "Thread/rollbackRequestMethod",
+          "type": "string"
+        },
+        "params": {
+          "$ref": "#/components/schemas/ThreadRollbackParams"
+        }
+      },
+      "required": [
+        "id",
+        "method",
+        "params"
+      ],
+      "title": "Thread/rollbackRequest",
+      "type": "object",
+      "deprecated": true,
+      "x-swift-unsupported-method": "thread/rollback",
+      "description": "Deprecated compatibility model. thread/rollback was removed in Codex 0.156.0; sending it throws AppServerClientError.unsupportedMethod."
+    },
+    "ThreadRollbackResponse": {
+      "properties": {
+        "thread": {
+          "$ref": "#/components/schemas/Thread",
+          "description": "The updated thread after applying the rollback, with `turns` populated.\n\nThe ThreadItems stored in each Turn are lossy since we explicitly do not persist all agent interactions, such as command executions. This is the same behavior as `thread/resume`."
+        }
+      },
+      "required": [
+        "thread"
+      ],
+      "title": "ThreadRollbackResponse",
+      "type": "object",
+      "deprecated": true,
+      "description": "Deprecated compatibility model. thread/rollback was removed in Codex 0.156.0; sending it throws AppServerClientError.unsupportedMethod."
+    },
+    "PluginIcon": {
+      "properties": {
+        "mimeType": {
+          "type": "string",
+          "nullable": true
+        },
+        "sizes": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "src": {
+          "type": "string"
+        },
+        "theme": {
+          "type": "string",
+          "nullable": true
+        }
+      },
+      "required": [
+        "src"
+      ],
+      "type": "object",
+      "deprecated": true,
+      "description": "@deprecated Removed in Codex 0.158.0. Retained only to decode historical plugin data."
+    },
+    "PluginQuickActionTarget": {
+      "properties": {
+        "arguments": {},
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "tool"
+          ],
+          "title": "ToolPluginQuickActionTargetType",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "type"
+      ],
+      "title": "ToolPluginQuickActionTarget",
+      "type": "object",
+      "deprecated": true,
+      "description": "@deprecated Removed in Codex 0.158.0. Retained only to decode historical plugin data."
+    },
+    "PluginQuickAction": {
+      "properties": {
+        "icons": {
+          "items": {
+            "$ref": "#/components/schemas/PluginIcon"
+          },
+          "type": "array"
+        },
+        "target": {
+          "$ref": "#/components/schemas/PluginQuickActionTarget"
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "icons",
+        "target",
+        "title"
+      ],
+      "type": "object",
+      "deprecated": true,
+      "description": "@deprecated Removed in Codex 0.158.0. Retained only to decode historical plugin data."
+    },
+    "PluginEntrypointGlobalPluginEntrypoint": {
+      "properties": {
+        "appId": {
+          "type": "string"
+        },
+        "icons": {
+          "items": {
+            "$ref": "#/components/schemas/PluginIcon"
+          },
+          "type": "array"
+        },
+        "quickAction": {
+          "$ref": "#/components/schemas/PluginQuickAction"
+        },
+        "resourceUri": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "toolName": {
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "global"
+          ],
+          "title": "GlobalPluginEntrypointType",
+          "type": "string"
+        }
+      },
+      "required": [
+        "appId",
+        "icons",
+        "resourceUri",
+        "title",
+        "toolName",
+        "type"
+      ],
+      "title": "GlobalPluginEntrypoint",
+      "type": "object",
+      "deprecated": true,
+      "description": "@deprecated Removed in Codex 0.158.0. Retained only to decode historical plugin data."
+    },
+    "PluginEntrypointSettingsPluginEntrypoint": {
+      "properties": {
+        "appId": {
+          "type": "string"
+        },
+        "icons": {
+          "items": {
+            "$ref": "#/components/schemas/PluginIcon"
+          },
+          "type": "array"
+        },
+        "resourceUri": {
+          "type": "string"
+        },
+        "searchTerms": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "title": {
+          "type": "string"
+        },
+        "toolName": {
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "settings"
+          ],
+          "title": "SettingsPluginEntrypointType",
+          "type": "string"
+        }
+      },
+      "required": [
+        "appId",
+        "icons",
+        "resourceUri",
+        "title",
+        "toolName",
+        "type"
+      ],
+      "title": "SettingsPluginEntrypoint",
+      "type": "object",
+      "deprecated": true,
+      "description": "@deprecated Removed in Codex 0.158.0. Retained only to decode historical plugin data."
+    },
+    "PluginEntrypointThreadPluginEntrypoint": {
+      "properties": {
+        "appId": {
+          "type": "string"
+        },
+        "icons": {
+          "items": {
+            "$ref": "#/components/schemas/PluginIcon"
+          },
+          "type": "array"
+        },
+        "resourceUri": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "toolName": {
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "thread"
+          ],
+          "title": "ThreadPluginEntrypointType",
+          "type": "string"
+        }
+      },
+      "required": [
+        "appId",
+        "icons",
+        "resourceUri",
+        "title",
+        "toolName",
+        "type"
+      ],
+      "title": "ThreadPluginEntrypoint",
+      "type": "object",
+      "deprecated": true,
+      "description": "@deprecated Removed in Codex 0.158.0. Retained only to decode historical plugin data."
+    },
+    "PluginEntrypointFilePluginEntrypoint": {
+      "properties": {
+        "appId": {
+          "type": "string"
+        },
+        "extensions": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "icons": {
+          "items": {
+            "$ref": "#/components/schemas/PluginIcon"
+          },
+          "type": "array"
+        },
+        "resourceUri": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "toolName": {
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "file"
+          ],
+          "title": "FilePluginEntrypointType",
+          "type": "string"
+        }
+      },
+      "required": [
+        "appId",
+        "extensions",
+        "icons",
+        "resourceUri",
+        "title",
+        "toolName",
+        "type"
+      ],
+      "title": "FilePluginEntrypoint",
+      "type": "object",
+      "deprecated": true,
+      "description": "@deprecated Removed in Codex 0.158.0. Retained only to decode historical plugin data."
+    },
+    "PluginEntrypoint": {
+      "oneOf": [
+        {
+          "$ref": "#/components/schemas/PluginEntrypointGlobalPluginEntrypoint"
+        },
+        {
+          "$ref": "#/components/schemas/PluginEntrypointSettingsPluginEntrypoint"
+        },
+        {
+          "$ref": "#/components/schemas/PluginEntrypointThreadPluginEntrypoint"
+        },
+        {
+          "$ref": "#/components/schemas/PluginEntrypointFilePluginEntrypoint"
+        }
+      ],
+      "discriminator": {
+        "propertyName": "type",
+        "mapping": {
+          "global": "#/components/schemas/PluginEntrypointGlobalPluginEntrypoint",
+          "settings": "#/components/schemas/PluginEntrypointSettingsPluginEntrypoint",
+          "thread": "#/components/schemas/PluginEntrypointThreadPluginEntrypoint",
+          "file": "#/components/schemas/PluginEntrypointFilePluginEntrypoint"
+        }
+      },
+      "deprecated": true,
+      "description": "@deprecated Removed in Codex 0.158.0. Retained only to decode historical plugin data."
+    },
+    "PluginSearchProviderCall": {
+      "properties": {
+        "_meta": {},
+        "arguments": {},
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "_meta",
+        "arguments",
+        "name"
+      ],
+      "type": "object",
+      "deprecated": true,
+      "description": "@deprecated Removed in Codex 0.158.0. Retained only to decode historical plugin data."
+    },
+    "PluginSearchProvider": {
+      "properties": {
+        "appId": {
+          "type": "string"
+        },
+        "call": {
+          "$ref": "#/components/schemas/PluginSearchProviderCall"
+        },
+        "linkId": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "toolName": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "appId",
+        "linkId",
+        "title",
+        "toolName"
+      ],
+      "type": "object",
+      "deprecated": true,
+      "description": "@deprecated Removed in Codex 0.158.0. Retained only to decode historical plugin data."
+    },
+    "PluginSettings": {
+      "properties": {
+        "appId": {
+          "type": "string"
+        },
+        "readToolName": {
+          "type": "string"
+        },
+        "updateToolName": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "appId",
+        "readToolName",
+        "updateToolName"
+      ],
+      "type": "object",
+      "deprecated": true,
+      "description": "@deprecated Removed in Codex 0.158.0. Retained only to decode historical plugin data."
+    },
+    "PluginExtensions": {
+      "properties": {
+        "entrypoints": {
+          "default": null,
+          "items": {
+            "$ref": "#/components/schemas/PluginEntrypoint"
+          },
+          "type": "array"
+        },
+        "fileHandlers": {
+          "default": [],
+          "items": {
+            "$ref": "#/components/schemas/PluginEntrypoint"
+          },
+          "type": "array"
+        },
+        "searchMentionProviders": {
+          "default": [],
+          "items": {
+            "$ref": "#/components/schemas/PluginSearchProvider"
+          },
+          "type": "array"
+        },
+        "settings": {
+          "default": [],
+          "items": {
+            "$ref": "#/components/schemas/PluginSettings"
+          },
+          "type": "array"
+        },
+        "settingsEntrypoints": {
+          "default": [],
+          "items": {
+            "$ref": "#/components/schemas/PluginEntrypoint"
+          },
+          "type": "array"
+        },
+        "threadEntrypoints": {
+          "default": [],
+          "items": {
+            "$ref": "#/components/schemas/PluginEntrypoint"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object",
+      "deprecated": true,
+      "description": "@deprecated Removed in Codex 0.158.0. Retained only to decode historical plugin data."
+    }
+  },
+  "properties": {
+    "ConfigRequirements": {
+      "windowsSandboxPrivateDesktop": {
+        "type": "boolean",
+        "nullable": true,
+        "deprecated": true,
+        "description": "Removed by Codex 0.156.0; current servers do not report this value."
+      }
+    },
+    "PluginSummary": {
+      "extensions": {
+        "$ref": "#/components/schemas/PluginExtensions",
+        "deprecated": true,
+        "description": "Removed by Codex 0.158.0; current servers do not report plugin extensions."
+      }
+    }
+  },
+  "clientRequestComponents": [
+    "ClientRequestThreadRollbackRequest"
+  ]
+}
