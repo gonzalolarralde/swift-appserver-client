@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.159.1 — 2026-10-04
+
+- Schema provenance: official `@openai/codex@0.159.1` experimental export,
+  verified byte-for-byte against all 440 files in the clean stable public
+  `rust-v0.159.1` source bundle at peeled commit
+  `8e68a98ef03cdde76d2e6800791ebdf1b3b95b24`.
+- Contract: no public contract change from 0.159.0; all schema files and
+  generated request mappings are unchanged. Upstream updates its bundled and
+  Bedrock model catalogs without changing the exported API shape.
+- Swift compatibility: updated version metadata, retaining the tested
+  string/item-anchor cursor representation; no new compatibility fixes.
+- Verification: idempotent generation, `swift build --target AppServerClient`,
+  all 17 `swift test` cases, `git diff --check`, and unchanged
+  `Package.resolved` passed. Initialize, account, usage, and empty thread-list
+  smoke calls passed against the exact official CLI using an isolated
+  authenticated home; the copied credential was removed afterward.
+  No turn-list or downstream iOS coverage is claimed.
+
 ## 0.159.0 — 2026-10-04
 
 - Schema provenance: official `@openai/codex@0.159.0` experimental export,
