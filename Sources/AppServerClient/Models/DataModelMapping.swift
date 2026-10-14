@@ -19,6 +19,7 @@ public extension AppServerModels.ClientRequest {
     typealias ThreadIncrementElicitation = Components.Schemas.ClientRequestThreadIncrementElicitationRequest
     typealias ThreadDecrementElicitation = Components.Schemas.ClientRequestThreadDecrementElicitationRequest
     typealias ThreadNameSet = Components.Schemas.ClientRequestThreadNameSetRequest
+    typealias ThreadPredictionRequest = Components.Schemas.ClientRequestThreadPredictionRequestRequest
     typealias ThreadGoalSet = Components.Schemas.ClientRequestThreadGoalSetRequest
     typealias ThreadGoalGet = Components.Schemas.ClientRequestThreadGoalGetRequest
     typealias ThreadGoalClear = Components.Schemas.ClientRequestThreadGoalClearRequest
@@ -141,6 +142,7 @@ public extension AppServerModels.ClientRequest {
     typealias AccountLoginStart = Components.Schemas.ClientRequestAccountLoginStartRequest
     typealias AccountBedrockDiscover = Components.Schemas.ClientRequestAccountBedrockDiscoverRequest
     typealias AccountBedrockSetup = Components.Schemas.ClientRequestAccountBedrockSetupRequest
+    typealias AccountBedrockCheckGovCloudRequirements = Components.Schemas.ClientRequestAccountBedrockCheckGovCloudRequirementsRequest
     typealias AccountLoginCancel = Components.Schemas.ClientRequestAccountLoginCancelRequest
     typealias AccountLogout = Components.Schemas.ClientRequestAccountLogoutRequest
     typealias AccountRateLimitsRead = Components.Schemas.ClientRequestAccountRateLimitsReadRequest
@@ -190,6 +192,7 @@ public extension AppServerModels.ClientRequest {
         public typealias ThreadIncrementElicitation = Components.Schemas.ThreadIncrementElicitationResponse
         public typealias ThreadDecrementElicitation = Components.Schemas.ThreadDecrementElicitationResponse
         public typealias ThreadNameSet = Components.Schemas.ThreadSetNameResponse
+        public typealias ThreadPredictionRequest = Components.Schemas.ThreadPredictionRequestResponse
         public typealias ThreadGoalSet = Components.Schemas.ThreadGoalSetResponse
         public typealias ThreadGoalGet = Components.Schemas.ThreadGoalGetResponse
         public typealias ThreadGoalClear = Components.Schemas.ThreadGoalClearResponse
@@ -312,6 +315,7 @@ public extension AppServerModels.ClientRequest {
         public typealias AccountLoginStart = Components.Schemas.LoginAccountResponse
         public typealias AccountBedrockDiscover = Components.Schemas.BedrockDiscoverResponse
         public typealias AccountBedrockSetup = Components.Schemas.BedrockSetupResponse
+        public typealias AccountBedrockCheckGovCloudRequirements = Components.Schemas.BedrockCheckGovCloudRequirementsResponse
         public typealias AccountLoginCancel = Components.Schemas.CancelLoginAccountResponse
         public typealias AccountLogout = Components.Schemas.LogoutAccountResponse
         public typealias AccountRateLimitsRead = Components.Schemas.GetAccountRateLimitsResponse
@@ -363,6 +367,7 @@ public extension AppServerModels.ClientRequest {
         case let .threadIncrementElicitation(value): value
         case let .threadDecrementElicitation(value): value
         case let .threadNameSet(value): value
+        case let .threadPredictionRequest(value): value
         case let .threadGoalSet(value): value
         case let .threadGoalGet(value): value
         case let .threadGoalClear(value): value
@@ -485,6 +490,7 @@ public extension AppServerModels.ClientRequest {
         case let .accountLoginStart(value): value
         case let .accountBedrockDiscover(value): value
         case let .accountBedrockSetup(value): value
+        case let .accountBedrockCheckGovCloudRequirements(value): value
         case let .accountLoginCancel(value): value
         case let .accountLogout(value): value
         case let .accountRateLimitsRead(value): value
@@ -644,6 +650,14 @@ extension Components.Schemas.ClientRequestThreadNameSetRequest: ClientRequestabl
     public typealias Response = AppServerModels.ClientRequest.Response.ThreadNameSet
     public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadNameSet(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestThreadPredictionRequestRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ThreadPredictionRequestParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadPredictionRequest
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .threadPredictionRequest(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
@@ -1623,6 +1637,14 @@ extension Components.Schemas.ClientRequestAccountBedrockSetupRequest: ClientRequ
     }
 }
 
+extension Components.Schemas.ClientRequestAccountBedrockCheckGovCloudRequirementsRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.BedrockCheckGovCloudRequirementsParams
+    public typealias Response = AppServerModels.ClientRequest.Response.AccountBedrockCheckGovCloudRequirements
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .accountBedrockCheckGovCloudRequirements(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
 extension Components.Schemas.ClientRequestAccountLoginCancelRequest: ClientRequestable {
     public typealias Params = Components.Schemas.CancelLoginAccountParams
     public typealias Response = AppServerModels.ClientRequest.Response.AccountLoginCancel
@@ -2009,6 +2031,7 @@ public extension AppServerModels.ServerNotification {
     typealias ThreadNameUpdated = Components.Schemas.ServerNotificationThreadNameUpdatedNotification
     typealias ThreadAttachmentUpdated = Components.Schemas.ServerNotificationThreadAttachmentUpdatedNotification
     typealias ThreadGoalUpdated = Components.Schemas.ServerNotificationThreadGoalUpdatedNotification
+    typealias ThreadPredictionUpdated = Components.Schemas.ServerNotificationThreadPredictionUpdatedNotification
     typealias ThreadGoalCleared = Components.Schemas.ServerNotificationThreadGoalClearedNotification
     typealias ThreadQueueChanged = Components.Schemas.ServerNotificationThreadQueueChangedNotification
     typealias ProjectChanged = Components.Schemas.ServerNotificationProjectChangedNotification
@@ -2095,6 +2118,7 @@ public extension AppServerModels.ServerNotification {
         case let .threadNameUpdated(value): value
         case let .threadAttachmentUpdated(value): value
         case let .threadGoalUpdated(value): value
+        case let .threadPredictionUpdated(value): value
         case let .threadGoalCleared(value): value
         case let .threadQueueChanged(value): value
         case let .projectChanged(value): value
@@ -2251,6 +2275,13 @@ extension Components.Schemas.ServerNotificationThreadGoalUpdatedNotification: Se
     public typealias Params = Components.Schemas.ThreadGoalUpdatedNotification
     public static func build(params: Params) -> AppServerModels.ServerNotification {
         .threadGoalUpdated(.init(method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ServerNotificationThreadPredictionUpdatedNotification: ServerNotificationPayload {
+    public typealias Params = Components.Schemas.ThreadPredictionUpdatedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
+        .threadPredictionUpdated(.init(method: .allCases.first!, params: params))
     }
 }
 

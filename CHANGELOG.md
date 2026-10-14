@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.161.0 — 2026-10-14
+
+- Schema provenance: the experimental export from official `@openai/codex@0.161.0`
+  matches all 445 files byte-for-byte against clean public tag `rust-v0.161.0`,
+  peeled commit `979011409de0a60b52f179721948e65531d26144`.
+- Contract: five schema files added, none removed, and 28 existing files changed.
+  Adds `thread/prediction/request`, `thread/prediction/updated`, and
+  `account/bedrock/checkGovCloudRequirements`. Goal mutations gain optional
+  user/automatic provenance; MCP OAuth responses/notifications gain nullable
+  login IDs. Error info now accepts unknown string/object variants.
+- Swift compatibility: added the GovCloud response-name override and normalize
+  JSON Schema multi-type arrays into disjoint OpenAPI alternatives. A focused
+  error-info override preserves known case names and nested payload APIs while
+  losslessly retaining unknown errors. Exhaustive switches must handle the new
+  `unknown` case. Existing deprecated compatibility APIs remain available.
+- Verification: generation was idempotent; source-bundle verification, two Python
+  normalization tests, `swift build --target AppServerClient`, all 25 Swift tests,
+  `git diff --check`, and unchanged `Package.resolved` passed. Smoke against the
+  exact official CLI passed initialize, account, usage, and empty thread-list
+  calls in an isolated authenticated home. No turn-list coverage is claimed;
+  the copied credential was removed afterward.
+
 ## 0.160.1 — 2026-10-14
 
 - Schema provenance: the experimental export from official `@openai/codex@0.160.1`

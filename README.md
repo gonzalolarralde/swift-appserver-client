@@ -22,8 +22,8 @@ models under `Sources/AppServerClient/Models/TypeOverrides`.
 
 ## Compatibility
 
-Release `0.160.1` is generated from the experimental app-server schema exposed
-by the stable public Codex tag `rust-v0.160.1`. App-server experimental APIs can
+Release `0.161.0` is generated from the experimental app-server schema exposed
+by the stable public Codex tag `rust-v0.161.0`. App-server experimental APIs can
 change between Codex releases, so matching these versions is recommended.
 
 ### Deprecated compatibility APIs
@@ -53,10 +53,16 @@ separate Swift compatibility overlay. The unmodified public-tag export in
 An upstream symbol reintroduced in a future release takes precedence over
 the historical overlay.
 
+Starting in `0.161.0`, `CodexErrorInfo` retains its known `case1` through `case6`
+Swift cases and nested payload names through a hand-written override. The new
+`unknown` case preserves unrecognized server string/object errors losslessly.
+Consumers with exhaustive switches must handle the new case. This does not
+reinterpret an unknown server code as a known error or discard its details.
+
 ## Requirements
 
 - Swift 6.2 or newer.
-- Codex `0.160.1` must be available on `PATH` for the stdio connection and smoke
+- Codex `0.161.0` must be available on `PATH` for the stdio connection and smoke
   executable.
 - `codex app-server` must be supported by the installed Codex CLI.
 
@@ -108,7 +114,7 @@ Prefer the matching tagged release:
 dependencies: [
     .package(
         url: "https://github.com/gonzalolarralde/swift-appserver-client.git",
-        exact: "0.160.1"
+        exact: "0.161.0"
     ),
 ],
 ```
@@ -300,5 +306,5 @@ swift build --target AppServerClient
 - Requests whose protocol `params` are null support `send(request:)` without a
   `with:` argument.
 - The generated `multiAgentMode` fields are retained for wire compatibility,
-  but Codex `0.160.1` ignores them and derives proactive delegation from Ultra
+  but Codex `0.161.0` ignores them and derives proactive delegation from Ultra
   reasoning effort.

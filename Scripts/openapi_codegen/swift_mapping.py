@@ -28,6 +28,7 @@ RESPONSE_OVERRIDES = {
     "ClientRequestAccountSendAddCreditsNudgeEmailRequest": "SendAddCreditsNudgeEmailResponse",
     "ClientRequestAccountBedrockDiscoverRequest": "BedrockDiscoverResponse",
     "ClientRequestAccountBedrockSetupRequest": "BedrockSetupResponse",
+    "ClientRequestAccountBedrockCheckGovCloudRequirementsRequest": "BedrockCheckGovCloudRequirementsResponse",
     "ClientRequestConfigValueWriteRequest": "ConfigWriteResponse",
     "ClientRequestConfigBatchWriteRequest": "ConfigWriteResponse",
     "ClientRequestAccountReadRequest": "GetAccountResponse",

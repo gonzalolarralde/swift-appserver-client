@@ -294,6 +294,13 @@ class Bundler:
                 schema.update(non_null_variant)
             schema["nullable"] = True
 
+        # OpenAPI 3.0 accepts a scalar type, not JSON Schema's type arrays.
+        # The alternatives are disjoint primitive types, so oneOf is equivalent.
+        if isinstance(schema.get("type"), list):
+            types = schema.pop("type")
+            schema["oneOf"] = [{"type": item} for item in types if item != "null"]
+            if "null" in types:
+                schema["nullable"] = True
         return schema
 
     def is_null_schema(self, schema: Any) -> bool:

@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Codex App Server Protocol",
-    "version": "0.160.1"
+    "version": "0.161.0"
   },
   "paths": {},
   "components": {
@@ -2483,6 +2483,53 @@
         "title": "Thread/name/setRequest",
         "type": "object"
       },
+      "ThreadPredictionRequestParams": {
+        "properties": {
+          "sourceTurnId": {
+            "type": "string"
+          },
+          "threadId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "sourceTurnId",
+          "threadId"
+        ],
+        "type": "object"
+      },
+      "ClientRequestThreadPredictionRequestRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "thread/prediction/request"
+            ],
+            "title": "Thread/prediction/requestRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ThreadPredictionRequestParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "Thread/prediction/requestRequest",
+        "type": "object"
+      },
+      "ThreadGoalMutationOrigin": {
+        "description": "Distinguishes explicit user actions from automatic goal lifecycle mutations.",
+        "enum": [
+          "user",
+          "automatic"
+        ],
+        "type": "string"
+      },
       "ThreadGoalStatus": {
         "enum": [
           "active",
@@ -2499,6 +2546,9 @@
           "objective": {
             "type": "string",
             "nullable": true
+          },
+          "origin": {
+            "$ref": "#/components/schemas/ThreadGoalMutationOrigin"
           },
           "status": {
             "$ref": "#/components/schemas/ThreadGoalStatus"
@@ -2578,6 +2628,9 @@
       },
       "ThreadGoalClearParams": {
         "properties": {
+          "origin": {
+            "$ref": "#/components/schemas/ThreadGoalMutationOrigin"
+          },
           "threadId": {
             "type": "string"
           }
@@ -6530,7 +6583,7 @@
         "type": "object"
       },
       "CyberAccessProgram": {
-        "description": "Requested cyber treatment for a ChatGPT-authenticated Codex turn. Authorization and model-tier restrictions remain server-owned.",
+        "description": "Requested cyber treatment for an OpenAI model turn. Authorization and model-tier restrictions remain server-owned.",
         "enum": [
           "standard",
           "daybreakBlue",
@@ -9022,6 +9075,33 @@
         "title": "Account/bedrock/setupRequest",
         "type": "object"
       },
+      "BedrockCheckGovCloudRequirementsParams": {
+        "type": "object"
+      },
+      "ClientRequestAccountBedrockCheckGovCloudRequirementsRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "account/bedrock/checkGovCloudRequirements"
+            ],
+            "title": "Account/bedrock/checkGovCloudRequirementsRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/BedrockCheckGovCloudRequirementsParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "Account/bedrock/checkGovCloudRequirementsRequest",
+        "type": "object"
+      },
       "CancelLoginAccountParams": {
         "properties": {
           "loginId": {
@@ -10700,6 +10780,9 @@
             "$ref": "#/components/schemas/ClientRequestThreadNameSetRequest"
           },
           {
+            "$ref": "#/components/schemas/ClientRequestThreadPredictionRequestRequest"
+          },
+          {
             "$ref": "#/components/schemas/ClientRequestThreadGoalSetRequest"
           },
           {
@@ -11066,6 +11149,9 @@
             "$ref": "#/components/schemas/ClientRequestAccountBedrockSetupRequest"
           },
           {
+            "$ref": "#/components/schemas/ClientRequestAccountBedrockCheckGovCloudRequirementsRequest"
+          },
+          {
             "$ref": "#/components/schemas/ClientRequestAccountLoginCancelRequest"
           },
           {
@@ -11175,6 +11261,7 @@
             "thread/increment_elicitation": "#/components/schemas/ClientRequestThreadIncrementElicitationRequest",
             "thread/decrement_elicitation": "#/components/schemas/ClientRequestThreadDecrementElicitationRequest",
             "thread/name/set": "#/components/schemas/ClientRequestThreadNameSetRequest",
+            "thread/prediction/request": "#/components/schemas/ClientRequestThreadPredictionRequestRequest",
             "thread/goal/set": "#/components/schemas/ClientRequestThreadGoalSetRequest",
             "thread/goal/get": "#/components/schemas/ClientRequestThreadGoalGetRequest",
             "thread/goal/clear": "#/components/schemas/ClientRequestThreadGoalClearRequest",
@@ -11297,6 +11384,7 @@
             "account/login/start": "#/components/schemas/ClientRequestAccountLoginStartRequest",
             "account/bedrock/discover": "#/components/schemas/ClientRequestAccountBedrockDiscoverRequest",
             "account/bedrock/setup": "#/components/schemas/ClientRequestAccountBedrockSetupRequest",
+            "account/bedrock/checkGovCloudRequirements": "#/components/schemas/ClientRequestAccountBedrockCheckGovCloudRequirementsRequest",
             "account/login/cancel": "#/components/schemas/ClientRequestAccountLoginCancelRequest",
             "account/logout": "#/components/schemas/ClientRequestAccountLogoutRequest",
             "account/rateLimits/read": "#/components/schemas/ClientRequestAccountRateLimitsReadRequest",
@@ -13451,8 +13539,7 @@
         "type": "string"
       },
       "CodexErrorInfo": {
-        "description": "This translation layer make sure that we expose codex error code in camel case.\n\nWhen an upstream HTTP status is available (for example, from the Responses API or a provider), it is forwarded in `httpStatusCode` on the relevant `codexErrorInfo` variant.",
-        "oneOf": [
+        "anyOf": [
           {
             "enum": [
               "contextWindowExceeded",
@@ -13581,8 +13668,19 @@
             ],
             "title": "ActiveTurnNotSteerableCodexErrorInfo",
             "type": "object"
+          },
+          {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object"
+              }
+            ]
           }
-        ]
+        ],
+        "description": "This translation layer make sure that we expose codex error code in camel case.\n\nWhen an upstream HTTP status is available (for example, from the Responses API or a provider), it is forwarded in `httpStatusCode` on the relevant `codexErrorInfo` variant."
       },
       "MisalignmentSteer": {
         "properties": {
@@ -15966,6 +16064,98 @@
         "title": "Thread/goal/updatedNotification",
         "type": "object"
       },
+      "ThreadPredictionResultCompletedThreadPredictionResult": {
+        "properties": {
+          "text": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "enum": [
+              "completed"
+            ],
+            "title": "CompletedThreadPredictionResultType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "title": "CompletedThreadPredictionResult",
+        "type": "object"
+      },
+      "ThreadPredictionResultFailedThreadPredictionResult": {
+        "properties": {
+          "type": {
+            "enum": [
+              "failed"
+            ],
+            "title": "FailedThreadPredictionResultType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "title": "FailedThreadPredictionResult",
+        "type": "object"
+      },
+      "ThreadPredictionResult": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ThreadPredictionResultCompletedThreadPredictionResult"
+          },
+          {
+            "$ref": "#/components/schemas/ThreadPredictionResultFailedThreadPredictionResult"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "completed": "#/components/schemas/ThreadPredictionResultCompletedThreadPredictionResult",
+            "failed": "#/components/schemas/ThreadPredictionResultFailedThreadPredictionResult"
+          }
+        }
+      },
+      "ThreadPredictionUpdatedNotification": {
+        "properties": {
+          "result": {
+            "$ref": "#/components/schemas/ThreadPredictionResult"
+          },
+          "sourceTurnId": {
+            "type": "string"
+          },
+          "threadId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "result",
+          "sourceTurnId",
+          "threadId"
+        ],
+        "type": "object"
+      },
+      "ServerNotificationThreadPredictionUpdatedNotification": {
+        "properties": {
+          "method": {
+            "enum": [
+              "thread/prediction/updated"
+            ],
+            "title": "Thread/prediction/updatedNotificationMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ThreadPredictionUpdatedNotification"
+          }
+        },
+        "required": [
+          "method",
+          "params"
+        ],
+        "title": "Thread/prediction/updatedNotification",
+        "type": "object"
+      },
       "ThreadGoalClearedNotification": {
         "properties": {
           "threadId": {
@@ -17899,6 +18089,11 @@
       "McpServerOauthLoginCompletedNotification": {
         "properties": {
           "error": {
+            "type": "string",
+            "nullable": true
+          },
+          "loginId": {
+            "description": "Identifies the explicit login attempt. Older servers omit this field.",
             "type": "string",
             "nullable": true
           },
@@ -20327,6 +20522,9 @@
             "$ref": "#/components/schemas/ServerNotificationThreadGoalUpdatedNotification"
           },
           {
+            "$ref": "#/components/schemas/ServerNotificationThreadPredictionUpdatedNotification"
+          },
+          {
             "$ref": "#/components/schemas/ServerNotificationThreadGoalClearedNotification"
           },
           {
@@ -20555,6 +20753,7 @@
             "thread/name/updated": "#/components/schemas/ServerNotificationThreadNameUpdatedNotification",
             "thread/attachment/updated": "#/components/schemas/ServerNotificationThreadAttachmentUpdatedNotification",
             "thread/goal/updated": "#/components/schemas/ServerNotificationThreadGoalUpdatedNotification",
+            "thread/prediction/updated": "#/components/schemas/ServerNotificationThreadPredictionUpdatedNotification",
             "thread/goal/cleared": "#/components/schemas/ServerNotificationThreadGoalClearedNotification",
             "thread/queue/changed": "#/components/schemas/ServerNotificationThreadQueueChangedNotification",
             "project/changed": "#/components/schemas/ServerNotificationProjectChangedNotification",
@@ -21192,6 +21391,25 @@
           "missingAppIds"
         ],
         "title": "AppsReadResponse",
+        "type": "object"
+      },
+      "BedrockCheckGovCloudRequirementsResponse": {
+        "description": "Advisory check of the current Bedrock configuration after login or setup.",
+        "properties": {
+          "isGovCloud": {
+            "description": "Whether the active Bedrock authentication resolves to a GovCloud region.",
+            "type": "boolean"
+          },
+          "shouldWarn": {
+            "description": "Whether GovCloud is selected and the managed requirements miss the baseline. A false value is not a general certification of the network configuration.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "isGovCloud",
+          "shouldWarn"
+        ],
+        "title": "BedrockCheckGovCloudRequirementsResponse",
         "type": "object"
       },
       "AwsCredentialType": {
@@ -24567,6 +24785,12 @@
         "properties": {
           "authorizationUrl": {
             "type": "string"
+          },
+          "loginId": {
+            "default": null,
+            "description": "Identifies this login attempt across the response and completion notification. Older servers omit this field; current servers always return it.",
+            "type": "string",
+            "nullable": true
           }
         },
         "required": [
@@ -27116,6 +27340,10 @@
           "thread"
         ],
         "title": "ThreadMetadataUpdateResponse",
+        "type": "object"
+      },
+      "ThreadPredictionRequestResponse": {
+        "title": "ThreadPredictionRequestResponse",
         "type": "object"
       },
       "QueuedSubmission": {

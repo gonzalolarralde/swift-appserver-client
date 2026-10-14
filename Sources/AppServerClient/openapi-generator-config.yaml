@@ -4,6 +4,7 @@ accessModifier: public
 namingStrategy: idiomatic
 typeOverrides:
   schemas:
+    CodexErrorInfo: CodexErrorInfoValue
     RequestId: RequestIdValue
     FunctionCallOutputBody: FunctionCallOutputBodyValue
     ThreadListCwdFilter: ThreadListCwdFilterValue
