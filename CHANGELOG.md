@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.162.1 — 2026-10-14
+
+- Schema provenance: the experimental export from official `@openai/codex@0.162.1`
+  matches all 447 files byte-for-byte against clean public tag `rust-v0.162.1`,
+  peeled commit `092d3acd6bec3e3a14bdc7e7a2810ab628ab759d`.
+- Contract: no public contract change from 0.162.0; no schema files or wire
+  definitions changed. Upstream fixes multiline asynchronous-question rendering
+  and background-server compatibility checks for explicit CLI feature overrides.
+- Swift compatibility: updates current compatibility metadata while retaining
+  deprecated APIs and lossless unknown-error handling. No generator repair needed.
+- Verification: generation was idempotent; source-bundle verification, two Python
+  normalization tests, `swift build --target AppServerClient`, all 26 Swift tests,
+  `git diff --check`, and unchanged `Package.resolved` passed. Smoke against the
+  exact official CLI passed initialize, account, usage, and empty thread-list
+  calls in an isolated authenticated home. No turn-list coverage is claimed;
+  the copied credential was removed afterward.
+
 ## 0.162.0 — 2026-10-14
 
 - Schema provenance: the experimental export from official `@openai/codex@0.162.0`
