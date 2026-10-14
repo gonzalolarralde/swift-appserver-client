@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.160.1 — 2026-10-14
+
+- Schema provenance: the experimental export from official `@openai/codex@0.160.1`
+  matches all 440 files byte-for-byte against the clean public tag
+  `rust-v0.160.1`, peeled commit `d27764b82f7118f674371e6d6e76271d9d606edb`.
+- Contract: no public contract change from 0.160.0; no schema files or wire
+  definitions changed. The upstream patch preserves Windows executor startup
+  environment variables for remote stdio MCP servers.
+- Swift compatibility: includes the reviewed deprecated-API additions from
+  main: removed rollback requests fail before sending, and historical plugin
+  models and Windows sandbox fields remain Codable. Published 0.160.0 is unchanged.
+  Updated current compatibility references; no generator repair was needed.
+- Verification: generation was idempotent; `swift build --target AppServerClient`,
+  all 22 `swift test` cases, `git diff --check`, and unchanged `Package.resolved`
+  passed. The first build was invalidated by a concurrent idempotency rewrite;
+  the serial retry passed. Smoke against the exact official CLI passed initialize,
+  account, usage, and empty thread-list calls in an isolated authenticated home.
+  No turn-list coverage is claimed; the copied credential was removed afterward.
+
 ## Unreleased — source compatibility
 
 - Retain deprecated `thread/rollback` request/params/response symbols removed

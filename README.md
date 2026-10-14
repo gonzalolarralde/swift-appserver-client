@@ -22,14 +22,14 @@ models under `Sources/AppServerClient/Models/TypeOverrides`.
 
 ## Compatibility
 
-Release `0.160.0` is generated from the experimental app-server schema exposed
-by the stable public Codex tag `rust-v0.160.0`. App-server experimental APIs can
+Release `0.160.1` is generated from the experimental app-server schema exposed
+by the stable public Codex tag `rust-v0.160.1`. App-server experimental APIs can
 change between Codex releases, so matching these versions is recommended.
 
-### Removed APIs on main
+### Deprecated compatibility APIs
 
-The following compatibility additions are on `main` for the next stable
-release; the published `0.160.0` tag is unchanged.
+The following compatibility additions are included starting in `0.160.1`;
+the published `0.160.0` tag is unchanged.
 
 Removed request and data-model symbols are retained instead of disappearing
 from Swift source. `ThreadRollback` and its params/response types are
@@ -56,7 +56,7 @@ the historical overlay.
 ## Requirements
 
 - Swift 6.2 or newer.
-- Codex `0.160.0` must be available on `PATH` for the stdio connection and smoke
+- Codex `0.160.1` must be available on `PATH` for the stdio connection and smoke
   executable.
 - `codex app-server` must be supported by the installed Codex CLI.
 
@@ -108,7 +108,7 @@ Prefer the matching tagged release:
 dependencies: [
     .package(
         url: "https://github.com/gonzalolarralde/swift-appserver-client.git",
-        exact: "0.160.0"
+        exact: "0.160.1"
     ),
 ],
 ```
@@ -300,5 +300,5 @@ swift build --target AppServerClient
 - Requests whose protocol `params` are null support `send(request:)` without a
   `with:` argument.
 - The generated `multiAgentMode` fields are retained for wire compatibility,
-  but Codex `0.160.0` ignores them and derives proactive delegation from Ultra
+  but Codex `0.160.1` ignores them and derives proactive delegation from Ultra
   reasoning effort.
