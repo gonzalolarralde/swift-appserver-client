@@ -70,7 +70,7 @@ public actor AppServerClient<Connection: AppServerConnection> {
             clientInfo: .init(
                 name: "swift-appserver-client",
                 title: "Swift AppServer Client",
-                version: "0.161.0"
+                version: "0.162.0"
             )
         )
     }

@@ -2,6 +2,18 @@ import Foundation
 import Testing
 @testable import AppServerClient
 
+@Test func removedNamespaceCapabilityIsOptionalAndPreservesHistoricalValues() throws {
+    let decoder = JSONDecoder()
+    let current = try decoder.decode(Components.Schemas.ModelProviderCapabilitiesReadResponse.self,
+        from: Data(#"{"imageGeneration":true,"webSearch":false}"#.utf8))
+    #expect(current.namespaceTools == nil)
+    let historical = try decoder.decode(Components.Schemas.ModelProviderCapabilitiesReadResponse.self,
+        from: Data(#"{"imageGeneration":true,"webSearch":false,"namespaceTools":true}"#.utf8))
+    #expect(historical.namespaceTools == true)
+    #expect(try decoder.decode(Components.Schemas.ModelProviderCapabilitiesReadResponse.self,
+        from: JSONEncoder().encode(historical)) == historical)
+}
+
 @Test func removedRollbackFailsBeforeWritingOrAllocatingRequestID() async throws {
     let connection = LegacyRecordingConnection()
     let client = AppServerClient(connection: connection)

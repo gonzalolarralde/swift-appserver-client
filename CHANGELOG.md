@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.162.0 — 2026-10-14
+
+- Schema provenance: the experimental export from official `@openai/codex@0.162.0`
+  matches all 447 files byte-for-byte against clean public tag `rust-v0.162.0`,
+  peeled commit `c1382380de69521303b416720a52f42d51af6248`.
+- Contract: two schema files added, none removed, and 34 existing files changed.
+  Adds paginated `thread/attachmentOwner/list`, environment skill configuration,
+  browser extension requirements, and independent speed-mode capability metadata.
+  Turns gain optional root/parent identifiers; subagent activity gains model and
+  reasoning metadata. Adds `partial_answer` message phase and `additional_tools`
+  response items; skill paths use the legacy-app-path string representation.
+  Misalignment details gain a nullable review target.
+- Swift compatibility: the removed `namespaceTools` provider capability remains
+  an optional deprecated property in the separate compatibility overlay, with
+  historical/current response coverage. The upstream JSON Schema export is
+  unchanged by this overlay. Existing deprecated APIs and the lossless error-info
+  override are retained. Exhaustive enum switches must handle the added cases.
+- Verification: generation was idempotent; source-bundle verification, two Python
+  normalization tests, `swift build --target AppServerClient`, all 26 Swift tests,
+  `git diff --check`, and unchanged `Package.resolved` passed. Smoke against the
+  exact official CLI passed initialize, account, usage, and empty thread-list
+  calls in an isolated authenticated home. No turn-list coverage is claimed;
+  the copied credential was removed afterward.
+
 ## 0.161.0 — 2026-10-14
 
 - Schema provenance: the experimental export from official `@openai/codex@0.161.0`

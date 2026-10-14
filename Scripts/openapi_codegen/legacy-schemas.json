@@ -1,5 +1,5 @@
 {
-  "description": "Swift source-compatibility only. Historical normalized schemas from SDK 0.155.1 (rollback and Windows field) and 0.157.1 (plugin models). Not part of the current upstream wire contract.",
+  "description": "Swift source-compatibility only. Historical normalized schemas from SDK 0.155.1 (rollback and Windows field), 0.157.1 (plugin models), and 0.161.0 (namespace capability). Not part of the current upstream wire contract.",
   "components": {
     "ThreadRollbackParams": {
       "description": "Deprecated compatibility model. thread/rollback was removed in Codex 0.156.0; sending it throws AppServerClientError.unsupportedMethod.",
@@ -462,6 +462,14 @@
     }
   },
   "properties": {
+    "ModelProviderCapabilitiesReadResponse": {
+      "namespaceTools": {
+        "type": "boolean",
+        "nullable": true,
+        "deprecated": true,
+        "description": "Removed by Codex 0.162.0; current servers do not report this value. Retained to decode historical provider capabilities, not to infer current tool support."
+      }
+    },
     "ConfigRequirements": {
       "windowsSandboxPrivateDesktop": {
         "type": "boolean",

@@ -32,6 +32,7 @@ public extension AppServerModels.ClientRequest {
     typealias ThreadMetadataUpdate = Components.Schemas.ClientRequestThreadMetadataUpdateRequest
     typealias ThreadAttachmentAdd = Components.Schemas.ClientRequestThreadAttachmentAddRequest
     typealias ThreadAttachmentList = Components.Schemas.ClientRequestThreadAttachmentListRequest
+    typealias ThreadAttachmentOwnerList = Components.Schemas.ClientRequestThreadAttachmentOwnerListRequest
     typealias ThreadAttachmentRemove = Components.Schemas.ClientRequestThreadAttachmentRemoveRequest
     typealias ThreadSectionMove = Components.Schemas.ClientRequestThreadSectionMoveRequest
     typealias ThreadSettingsUpdate = Components.Schemas.ClientRequestThreadSettingsUpdateRequest
@@ -205,6 +206,7 @@ public extension AppServerModels.ClientRequest {
         public typealias ThreadMetadataUpdate = Components.Schemas.ThreadMetadataUpdateResponse
         public typealias ThreadAttachmentAdd = Components.Schemas.ThreadAttachmentAddResponse
         public typealias ThreadAttachmentList = Components.Schemas.ThreadAttachmentListResponse
+        public typealias ThreadAttachmentOwnerList = Components.Schemas.ThreadAttachmentOwnerListResponse
         public typealias ThreadAttachmentRemove = Components.Schemas.ThreadAttachmentRemoveResponse
         public typealias ThreadSectionMove = Components.Schemas.ThreadSectionMoveResponse
         public typealias ThreadSettingsUpdate = Components.Schemas.ThreadSettingsUpdateResponse
@@ -380,6 +382,7 @@ public extension AppServerModels.ClientRequest {
         case let .threadMetadataUpdate(value): value
         case let .threadAttachmentAdd(value): value
         case let .threadAttachmentList(value): value
+        case let .threadAttachmentOwnerList(value): value
         case let .threadAttachmentRemove(value): value
         case let .threadSectionMove(value): value
         case let .threadSettingsUpdate(value): value
@@ -754,6 +757,14 @@ extension Components.Schemas.ClientRequestThreadAttachmentListRequest: ClientReq
     public typealias Response = AppServerModels.ClientRequest.Response.ThreadAttachmentList
     public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadAttachmentList(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestThreadAttachmentOwnerListRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ThreadAttachmentOwnerListParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadAttachmentOwnerList
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .threadAttachmentOwnerList(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 

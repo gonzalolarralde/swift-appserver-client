@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Codex App Server Protocol",
-    "version": "0.161.0"
+    "version": "0.162.0"
   },
   "paths": {},
   "components": {
@@ -750,6 +750,35 @@
         "title": "Thread/startRequest",
         "type": "object"
       },
+      "ResponseItemAdditionalToolsResponseItem": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "role": {
+            "type": "string"
+          },
+          "tools": {
+            "items": {},
+            "type": "array"
+          },
+          "type": {
+            "enum": [
+              "additional_tools"
+            ],
+            "title": "AdditionalToolsResponseItemType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "role",
+          "tools",
+          "type"
+        ],
+        "title": "AdditionalToolsResponseItem",
+        "type": "object"
+      },
       "ContentItemInputTextContentItem": {
         "properties": {
           "text": {
@@ -900,10 +929,11 @@
         "type": "object"
       },
       "MessagePhase": {
-        "description": "Classifies an assistant message as interim commentary or final answer text.\n\nProviders do not emit this consistently, so callers must treat `None` as \"phase unknown\" and keep compatibility behavior for legacy models.",
+        "description": "Classifies assistant text as commentary, a partial answer, or a terminal answer.\n\nProviders do not emit this consistently, so callers must treat `None` as \"phase unknown\" and keep compatibility behavior for legacy models.",
         "type": "string",
         "enum": [
           "commentary",
+          "partial_answer",
           "final_answer"
         ]
       },
@@ -1931,6 +1961,9 @@
       "ResponseItem": {
         "oneOf": [
           {
+            "$ref": "#/components/schemas/ResponseItemAdditionalToolsResponseItem"
+          },
+          {
             "$ref": "#/components/schemas/ResponseItemMessageResponseItem"
           },
           {
@@ -1985,6 +2018,7 @@
         "discriminator": {
           "propertyName": "type",
           "mapping": {
+            "additional_tools": "#/components/schemas/ResponseItemAdditionalToolsResponseItem",
             "message": "#/components/schemas/ResponseItemMessageResponseItem",
             "agent_message": "#/components/schemas/ResponseItemAgentMessageResponseItem",
             "reasoning": "#/components/schemas/ResponseItemReasoningResponseItem",
@@ -3338,6 +3372,61 @@
           "params"
         ],
         "title": "Thread/attachment/listRequest",
+        "type": "object"
+      },
+      "ThreadAttachmentOwnerListParams": {
+        "description": "Parameters for reverse lookup by attachment identity within this server's store.",
+        "properties": {
+          "archived": {
+            "description": "Omitted or null returns all matches; false returns non-archived threads only.",
+            "type": "boolean",
+            "nullable": true
+          },
+          "attachmentType": {
+            "type": "string"
+          },
+          "cursor": {
+            "type": "string",
+            "nullable": true
+          },
+          "identityKey": {
+            "type": "string"
+          },
+          "limit": {
+            "format": "uint32",
+            "minimum": 0.0,
+            "type": "integer",
+            "nullable": true
+          }
+        },
+        "required": [
+          "attachmentType",
+          "identityKey"
+        ],
+        "type": "object"
+      },
+      "ClientRequestThreadAttachmentOwnerListRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "thread/attachmentOwner/list"
+            ],
+            "title": "Thread/attachmentOwner/listRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ThreadAttachmentOwnerListParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "Thread/attachmentOwner/listRequest",
         "type": "object"
       },
       "ThreadAttachmentRemoveParams": {
@@ -4883,7 +4972,7 @@
             "nullable": true
           },
           "searchTerm": {
-            "description": "Case-insensitive literal substring to find in visible user messages and final assistant messages.",
+            "description": "Case-insensitive literal substring to find in visible user messages and both partial and final assistant answers.",
             "type": "string"
           },
           "threadId": {
@@ -6674,6 +6763,11 @@
           "outputSchema": {
             "description": "Optional JSON Schema used to constrain the final assistant message for this turn."
           },
+          "parentTurnId": {
+            "description": "ID of the turn that caused this new turn to start.\n\nSet this when starting work on behalf of another turn, such as delegated work in a different thread. Leave unset for work started directly by the user. Ignored when this request adds input to an active turn.",
+            "type": "string",
+            "nullable": true
+          },
           "permissions": {
             "description": "Select a named permissions profile id for this turn and subsequent turns. Cannot be combined with `sandboxPolicy`.",
             "type": "string",
@@ -6688,6 +6782,11 @@
             },
             "description": "Optional metadata to enrich Codex's ResponsesAPI turn metadata.\n\nEntries are flattened into the JSON string sent as `client_metadata[\"x-codex-turn-metadata\"]` on ResponsesAPI HTTP and websocket requests.\n\nThey are not sent as top-level ResponsesAPI `client_metadata` keys, and reserved keys such as `session_id`, `thread_id`, `turn_id`, and `window_id` cannot be overridden.",
             "type": "object"
+          },
+          "rootTurnId": {
+            "description": "ID of the first turn in the chain of work that led to this new turn.\n\nWhen setting `parentTurnId`, set this to the parent turn's `rootTurnId` when known. This keeps descendant work attributed to the original turn. If omitted, the new turn becomes its own root. Ignored when this request adds input to an active turn.",
+            "type": "string",
+            "nullable": true
           },
           "runtimeWorkspaceRoots": {
             "description": "Replace the thread's runtime workspace roots for this turn and subsequent turns. Paths must be absolute.",
@@ -8208,6 +8307,18 @@
         "title": "Mock/experimentalMethodRequest",
         "type": "object"
       },
+      "EnvironmentSkillsParams": {
+        "properties": {
+          "required": {
+            "description": "Exact catalog names that must be available from this environment.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
       "EnvironmentAddParams": {
         "properties": {
           "authBearerToken": {
@@ -8227,6 +8338,9 @@
           },
           "execServerUrl": {
             "type": "string"
+          },
+          "skills": {
+            "$ref": "#/components/schemas/EnvironmentSkillsParams"
           }
         },
         "required": [
@@ -10819,6 +10933,9 @@
             "$ref": "#/components/schemas/ClientRequestThreadAttachmentListRequest"
           },
           {
+            "$ref": "#/components/schemas/ClientRequestThreadAttachmentOwnerListRequest"
+          },
+          {
             "$ref": "#/components/schemas/ClientRequestThreadAttachmentRemoveRequest"
           },
           {
@@ -11274,6 +11391,7 @@
             "thread/metadata/update": "#/components/schemas/ClientRequestThreadMetadataUpdateRequest",
             "thread/attachment/add": "#/components/schemas/ClientRequestThreadAttachmentAddRequest",
             "thread/attachment/list": "#/components/schemas/ClientRequestThreadAttachmentListRequest",
+            "thread/attachmentOwner/list": "#/components/schemas/ClientRequestThreadAttachmentOwnerListRequest",
             "thread/attachment/remove": "#/components/schemas/ClientRequestThreadAttachmentRemoveRequest",
             "thread/section/move": "#/components/schemas/ClientRequestThreadSectionMoveRequest",
             "thread/settings/update": "#/components/schemas/ClientRequestThreadSettingsUpdateRequest",
@@ -13705,6 +13823,11 @@
             "type": "string",
             "nullable": true
           },
+          "reviewTarget": {
+            "description": "Opaque server-issued block target. Presence alone does not enable target-based continuation.",
+            "type": "string",
+            "nullable": true
+          },
           "steer": {
             "$ref": "#/components/schemas/MisalignmentSteer"
           }
@@ -14983,6 +15106,14 @@
           "kind": {
             "$ref": "#/components/schemas/SubAgentActivityKind"
           },
+          "model": {
+            "description": "Resolved model at sub-agent creation; absent from older records and other activities.",
+            "type": "string",
+            "nullable": true
+          },
+          "reasoningEffort": {
+            "$ref": "#/components/schemas/ReasoningEffort"
+          },
           "type": {
             "enum": [
               "subAgentActivity"
@@ -15458,6 +15589,11 @@
             "$ref": "#/components/schemas/TurnItemsView",
             "default": "full",
             "description": "Describes how much of `items` has been loaded for this turn."
+          },
+          "rootTurnId": {
+            "description": "ID of the first turn in the chain of work that led to this turn. Pass this as `rootTurnId` when starting work on behalf of this turn. May be null in older history or a `review/start` response.",
+            "type": "string",
+            "nullable": true
           },
           "startedAt": {
             "description": "Unix timestamp (in seconds) when the turn started.",
@@ -22350,6 +22486,32 @@
         },
         "type": "object"
       },
+      "RequestHeader": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "value"
+        ],
+        "type": "object"
+      },
+      "BrowserUseExtensionRequirements": {
+        "properties": {
+          "requestHeaders": {
+            "items": {
+              "$ref": "#/components/schemas/RequestHeader"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
       "BrowserUseRequirements": {
         "properties": {
           "allowGlobalPersistentApproval": {
@@ -22370,6 +22532,9 @@
           "disableAutoReview": {
             "type": "boolean",
             "nullable": true
+          },
+          "extension": {
+            "$ref": "#/components/schemas/BrowserUseExtensionRequirements"
           },
           "origins": {
             "additionalProperties": {
@@ -23007,6 +23172,12 @@
         "properties": {
           "requirements": {
             "$ref": "#/components/schemas/ConfigRequirements"
+          },
+          "supportsIndependentSpeedModes": {
+            "default": null,
+            "description": "Whether Fast and Ultra Fast requirements are enforced independently. Older servers omit this field and use Fast mode as a shared speed gate.",
+            "type": "boolean",
+            "nullable": true
           }
         },
         "title": "ConfigRequirementsReadResponse",
@@ -25088,7 +25259,10 @@
             "type": "boolean"
           },
           "namespaceTools": {
-            "type": "boolean"
+            "type": "boolean",
+            "nullable": true,
+            "deprecated": true,
+            "description": "Removed by Codex 0.162.0; current servers do not report this value. Retained to decode historical provider capabilities, not to infer current tool support."
           },
           "webSearch": {
             "type": "boolean"
@@ -25096,7 +25270,6 @@
         },
         "required": [
           "imageGeneration",
-          "namespaceTools",
           "webSearch"
         ],
         "title": "ModelProviderCapabilitiesReadResponse",
@@ -25843,7 +26016,7 @@
             "type": "string"
           },
           "path": {
-            "$ref": "#/components/schemas/AbsolutePathBuf"
+            "$ref": "#/components/schemas/LegacyAppPathString"
           },
           "shortDescription": {
             "type": "string",
@@ -26839,7 +27012,7 @@
             "type": "string"
           },
           "path": {
-            "$ref": "#/components/schemas/AbsolutePathBuf"
+            "$ref": "#/components/schemas/LegacyAppPathString"
           },
           "pluginId": {
             "description": "Owning plugin ID, matching `PluginSummary.id`, when known.",
@@ -26982,6 +27155,43 @@
           "data"
         ],
         "title": "ThreadAttachmentListResponse",
+        "type": "object"
+      },
+      "ThreadAttachmentOwner": {
+        "description": "A thread that currently owns an attachment with the requested identity.",
+        "properties": {
+          "archived": {
+            "description": "Whether the owning thread is archived, not whether it is currently executing a turn.",
+            "type": "boolean"
+          },
+          "threadId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "archived",
+          "threadId"
+        ],
+        "type": "object"
+      },
+      "ThreadAttachmentOwnerListResponse": {
+        "description": "One page of matching owners, including threads without their own user messages.",
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/ThreadAttachmentOwner"
+            },
+            "type": "array"
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "title": "ThreadAttachmentOwnerListResponse",
         "type": "object"
       },
       "ThreadAttachmentRemoveResponse": {
