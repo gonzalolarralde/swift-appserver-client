@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.164.0 — 2026-11-01
+
+- Schema provenance: the experimental export from official `@openai/codex@0.164.0`
+  matches all 458 files byte-for-byte against clean public tag `rust-v0.164.0`,
+  peeled commit `6aaac694803004a63c6f393d153c96d22521a6b9`.
+- Contract: six schema files added, none removed, and 39 existing files changed.
+  Adds `feedback/save`, `thread/sample`, and `thread/sample/cancel`; managed
+  storage requirements; pre/post model-request hooks; SCI plan types; MCP tool-list
+  metadata; voice-session IDs; prediction MCP controls; and per-turn Responses
+  metadata patches. Image items support a durable file ID or inline result and
+  record their input images.
+- Swift compatibility: a focused image-item override preserves common fields
+  that the pinned OpenAPI generator otherwise drops beside `anyOf`. Both output
+  representations round-trip, including migration responses containing both.
+  `result` is now optional: callers must handle `fileId`-only items. Encoding
+  and decoding reject items with neither representation. Existing deprecated
+  APIs remain available; exhaustive switches must cover new enum cases.
+- Verification: idempotent generation, source-bundle verification, two Python
+  normalization tests, library build, all 28 Swift tests (including three image
+  output variants and missing-output validation), `git diff --check`, and
+  unchanged `Package.resolved` passed. Exact-CLI smoke passed initialize, account,
+  usage, and empty thread-list calls in an isolated authenticated home; no
+  turn-list coverage is claimed. The initial smoke build was invalidated by a
+  concurrent idempotency rewrite; the serial retry passed. Copied credentials
+  were removed after both attempts.
+
 ## 0.163.0 — 2026-11-01
 
 - Schema provenance: the experimental export from official `@openai/codex@0.163.0`

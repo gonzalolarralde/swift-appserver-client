@@ -5,6 +5,7 @@ namingStrategy: idiomatic
 typeOverrides:
   schemas:
     CodexErrorInfo: CodexErrorInfoValue
+    ThreadItemImageGenerationThreadItem: ThreadItemImageGenerationValue
     RequestId: RequestIdValue
     FunctionCallOutputBody: FunctionCallOutputBodyValue
     ThreadListCwdFilter: ThreadListCwdFilterValue

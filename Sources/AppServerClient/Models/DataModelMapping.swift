@@ -13,6 +13,8 @@ public extension AppServerModels.ClientRequest {
     typealias ThreadStart = Components.Schemas.ClientRequestThreadStartRequest
     typealias ThreadResume = Components.Schemas.ClientRequestThreadResumeRequest
     typealias ThreadFork = Components.Schemas.ClientRequestThreadForkRequest
+    typealias ThreadSample = Components.Schemas.ClientRequestThreadSampleRequest
+    typealias ThreadSampleCancel = Components.Schemas.ClientRequestThreadSampleCancelRequest
     typealias ThreadArchive = Components.Schemas.ClientRequestThreadArchiveRequest
     typealias ThreadDelete = Components.Schemas.ClientRequestThreadDeleteRequest
     typealias ThreadUnsubscribe = Components.Schemas.ClientRequestThreadUnsubscribeRequest
@@ -154,6 +156,7 @@ public extension AppServerModels.ClientRequest {
     typealias AccountWorkspaceMessagesRead = Components.Schemas.ClientRequestAccountWorkspaceMessagesReadRequest
     typealias AccountSendAddCreditsNudgeEmail = Components.Schemas.ClientRequestAccountSendAddCreditsNudgeEmailRequest
     typealias FeedbackUpload = Components.Schemas.ClientRequestFeedbackUploadRequest
+    typealias FeedbackSave = Components.Schemas.ClientRequestFeedbackSaveRequest
     typealias CommandExec = Components.Schemas.ClientRequestCommandExecRequest
     typealias CommandExecWrite = Components.Schemas.ClientRequestCommandExecWriteRequest
     typealias CommandExecTerminate = Components.Schemas.ClientRequestCommandExecTerminateRequest
@@ -189,6 +192,8 @@ public extension AppServerModels.ClientRequest {
         public typealias ThreadStart = Components.Schemas.ThreadStartResponse
         public typealias ThreadResume = Components.Schemas.ThreadResumeResponse
         public typealias ThreadFork = Components.Schemas.ThreadForkResponse
+        public typealias ThreadSample = Components.Schemas.ThreadSampleResponse
+        public typealias ThreadSampleCancel = Components.Schemas.ThreadSampleCancelResponse
         public typealias ThreadArchive = Components.Schemas.ThreadArchiveResponse
         public typealias ThreadDelete = Components.Schemas.ThreadDeleteResponse
         public typealias ThreadUnsubscribe = Components.Schemas.ThreadUnsubscribeResponse
@@ -330,6 +335,7 @@ public extension AppServerModels.ClientRequest {
         public typealias AccountWorkspaceMessagesRead = Components.Schemas.GetWorkspaceMessagesResponse
         public typealias AccountSendAddCreditsNudgeEmail = Components.Schemas.SendAddCreditsNudgeEmailResponse
         public typealias FeedbackUpload = Components.Schemas.FeedbackUploadResponse
+        public typealias FeedbackSave = Components.Schemas.FeedbackSaveResponse
         public typealias CommandExec = Components.Schemas.CommandExecResponse
         public typealias CommandExecWrite = Components.Schemas.CommandExecWriteResponse
         public typealias CommandExecTerminate = Components.Schemas.CommandExecTerminateResponse
@@ -367,6 +373,8 @@ public extension AppServerModels.ClientRequest {
         case let .threadStart(value): value
         case let .threadResume(value): value
         case let .threadFork(value): value
+        case let .threadSample(value): value
+        case let .threadSampleCancel(value): value
         case let .threadArchive(value): value
         case let .threadDelete(value): value
         case let .threadUnsubscribe(value): value
@@ -508,6 +516,7 @@ public extension AppServerModels.ClientRequest {
         case let .accountWorkspaceMessagesRead(value): value
         case let .accountSendAddCreditsNudgeEmail(value): value
         case let .feedbackUpload(value): value
+        case let .feedbackSave(value): value
         case let .commandExec(value): value
         case let .commandExecWrite(value): value
         case let .commandExecTerminate(value): value
@@ -611,6 +620,22 @@ extension Components.Schemas.ClientRequestThreadForkRequest: ClientRequestable {
     public typealias Response = AppServerModels.ClientRequest.Response.ThreadFork
     public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadFork(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestThreadSampleRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ThreadSampleParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadSample
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .threadSample(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestThreadSampleCancelRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ThreadSampleCancelParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadSampleCancel
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .threadSampleCancel(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
@@ -1739,6 +1764,14 @@ extension Components.Schemas.ClientRequestFeedbackUploadRequest: ClientRequestab
     public typealias Response = AppServerModels.ClientRequest.Response.FeedbackUpload
     public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .feedbackUpload(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestFeedbackSaveRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.FeedbackSaveParams
+    public typealias Response = AppServerModels.ClientRequest.Response.FeedbackSave
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .feedbackSave(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
