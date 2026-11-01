@@ -64,8 +64,10 @@ public extension AppServerModels.ClientRequest {
     typealias ThreadSearchOccurrences = Components.Schemas.ClientRequestThreadSearchOccurrencesRequest
     typealias ThreadLoadedList = Components.Schemas.ClientRequestThreadLoadedListRequest
     typealias ThreadRead = Components.Schemas.ClientRequestThreadReadRequest
+    typealias ThreadReadStateUpdate = Components.Schemas.ClientRequestThreadReadStateUpdateRequest
     typealias ThreadTurnsList = Components.Schemas.ClientRequestThreadTurnsListRequest
     typealias ThreadItemsList = Components.Schemas.ClientRequestThreadItemsListRequest
+    typealias ThreadItemsRead = Components.Schemas.ClientRequestThreadItemsReadRequest
     typealias ThreadInjectItems = Components.Schemas.ClientRequestThreadInjectItemsRequest
     typealias SkillsList = Components.Schemas.ClientRequestSkillsListRequest
     typealias SkillsExtraRootsSet = Components.Schemas.ClientRequestSkillsExtraRootsSetRequest
@@ -238,8 +240,10 @@ public extension AppServerModels.ClientRequest {
         public typealias ThreadSearchOccurrences = Components.Schemas.ThreadSearchOccurrencesResponse
         public typealias ThreadLoadedList = Components.Schemas.ThreadLoadedListResponse
         public typealias ThreadRead = Components.Schemas.ThreadReadResponse
+        public typealias ThreadReadStateUpdate = Components.Schemas.ThreadReadStateUpdateResponse
         public typealias ThreadTurnsList = Components.Schemas.ThreadTurnsListResponse
         public typealias ThreadItemsList = Components.Schemas.ThreadItemsListResponse
+        public typealias ThreadItemsRead = Components.Schemas.ThreadItemsReadResponse
         public typealias ThreadInjectItems = Components.Schemas.ThreadInjectItemsResponse
         public typealias SkillsList = Components.Schemas.SkillsListResponse
         public typealias SkillsExtraRootsSet = Components.Schemas.SkillsExtraRootsSetResponse
@@ -414,8 +418,10 @@ public extension AppServerModels.ClientRequest {
         case let .threadSearchOccurrences(value): value
         case let .threadLoadedList(value): value
         case let .threadRead(value): value
+        case let .threadReadStateUpdate(value): value
         case let .threadTurnsList(value): value
         case let .threadItemsList(value): value
+        case let .threadItemsRead(value): value
         case let .threadInjectItems(value): value
         case let .skillsList(value): value
         case let .skillsExtraRootsSet(value): value
@@ -1016,6 +1022,14 @@ extension Components.Schemas.ClientRequestThreadReadRequest: ClientRequestable {
     }
 }
 
+extension Components.Schemas.ClientRequestThreadReadStateUpdateRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ThreadReadStateUpdateParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadReadStateUpdate
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .threadReadStateUpdate(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
 extension Components.Schemas.ClientRequestThreadTurnsListRequest: ClientRequestable {
     public typealias Params = Components.Schemas.ThreadTurnsListParams
     public typealias Response = AppServerModels.ClientRequest.Response.ThreadTurnsList
@@ -1029,6 +1043,14 @@ extension Components.Schemas.ClientRequestThreadItemsListRequest: ClientRequesta
     public typealias Response = AppServerModels.ClientRequest.Response.ThreadItemsList
     public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadItemsList(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestThreadItemsReadRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ThreadItemsReadParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadItemsRead
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .threadItemsRead(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
@@ -2033,6 +2055,7 @@ public extension AppServerModels.ServerNotification {
     typealias Error = Components.Schemas.ServerNotificationErrorNotification
     typealias ThreadStarted = Components.Schemas.ServerNotificationThreadStartedNotification
     typealias ThreadStatusChanged = Components.Schemas.ServerNotificationThreadStatusChangedNotification
+    typealias ThreadReadStateChanged = Components.Schemas.ServerNotificationThreadReadStateChangedNotification
     typealias ThreadArchived = Components.Schemas.ServerNotificationThreadArchivedNotification
     typealias ThreadDeleted = Components.Schemas.ServerNotificationThreadDeletedNotification
     typealias ThreadUnarchived = Components.Schemas.ServerNotificationThreadUnarchivedNotification
@@ -2120,6 +2143,7 @@ public extension AppServerModels.ServerNotification {
         case let .error(value): value
         case let .threadStarted(value): value
         case let .threadStatusChanged(value): value
+        case let .threadReadStateChanged(value): value
         case let .threadArchived(value): value
         case let .threadDeleted(value): value
         case let .threadUnarchived(value): value
@@ -2223,6 +2247,13 @@ extension Components.Schemas.ServerNotificationThreadStatusChangedNotification: 
     public typealias Params = Components.Schemas.ThreadStatusChangedNotification
     public static func build(params: Params) -> AppServerModels.ServerNotification {
         .threadStatusChanged(.init(method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ServerNotificationThreadReadStateChangedNotification: ServerNotificationPayload {
+    public typealias Params = Components.Schemas.ThreadReadStateChangedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
+        .threadReadStateChanged(.init(method: .allCases.first!, params: params))
     }
 }
 

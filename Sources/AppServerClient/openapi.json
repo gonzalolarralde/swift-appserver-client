@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Codex App Server Protocol",
-    "version": "0.162.1"
+    "version": "0.163.0"
   },
   "paths": {},
   "components": {
@@ -875,6 +875,14 @@
       },
       "ContentItemOutputTextContentItem": {
         "properties": {
+          "annotations": {
+            "items": {},
+            "type": "array"
+          },
+          "logprobs": {
+            "items": {},
+            "type": "array"
+          },
           "text": {
             "type": "string"
           },
@@ -945,6 +953,10 @@
             },
             "type": "array"
           },
+          "encrypted_content": {
+            "type": "string",
+            "nullable": true
+          },
           "id": {
             "type": "string",
             "nullable": true
@@ -957,6 +969,10 @@
           },
           "role": {
             "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
           },
           "type": {
             "enum": [
@@ -1248,6 +1264,10 @@
             "type": "string",
             "nullable": true
           },
+          "encrypted_content": {
+            "type": "string",
+            "nullable": true
+          },
           "id": {
             "description": "Legacy id field retained for compatibility with older payloads.",
             "type": "string",
@@ -1283,6 +1303,10 @@
           "call_id": {
             "type": "string"
           },
+          "encrypted_content": {
+            "type": "string",
+            "nullable": true
+          },
           "encrypted_function_args": {
             "items": {
               "type": "string"
@@ -1300,6 +1324,10 @@
             "type": "string"
           },
           "namespace": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
             "type": "string",
             "nullable": true
           },
@@ -1324,6 +1352,10 @@
         "properties": {
           "arguments": {},
           "call_id": {
+            "type": "string",
+            "nullable": true
+          },
+          "encrypted_content": {
             "type": "string",
             "nullable": true
           },
@@ -1544,6 +1576,10 @@
         "properties": {
           "call_id": {
             "type": "string"
+          },
+          "encrypted_content": {
+            "type": "string",
+            "nullable": true
           },
           "id": {
             "type": "string",
@@ -1774,6 +1810,10 @@
           "action": {
             "$ref": "#/components/schemas/ResponsesApiWebSearchAction"
           },
+          "encrypted_content": {
+            "type": "string",
+            "nullable": true
+          },
           "id": {
             "type": "string",
             "nullable": true
@@ -1801,6 +1841,10 @@
       },
       "ResponseItemImageGenerationCallResponseItem": {
         "properties": {
+          "encrypted_content": {
+            "type": "string",
+            "nullable": true
+          },
           "id": {
             "type": "string",
             "nullable": true
@@ -2220,6 +2264,10 @@
           },
           "excludeTurns": {
             "description": "When true, return only thread metadata and live fork state without populating `thread.turns`. This is useful when the client plans to call `thread/turns/list` immediately after forking. Full-history hydration is deprecated for paginated threads; use this with `thread/turns/list` and `thread/items/list` instead.",
+            "type": "boolean"
+          },
+          "experimentalPredictionMode": {
+            "description": "Start from the loaded parent's effective config, tools, environments, and persisted history to maximize prompt-cache reuse. Requires a loaded, persisted parent and `ephemeral: true`. Enables `features.reasoning_effort_override` on the fork. Cannot be combined with configuration overrides, `path`, `lastTurnId`, or `beforeTurnId`.",
             "type": "boolean"
           },
           "lastTurnId": {
@@ -4286,6 +4334,13 @@
           "cwd": {
             "$ref": "#/components/schemas/ThreadListCwdFilter"
           },
+          "excludedThreadIds": {
+            "description": "Thread IDs to exclude before applying the result limit. Up to 100 entries; invalid IDs or a larger list are rejected, never truncated. Send the same exclusions on each page. Omitted, null, or empty means no exclusions.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
           "limit": {
             "description": "Optional page size; defaults to a reasonable server-side value.",
             "format": "uint32",
@@ -5089,6 +5144,99 @@
         "title": "Thread/readRequest",
         "type": "object"
       },
+      "ThreadReadStateOperationReadThreadReadStateOperation": {
+        "properties": {
+          "type": {
+            "enum": [
+              "read"
+            ],
+            "title": "ReadThreadReadStateOperationType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "title": "ReadThreadReadStateOperation",
+        "type": "object"
+      },
+      "ThreadReadStateOperationUnreadThreadReadStateOperation": {
+        "properties": {
+          "type": {
+            "enum": [
+              "unread"
+            ],
+            "title": "UnreadThreadReadStateOperationType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "title": "UnreadThreadReadStateOperation",
+        "type": "object"
+      },
+      "ThreadReadStateOperation": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ThreadReadStateOperationReadThreadReadStateOperation"
+          },
+          {
+            "$ref": "#/components/schemas/ThreadReadStateOperationUnreadThreadReadStateOperation"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "read": "#/components/schemas/ThreadReadStateOperationReadThreadReadStateOperation",
+            "unread": "#/components/schemas/ThreadReadStateOperationUnreadThreadReadStateOperation"
+          }
+        }
+      },
+      "ThreadReadStateUpdateParams": {
+        "properties": {
+          "expectedRevision": {
+            "description": "Revision of the row or transcript actually seen. Conflicts require a fresh user action.",
+            "type": "string"
+          },
+          "operation": {
+            "$ref": "#/components/schemas/ThreadReadStateOperation"
+          },
+          "threadId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "expectedRevision",
+          "operation",
+          "threadId"
+        ],
+        "type": "object"
+      },
+      "ClientRequestThreadReadStateUpdateRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "thread/readState/update"
+            ],
+            "title": "Thread/readState/updateRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ThreadReadStateUpdateParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "Thread/readState/updateRequest",
+        "type": "object"
+      },
       "ThreadTurnsListParams": {
         "properties": {
           "cursor": {
@@ -5225,6 +5373,54 @@
           "params"
         ],
         "title": "Thread/items/listRequest",
+        "type": "object"
+      },
+      "ThreadItemsReadParams": {
+        "description": "EXPERIMENTAL - retrieve a bounded set of persisted items from one turn.",
+        "properties": {
+          "itemIds": {
+            "description": "Item IDs to retrieve. Supply 1 to 100 IDs.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "threadId": {
+            "type": "string"
+          },
+          "turnId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "itemIds",
+          "threadId",
+          "turnId"
+        ],
+        "type": "object"
+      },
+      "ClientRequestThreadItemsReadRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "thread/items/read"
+            ],
+            "title": "Thread/items/readRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ThreadItemsReadParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "Thread/items/readRequest",
         "type": "object"
       },
       "ThreadInjectItemsParams": {
@@ -6691,6 +6887,10 @@
           },
           "output": {
             "$ref": "#/components/schemas/FunctionCallOutputBody"
+          },
+          "retain": {
+            "description": "Requests retention of this output in the thread's model history.",
+            "type": "boolean"
           }
         },
         "required": [
@@ -7149,22 +7349,38 @@
           "alloy",
           "arbor",
           "ash",
+          "aube",
           "ballad",
           "breeze",
+          "bubbie",
           "cedar",
           "coral",
           "cove",
           "echo",
           "ember",
+          "haetsal",
+          "hanul",
+          "himari",
           "juniper",
+          "leher",
           "maple",
           "marin",
+          "miko",
+          "neer",
+          "porto",
+          "rindo",
+          "rio",
+          "rivage",
           "sage",
+          "selva",
           "shimmer",
           "sol",
+          "sonna",
           "spruce",
+          "tinta",
           "vale",
-          "verse"
+          "verse",
+          "viola"
         ],
         "type": "string"
       },
@@ -8341,6 +8557,11 @@
           },
           "skills": {
             "$ref": "#/components/schemas/EnvironmentSkillsParams"
+          },
+          "websocketRequestId": {
+            "description": "Optional X-Request-ID for the direct WebSocket upgrade, including reconnects. Requires a secure transport or a loopback destination.",
+            "type": "string",
+            "nullable": true
           }
         },
         "required": [
@@ -11029,10 +11250,16 @@
             "$ref": "#/components/schemas/ClientRequestThreadReadRequest"
           },
           {
+            "$ref": "#/components/schemas/ClientRequestThreadReadStateUpdateRequest"
+          },
+          {
             "$ref": "#/components/schemas/ClientRequestThreadTurnsListRequest"
           },
           {
             "$ref": "#/components/schemas/ClientRequestThreadItemsListRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ClientRequestThreadItemsReadRequest"
           },
           {
             "$ref": "#/components/schemas/ClientRequestThreadInjectItemsRequest"
@@ -11423,8 +11650,10 @@
             "thread/searchOccurrences": "#/components/schemas/ClientRequestThreadSearchOccurrencesRequest",
             "thread/loaded/list": "#/components/schemas/ClientRequestThreadLoadedListRequest",
             "thread/read": "#/components/schemas/ClientRequestThreadReadRequest",
+            "thread/readState/update": "#/components/schemas/ClientRequestThreadReadStateUpdateRequest",
             "thread/turns/list": "#/components/schemas/ClientRequestThreadTurnsListRequest",
             "thread/items/list": "#/components/schemas/ClientRequestThreadItemsListRequest",
+            "thread/items/read": "#/components/schemas/ClientRequestThreadItemsReadRequest",
             "thread/inject_items": "#/components/schemas/ClientRequestThreadInjectItemsRequest",
             "skills/list": "#/components/schemas/ClientRequestSkillsListRequest",
             "skills/extraRoots/set": "#/components/schemas/ClientRequestSkillsExtraRootsSetRequest",
@@ -15845,6 +16074,111 @@
           "params"
         ],
         "title": "Thread/status/changedNotification",
+        "type": "object"
+      },
+      "ThreadUnreadPositionThreadStartThreadUnreadPosition": {
+        "description": "Explicitly marked unread, including when the thread has no turns.",
+        "properties": {
+          "type": {
+            "enum": [
+              "threadStart"
+            ],
+            "title": "ThreadStartThreadUnreadPositionType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "title": "ThreadStartThreadUnreadPosition",
+        "type": "object"
+      },
+      "ThreadUnreadPositionTurnThreadUnreadPosition": {
+        "description": "The earliest completed result needing attention.",
+        "properties": {
+          "turnId": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "turn"
+            ],
+            "title": "TurnThreadUnreadPositionType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "turnId",
+          "type"
+        ],
+        "title": "TurnThreadUnreadPosition",
+        "type": "object"
+      },
+      "ThreadUnreadPosition": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ThreadUnreadPositionThreadStartThreadUnreadPosition"
+          },
+          {
+            "$ref": "#/components/schemas/ThreadUnreadPositionTurnThreadUnreadPosition"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "threadStart": "#/components/schemas/ThreadUnreadPositionThreadStartThreadUnreadPosition",
+            "turn": "#/components/schemas/ThreadUnreadPositionTurnThreadUnreadPosition"
+          }
+        }
+      },
+      "ThreadReadState": {
+        "description": "The first unread position in a durable local thread. A null position means read. The opaque revision guards edits against activity or marks the caller has not seen.",
+        "properties": {
+          "firstUnread": {
+            "$ref": "#/components/schemas/ThreadUnreadPosition"
+          },
+          "revision": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "revision"
+        ],
+        "type": "object"
+      },
+      "ThreadReadStateChangedNotification": {
+        "properties": {
+          "readState": {
+            "$ref": "#/components/schemas/ThreadReadState"
+          },
+          "threadId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "readState",
+          "threadId"
+        ],
+        "type": "object"
+      },
+      "ServerNotificationThreadReadStateChangedNotification": {
+        "properties": {
+          "method": {
+            "enum": [
+              "thread/readState/changed"
+            ],
+            "title": "Thread/readState/changedNotificationMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ThreadReadStateChangedNotification"
+          }
+        },
+        "required": [
+          "method",
+          "params"
+        ],
+        "title": "Thread/readState/changedNotification",
         "type": "object"
       },
       "ThreadArchivedNotification": {
@@ -20631,6 +20965,9 @@
             "$ref": "#/components/schemas/ServerNotificationThreadStatusChangedNotification"
           },
           {
+            "$ref": "#/components/schemas/ServerNotificationThreadReadStateChangedNotification"
+          },
+          {
             "$ref": "#/components/schemas/ServerNotificationThreadArchivedNotification"
           },
           {
@@ -20880,6 +21217,7 @@
             "error": "#/components/schemas/ServerNotificationErrorNotification",
             "thread/started": "#/components/schemas/ServerNotificationThreadStartedNotification",
             "thread/status/changed": "#/components/schemas/ServerNotificationThreadStatusChangedNotification",
+            "thread/readState/changed": "#/components/schemas/ServerNotificationThreadReadStateChangedNotification",
             "thread/archived": "#/components/schemas/ServerNotificationThreadArchivedNotification",
             "thread/deleted": "#/components/schemas/ServerNotificationThreadDeletedNotification",
             "thread/unarchived": "#/components/schemas/ServerNotificationThreadUnarchivedNotification",
@@ -27490,6 +27828,22 @@
         "title": "ThreadItemsListResponse",
         "type": "object"
       },
+      "ThreadItemsReadResponse": {
+        "description": "EXPERIMENTAL - persisted items returned in canonical stored order.",
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/ThreadItemEntry"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "title": "ThreadItemsReadResponse",
+        "type": "object"
+      },
       "ThreadListResponse": {
         "properties": {
           "backwardsCursor": {
@@ -27507,6 +27861,13 @@
             "description": "Opaque cursor to pass to the next call to continue after the last item. if None, there are no more items to return.",
             "type": "string",
             "nullable": true
+          },
+          "readStates": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ThreadReadState"
+            },
+            "description": "Local receipts for eligible threads on this page, keyed by thread ID. Null means durable read state is unavailable; an absent key means that row is ineligible.",
+            "type": "object"
           }
         },
         "required": [
@@ -27652,6 +28013,9 @@
       },
       "ThreadReadResponse": {
         "properties": {
+          "readState": {
+            "$ref": "#/components/schemas/ThreadReadState"
+          },
           "thread": {
             "$ref": "#/components/schemas/Thread"
           }
@@ -27660,6 +28024,18 @@
           "thread"
         ],
         "title": "ThreadReadResponse",
+        "type": "object"
+      },
+      "ThreadReadStateUpdateResponse": {
+        "properties": {
+          "readState": {
+            "$ref": "#/components/schemas/ThreadReadState"
+          }
+        },
+        "required": [
+          "readState"
+        ],
+        "title": "ThreadReadStateUpdateResponse",
         "type": "object"
       },
       "ThreadRealtimeAppendAudioResponse": {
@@ -27692,6 +28068,13 @@
             "type": "array"
           },
           "v2": {
+            "items": {
+              "$ref": "#/components/schemas/RealtimeVoice"
+            },
+            "type": "array"
+          },
+          "v3": {
+            "default": [],
             "items": {
               "$ref": "#/components/schemas/RealtimeVoice"
             },

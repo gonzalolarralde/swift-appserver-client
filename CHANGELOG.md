@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.163.0 — 2026-11-01
+
+- Schema provenance: the experimental export from official `@openai/codex@0.163.0`
+  matches all 452 files byte-for-byte against clean public tag `rust-v0.163.0`,
+  peeled commit `83086188ae0614bd882818ff1aa23f3194962012`.
+- Contract: five schema files added, none removed, and 14 existing files changed.
+  Adds `thread/items/read`, `thread/readState/update`, and
+  `thread/readState/changed`, durable thread read states, and thread-list exclusions.
+  Realtime voice metadata gains the v3 catalog and 16 voices. Forks gain prediction
+  mode; tool outputs gain retention metadata. Raw text/message items gain
+  annotations, log probabilities, encrypted content, and status fields.
+- Swift compatibility: updates current compatibility metadata and retains existing
+  deprecated APIs and lossless unknown-error handling. No generator repair needed.
+  Exhaustive switches must handle the added RPC, notification, and voice cases.
+- Verification: generation was idempotent; source-bundle verification, two Python
+  normalization tests, `swift build --target AppServerClient`, all 26 Swift tests,
+  `git diff --check`, and unchanged `Package.resolved` passed. Smoke against the
+  exact official CLI passed initialize, account, usage, and empty thread-list
+  calls in an isolated authenticated home. No turn-list coverage is claimed;
+  the copied credential was removed afterward.
+
 ## 0.162.1 — 2026-10-14
 
 - Schema provenance: the experimental export from official `@openai/codex@0.162.1`
