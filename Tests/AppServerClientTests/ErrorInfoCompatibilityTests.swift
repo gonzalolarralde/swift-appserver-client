@@ -12,6 +12,7 @@ import Testing
 @Test func knownErrorCasesPreserveTheirSwiftAPIAndRoundTrip() throws {
     let values: [Components.Schemas.CodexErrorInfo] = [
         .case1(.rateLimitExceeded),
+        .case1(.modelNotFound),
         .case2(.init(httpConnectionFailed: .init(httpStatusCode: 503))),
         .case3(.init(responseStreamConnectionFailed: .init())),
         .case4(.init(responseStreamDisconnected: .init(httpStatusCode: 429))),

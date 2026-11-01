@@ -39,6 +39,7 @@ public extension AppServerModels.ClientRequest {
     typealias ThreadSectionMove = Components.Schemas.ClientRequestThreadSectionMoveRequest
     typealias ThreadSettingsUpdate = Components.Schemas.ClientRequestThreadSettingsUpdateRequest
     typealias ThreadMemoryModeSet = Components.Schemas.ClientRequestThreadMemoryModeSetRequest
+    typealias ThreadMemoryRead = Components.Schemas.ClientRequestThreadMemoryReadRequest
     typealias MemoryStatus = Components.Schemas.ClientRequestMemoryStatusRequest
     typealias MemoryReset = Components.Schemas.ClientRequestMemoryResetRequest
     typealias RolloutCompress = Components.Schemas.ClientRequestRolloutCompressRequest
@@ -218,6 +219,7 @@ public extension AppServerModels.ClientRequest {
         public typealias ThreadSectionMove = Components.Schemas.ThreadSectionMoveResponse
         public typealias ThreadSettingsUpdate = Components.Schemas.ThreadSettingsUpdateResponse
         public typealias ThreadMemoryModeSet = Components.Schemas.ThreadMemoryModeSetResponse
+        public typealias ThreadMemoryRead = Components.Schemas.ThreadMemoryReadResponse
         public typealias MemoryStatus = Components.Schemas.MemoryStatusResponse
         public typealias MemoryReset = Components.Schemas.MemoryResetResponse
         public typealias RolloutCompress = Components.Schemas.RolloutCompressResponse
@@ -399,6 +401,7 @@ public extension AppServerModels.ClientRequest {
         case let .threadSectionMove(value): value
         case let .threadSettingsUpdate(value): value
         case let .threadMemoryModeSet(value): value
+        case let .threadMemoryRead(value): value
         case let .memoryStatus(value): value
         case let .memoryReset(value): value
         case let .rolloutCompress(value): value
@@ -828,6 +831,14 @@ extension Components.Schemas.ClientRequestThreadMemoryModeSetRequest: ClientRequ
     public typealias Response = AppServerModels.ClientRequest.Response.ThreadMemoryModeSet
     public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadMemoryModeSet(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestThreadMemoryReadRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ThreadMemoryReadParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadMemoryRead
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .threadMemoryRead(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 

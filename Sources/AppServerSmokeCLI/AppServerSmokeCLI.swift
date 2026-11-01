@@ -101,6 +101,8 @@ private func describeAccount(_ account: Components.Schemas.Account?) -> String {
     switch account {
     case .amazonBedrock:
         return "Amazon Bedrock"
+    case .gcp:
+        return "Google Cloud"
     case .apiKey:
         return "API key"
     case let .chatgpt(chatGPT):

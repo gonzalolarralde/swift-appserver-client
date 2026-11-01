@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Codex App Server Protocol",
-    "version": "0.164.0"
+    "version": "0.165.0"
   },
   "paths": {},
   "components": {
@@ -2234,6 +2234,10 @@
           "approvalsReviewer": {
             "$ref": "#/components/schemas/ApprovalsReviewer"
           },
+          "attachToSource": {
+            "description": "Persist the fork as an attached thread of its resolved source, hidden from ordinary lists. The source cannot be deleted while attached threads exist. Requires local storage; incompatible with ephemeral and deferGoalContinuation. Omitted or false creates an ordinary fork.",
+            "type": "boolean"
+          },
           "baseInstructions": {
             "type": "string",
             "nullable": true
@@ -2374,6 +2378,9 @@
           },
           "threadId": {
             "type": "string"
+          },
+          "threadSource": {
+            "$ref": "#/components/schemas/ThreadSource"
           },
           "turnTrigger": {
             "type": "string",
@@ -3979,6 +3986,42 @@
         "title": "Thread/memoryMode/setRequest",
         "type": "object"
       },
+      "ThreadMemoryReadParams": {
+        "properties": {
+          "threadId": {
+            "description": "The thread must already be started or resumed.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "threadId"
+        ],
+        "type": "object"
+      },
+      "ClientRequestThreadMemoryReadRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "thread/memory/read"
+            ],
+            "title": "Thread/memory/readRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ThreadMemoryReadParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "Thread/memory/readRequest",
+        "type": "object"
+      },
       "MemoryStatusParams": {
         "properties": {
           "minConsolidatedThreads": {
@@ -4426,6 +4469,11 @@
           "archived": {
             "description": "Optional archived filter; when set to true, only archived threads are returned. If false or null, only non-archived threads are returned.",
             "type": "boolean",
+            "nullable": true
+          },
+          "attachedToThreadId": {
+            "description": "Return only persistent threads attached to this thread, including empty threads. Mutually exclusive with parentThreadId and ancestorThreadId. Omitting this filter keeps attached threads hidden from ordinary listings.",
+            "type": "string",
             "nullable": true
           },
           "cursor": {
@@ -11359,6 +11407,9 @@
             "$ref": "#/components/schemas/ClientRequestThreadMemoryModeSetRequest"
           },
           {
+            "$ref": "#/components/schemas/ClientRequestThreadMemoryReadRequest"
+          },
+          {
             "$ref": "#/components/schemas/ClientRequestMemoryStatusRequest"
           },
           {
@@ -11818,6 +11869,7 @@
             "thread/section/move": "#/components/schemas/ClientRequestThreadSectionMoveRequest",
             "thread/settings/update": "#/components/schemas/ClientRequestThreadSettingsUpdateRequest",
             "thread/memoryMode/set": "#/components/schemas/ClientRequestThreadMemoryModeSetRequest",
+            "thread/memory/read": "#/components/schemas/ClientRequestThreadMemoryReadRequest",
             "memory/status": "#/components/schemas/ClientRequestMemoryStatusRequest",
             "memory/reset": "#/components/schemas/ClientRequestMemoryResetRequest",
             "rollout/compress": "#/components/schemas/ClientRequestRolloutCompressRequest",
@@ -14091,6 +14143,7 @@
               "rateLimitExceeded",
               "flexUnavailable",
               "serverOverloaded",
+              "modelNotFound",
               "cyberPolicy",
               "misalignmentPolicyViolation",
               "tooManyDenials",
@@ -23615,6 +23668,13 @@
             "type": "boolean",
             "nullable": true
           },
+          "reviewDomains": {
+            "description": "Host patterns routed to network approval before ordinary allow rules.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
           "socksPort": {
             "format": "uint16",
             "minimum": 0.0,
@@ -24558,6 +24618,23 @@
         "title": "AmazonBedrockAccount",
         "type": "object"
       },
+      "AccountGcpAccount": {
+        "description": "Google Cloud Vertex AI with externally managed credentials.",
+        "properties": {
+          "type": {
+            "enum": [
+              "gcp"
+            ],
+            "title": "GcpAccountType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "title": "GcpAccount",
+        "type": "object"
+      },
       "Account": {
         "oneOf": [
           {
@@ -24568,6 +24645,9 @@
           },
           {
             "$ref": "#/components/schemas/AccountAmazonBedrockAccount"
+          },
+          {
+            "$ref": "#/components/schemas/AccountGcpAccount"
           }
         ],
         "discriminator": {
@@ -24575,7 +24655,8 @@
           "mapping": {
             "apiKey": "#/components/schemas/AccountApiKeyAccount",
             "chatgpt": "#/components/schemas/AccountChatgptAccount",
-            "amazonBedrock": "#/components/schemas/AccountAmazonBedrockAccount"
+            "amazonBedrock": "#/components/schemas/AccountAmazonBedrockAccount",
+            "gcp": "#/components/schemas/AccountGcpAccount"
           }
         }
       },
@@ -28199,6 +28280,17 @@
       },
       "ThreadMemoryModeSetResponse": {
         "title": "ThreadMemoryModeSetResponse",
+        "type": "object"
+      },
+      "ThreadMemoryReadResponse": {
+        "properties": {
+          "summary": {
+            "description": "Summary from the thread's selected memory version. Null when memory use is disabled or the selected summary is missing, unreadable, or blank.",
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "title": "ThreadMemoryReadResponse",
         "type": "object"
       },
       "ThreadMetadataUpdateResponse": {

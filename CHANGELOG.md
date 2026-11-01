@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.165.0 — 2026-11-01
+
+- Schema provenance: the experimental export from official `@openai/codex@0.165.0`
+  matches all 460 files byte-for-byte against clean public tag `rust-v0.165.0`,
+  peeled commit `360319d8dee62d87e2d59fc0c21805d79519cfed`.
+- Contract: two schema files added, none removed, and 27 existing files changed.
+  Adds `thread/memory/read`, Google Cloud account representation, and the known
+  `modelNotFound` error. Forks can attach to their source; thread listing can
+  filter attached threads. Network requirements gain review domains, and thread
+  sampling accepts a thread source.
+- Swift compatibility: the smoke CLI handles the new Google Cloud account case;
+  the error-info override exposes `modelNotFound` as a known string error while
+  preserving unknown-error fallback. Existing image and deprecated-API
+  compatibility layers remain available. Exhaustive account/error switches
+  must handle the new cases.
+- Verification: idempotent generation, source-bundle verification, two Python
+  normalization tests, library build, all 29 Swift tests (including Google Cloud
+  account round-trip and the new known error), `git diff --check`, and unchanged
+  `Package.resolved` passed. Exact-CLI smoke passed initialize, account, usage,
+  and empty thread-list calls in an isolated authenticated home. No turn-list
+  or live Google Cloud inference coverage is claimed; the copied credential
+  was removed afterward.
+
 ## 0.164.0 — 2026-11-01
 
 - Schema provenance: the experimental export from official `@openai/codex@0.164.0`
