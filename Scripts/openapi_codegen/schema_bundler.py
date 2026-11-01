@@ -611,7 +611,21 @@ class Bundler:
         one_of: list[dict[str, str]] = []
         mapping: dict[str, str] = {}
         used_names: set[str] = set()
+        shared_properties = schema.get("properties", {})
         for index, variant in enumerate(schema["oneOf"], start=1):
+            # The Swift generator ignores object fields beside a union. Move
+            # common fields into each tagged object without weakening a choice.
+            if shared_properties:
+                variant = copy.deepcopy(variant)
+                properties = variant.setdefault("properties", {})
+                for key, shared in shared_properties.items():
+                    if key in properties and properties[key] != shared:
+                        raise ValueError(f"{name} has conflicting shared property {key}")
+                    properties[key] = copy.deepcopy(shared)
+                if schema.get("required"):
+                    variant["required"] = list(dict.fromkeys([
+                        *variant.get("required", []), *schema["required"],
+                    ]))
             discriminator_value = self.discriminator_value_for_variant(
                 name,
                 index,
@@ -636,6 +650,11 @@ class Bundler:
             one_of.append({"$ref": component_ref})
             mapping[discriminator_value] = component_ref
 
+        if shared_properties:
+            output.pop("properties", None)
+            output.pop("required", None)
+            if output.get("type") == "object":
+                output.pop("type")
         output["oneOf"] = one_of
         output["discriminator"] = {
             "propertyName": discriminator_key,

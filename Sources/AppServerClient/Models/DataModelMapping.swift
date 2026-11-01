@@ -148,8 +148,11 @@ public extension AppServerModels.ClientRequest {
     typealias AccountLoginStart = Components.Schemas.ClientRequestAccountLoginStartRequest
     typealias AccountBedrockDiscover = Components.Schemas.ClientRequestAccountBedrockDiscoverRequest
     typealias AccountBedrockSetup = Components.Schemas.ClientRequestAccountBedrockSetupRequest
+    typealias AccountGcpSetup = Components.Schemas.ClientRequestAccountGcpSetupRequest
     typealias AccountBedrockCheckGovCloudRequirements = Components.Schemas.ClientRequestAccountBedrockCheckGovCloudRequirementsRequest
     typealias AccountLoginCancel = Components.Schemas.ClientRequestAccountLoginCancelRequest
+    typealias AccountSessionList = Components.Schemas.ClientRequestAccountSessionListRequest
+    typealias AccountSessionSwitch = Components.Schemas.ClientRequestAccountSessionSwitchRequest
     typealias AccountLogout = Components.Schemas.ClientRequestAccountLogoutRequest
     typealias AccountRateLimitsRead = Components.Schemas.ClientRequestAccountRateLimitsReadRequest
     typealias AccountRateLimitResetCreditConsume = Components.Schemas.ClientRequestAccountRateLimitResetCreditConsumeRequest
@@ -328,8 +331,11 @@ public extension AppServerModels.ClientRequest {
         public typealias AccountLoginStart = Components.Schemas.LoginAccountResponse
         public typealias AccountBedrockDiscover = Components.Schemas.BedrockDiscoverResponse
         public typealias AccountBedrockSetup = Components.Schemas.BedrockSetupResponse
+        public typealias AccountGcpSetup = Components.Schemas.GcpSetupResponse
         public typealias AccountBedrockCheckGovCloudRequirements = Components.Schemas.BedrockCheckGovCloudRequirementsResponse
         public typealias AccountLoginCancel = Components.Schemas.CancelLoginAccountResponse
+        public typealias AccountSessionList = Components.Schemas.AccountSessionsResponse
+        public typealias AccountSessionSwitch = Components.Schemas.AccountSessionsSwitchResponse
         public typealias AccountLogout = Components.Schemas.LogoutAccountResponse
         public typealias AccountRateLimitsRead = Components.Schemas.GetAccountRateLimitsResponse
         public typealias AccountRateLimitResetCreditConsume = Components.Schemas.ConsumeAccountRateLimitResetCreditResponse
@@ -510,8 +516,11 @@ public extension AppServerModels.ClientRequest {
         case let .accountLoginStart(value): value
         case let .accountBedrockDiscover(value): value
         case let .accountBedrockSetup(value): value
+        case let .accountGcpSetup(value): value
         case let .accountBedrockCheckGovCloudRequirements(value): value
         case let .accountLoginCancel(value): value
+        case let .accountSessionList(value): value
+        case let .accountSessionSwitch(value): value
         case let .accountLogout(value): value
         case let .accountRateLimitsRead(value): value
         case let .accountRateLimitResetCreditConsume(value): value
@@ -1706,6 +1715,14 @@ extension Components.Schemas.ClientRequestAccountBedrockSetupRequest: ClientRequ
     }
 }
 
+extension Components.Schemas.ClientRequestAccountGcpSetupRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.GcpSetupParams
+    public typealias Response = AppServerModels.ClientRequest.Response.AccountGcpSetup
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .accountGcpSetup(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
 extension Components.Schemas.ClientRequestAccountBedrockCheckGovCloudRequirementsRequest: ClientRequestable {
     public typealias Params = Components.Schemas.BedrockCheckGovCloudRequirementsParams
     public typealias Response = AppServerModels.ClientRequest.Response.AccountBedrockCheckGovCloudRequirements
@@ -1719,6 +1736,22 @@ extension Components.Schemas.ClientRequestAccountLoginCancelRequest: ClientReque
     public typealias Response = AppServerModels.ClientRequest.Response.AccountLoginCancel
     public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .accountLoginCancel(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestAccountSessionListRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.AccountSessionsListParams
+    public typealias Response = AppServerModels.ClientRequest.Response.AccountSessionList
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .accountSessionList(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestAccountSessionSwitchRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.AccountSessionsSwitchParams
+    public typealias Response = AppServerModels.ClientRequest.Response.AccountSessionSwitch
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .accountSessionSwitch(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 

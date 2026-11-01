@@ -22,8 +22,8 @@ models under `Sources/AppServerClient/Models/TypeOverrides`.
 
 ## Compatibility
 
-Release `0.165.0` is generated from the experimental app-server schema exposed
-by the stable public Codex tag `rust-v0.165.0`. App-server experimental APIs can
+Release `0.166.0` is generated from the experimental app-server schema exposed
+by the stable public Codex tag `rust-v0.166.0`. App-server experimental APIs can
 change between Codex releases, so matching these versions is recommended.
 
 ### Deprecated compatibility APIs
@@ -68,10 +68,19 @@ instead of inline `result` data. Both fields are optional in Swift; consumers
 must handle either representation. A hand-written model preserves common item
 fields and both outputs when present, and rejects data with neither output.
 
+Release `0.166.0` preserves item start/completion timestamps and image-generation
+IDs. It also follows the upstream removal of `ReviewDelivery.detached`; use the
+remaining inline review delivery mode.
+
+The union-field generator fix also restores the already-required `serverName`
+and `threadId`, plus optional `turnId`, on MCP elicitation payloads. Supply the
+required context when constructing those payloads; earlier generated Swift
+models incorrectly omitted these shared fields.
+
 ## Requirements
 
 - Swift 6.2 or newer.
-- Codex `0.165.0` must be available on `PATH` for the stdio connection and smoke
+- Codex `0.166.0` must be available on `PATH` for the stdio connection and smoke
   executable.
 - `codex app-server` must be supported by the installed Codex CLI.
 
@@ -123,7 +132,7 @@ Prefer the matching tagged release:
 dependencies: [
     .package(
         url: "https://github.com/gonzalolarralde/swift-appserver-client.git",
-        exact: "0.165.0"
+        exact: "0.166.0"
     ),
 ],
 ```
@@ -315,5 +324,5 @@ swift build --target AppServerClient
 - Requests whose protocol `params` are null support `send(request:)` without a
   `with:` argument.
 - The generated `multiAgentMode` fields are retained for wire compatibility,
-  but Codex `0.165.0` ignores them and derives proactive delegation from Ultra
+  but Codex `0.166.0` ignores them and derives proactive delegation from Ultra
   reasoning effort.

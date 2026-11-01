@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Codex App Server Protocol",
-    "version": "0.165.0"
+    "version": "0.166.0"
   },
   "paths": {},
   "components": {
@@ -2235,7 +2235,7 @@
             "$ref": "#/components/schemas/ApprovalsReviewer"
           },
           "attachToSource": {
-            "description": "Persist the fork as an attached thread of its resolved source, hidden from ordinary lists. The source cannot be deleted while attached threads exist. Requires local storage; incompatible with ephemeral and deferGoalContinuation. Omitted or false creates an ordinary fork.",
+            "description": "Persist the fork as an attached thread of its resolved source, hidden from ordinary lists. The source cannot be deleted while attached threads exist. Requires a paginated source and local storage; incompatible with ephemeral and deferGoalContinuation. Omitted or false creates an ordinary fork.",
             "type": "boolean"
           },
           "baseInstructions": {
@@ -5696,11 +5696,16 @@
       "HooksListParams": {
         "properties": {
           "cwds": {
-            "description": "When empty, defaults to the current session working directory.",
+            "description": "Working directories to inspect when no thread is specified. An empty list uses the session cwd.",
             "items": {
               "type": "string"
             },
             "type": "array"
+          },
+          "threadId": {
+            "description": "List a loaded thread's hooks, including its selected environments. Omit `cwds` in this mode.",
+            "type": "string",
+            "nullable": true
           }
         },
         "type": "object"
@@ -7007,6 +7012,11 @@
           "kind": {
             "$ref": "#/components/schemas/AdditionalContextKind"
           },
+          "name": {
+            "description": "Optional name for untrusted context, used to label its tool output.",
+            "type": "string",
+            "nullable": true
+          },
           "value": {
             "type": "string"
           }
@@ -7950,8 +7960,7 @@
       },
       "ReviewDelivery": {
         "enum": [
-          "inline",
-          "detached"
+          "inline"
         ],
         "type": "string"
       },
@@ -9579,6 +9588,51 @@
         "title": "Account/bedrock/setupRequest",
         "type": "object"
       },
+      "GcpSetupParams": {
+        "properties": {
+          "credentialFile": {
+            "description": "Absolute path to a credential file on the app-server host. Omit or pass `null` to clear the active user configuration's override and use ADC. If another configuration layer would still supply a credential file, setup fails without saving changes.",
+            "type": "string",
+            "nullable": true
+          },
+          "location": {
+            "description": "Vertex AI location. Omission or null selects `global`.",
+            "type": "string",
+            "nullable": true
+          },
+          "projectId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "projectId"
+        ],
+        "type": "object"
+      },
+      "ClientRequestAccountGcpSetupRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "account/gcp/setup"
+            ],
+            "title": "Account/gcp/setupRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/GcpSetupParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "Account/gcp/setupRequest",
+        "type": "object"
+      },
       "BedrockCheckGovCloudRequirementsParams": {
         "type": "object"
       },
@@ -9639,6 +9693,83 @@
           "params"
         ],
         "title": "Account/login/cancelRequest",
+        "type": "object"
+      },
+      "AccountSessionsListParams": {
+        "properties": {
+          "refreshWorkspaceMetadata": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "ClientRequestAccountSessionListRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "accountSession/list"
+            ],
+            "title": "AccountSession/listRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/AccountSessionsListParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "AccountSession/listRequest",
+        "type": "object"
+      },
+      "AccountSessionsSwitchParams": {
+        "properties": {
+          "accountId": {
+            "description": "Workspace to select within that login; this is not a user identifier.",
+            "type": "string"
+          },
+          "allowBrowserLogin": {
+            "description": "Allow Core to start browser sign-in if this session needs SSO for the workspace.",
+            "type": "boolean"
+          },
+          "sessionId": {
+            "description": "Opaque active-login identifier returned by accountSession/list.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "accountId",
+          "sessionId"
+        ],
+        "type": "object"
+      },
+      "ClientRequestAccountSessionSwitchRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "accountSession/switch"
+            ],
+            "title": "AccountSession/switchRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/AccountSessionsSwitchParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "AccountSession/switchRequest",
         "type": "object"
       },
       "ClientRequestAccountLogoutRequest": {
@@ -11734,10 +11865,19 @@
             "$ref": "#/components/schemas/ClientRequestAccountBedrockSetupRequest"
           },
           {
+            "$ref": "#/components/schemas/ClientRequestAccountGcpSetupRequest"
+          },
+          {
             "$ref": "#/components/schemas/ClientRequestAccountBedrockCheckGovCloudRequirementsRequest"
           },
           {
             "$ref": "#/components/schemas/ClientRequestAccountLoginCancelRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ClientRequestAccountSessionListRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ClientRequestAccountSessionSwitchRequest"
           },
           {
             "$ref": "#/components/schemas/ClientRequestAccountLogoutRequest"
@@ -11978,8 +12118,11 @@
             "account/login/start": "#/components/schemas/ClientRequestAccountLoginStartRequest",
             "account/bedrock/discover": "#/components/schemas/ClientRequestAccountBedrockDiscoverRequest",
             "account/bedrock/setup": "#/components/schemas/ClientRequestAccountBedrockSetupRequest",
+            "account/gcp/setup": "#/components/schemas/ClientRequestAccountGcpSetupRequest",
             "account/bedrock/checkGovCloudRequirements": "#/components/schemas/ClientRequestAccountBedrockCheckGovCloudRequirementsRequest",
             "account/login/cancel": "#/components/schemas/ClientRequestAccountLoginCancelRequest",
+            "accountSession/list": "#/components/schemas/ClientRequestAccountSessionListRequest",
+            "accountSession/switch": "#/components/schemas/ClientRequestAccountSessionSwitchRequest",
             "account/logout": "#/components/schemas/ClientRequestAccountLogoutRequest",
             "account/rateLimits/read": "#/components/schemas/ClientRequestAccountRateLimitsReadRequest",
             "account/rateLimitResetCredit/consume": "#/components/schemas/ClientRequestAccountRateLimitResetCreditConsumeRequest",
@@ -12863,13 +13006,26 @@
           },
           "title": {
             "type": "string"
+          },
+          "serverName": {
+            "type": "string"
+          },
+          "threadId": {
+            "type": "string"
+          },
+          "turnId": {
+            "description": "Active Codex turn when this elicitation was observed, if app-server could correlate one.\n\nThis is nullable because MCP models elicitation as a standalone server-to-client request identified by the MCP server request id. It may be triggered during a turn, but turn context is app-server correlation rather than part of the protocol identity of the elicitation itself.",
+            "type": "string",
+            "nullable": true
           }
         },
         "required": [
           "challenge",
           "description",
           "mode",
-          "title"
+          "title",
+          "serverName",
+          "threadId"
         ],
         "type": "object"
       },
@@ -13337,12 +13493,25 @@
           },
           "requestedSchema": {
             "$ref": "#/components/schemas/McpElicitationSchema"
+          },
+          "serverName": {
+            "type": "string"
+          },
+          "threadId": {
+            "type": "string"
+          },
+          "turnId": {
+            "description": "Active Codex turn when this elicitation was observed, if app-server could correlate one.\n\nThis is nullable because MCP models elicitation as a standalone server-to-client request identified by the MCP server request id. It may be triggered during a turn, but turn context is app-server correlation rather than part of the protocol identity of the elicitation itself.",
+            "type": "string",
+            "nullable": true
           }
         },
         "required": [
           "message",
           "mode",
-          "requestedSchema"
+          "requestedSchema",
+          "serverName",
+          "threadId"
         ],
         "type": "object"
       },
@@ -13358,12 +13527,25 @@
             ],
             "type": "string"
           },
-          "requestedSchema": {}
+          "requestedSchema": {},
+          "serverName": {
+            "type": "string"
+          },
+          "threadId": {
+            "type": "string"
+          },
+          "turnId": {
+            "description": "Active Codex turn when this elicitation was observed, if app-server could correlate one.\n\nThis is nullable because MCP models elicitation as a standalone server-to-client request identified by the MCP server request id. It may be triggered during a turn, but turn context is app-server correlation rather than part of the protocol identity of the elicitation itself.",
+            "type": "string",
+            "nullable": true
+          }
         },
         "required": [
           "message",
           "mode",
-          "requestedSchema"
+          "requestedSchema",
+          "serverName",
+          "threadId"
         ],
         "type": "object"
       },
@@ -13379,12 +13561,25 @@
             ],
             "type": "string"
           },
-          "requestedSchema": {}
+          "requestedSchema": {},
+          "serverName": {
+            "type": "string"
+          },
+          "threadId": {
+            "type": "string"
+          },
+          "turnId": {
+            "description": "Active Codex turn when this elicitation was observed, if app-server could correlate one.\n\nThis is nullable because MCP models elicitation as a standalone server-to-client request identified by the MCP server request id. It may be triggered during a turn, but turn context is app-server correlation rather than part of the protocol identity of the elicitation itself.",
+            "type": "string",
+            "nullable": true
+          }
         },
         "required": [
           "message",
           "mode",
-          "requestedSchema"
+          "requestedSchema",
+          "serverName",
+          "threadId"
         ],
         "type": "object"
       },
@@ -13405,18 +13600,7 @@
           },
           "url": {
             "type": "string"
-          }
-        },
-        "required": [
-          "elicitationId",
-          "message",
-          "mode",
-          "url"
-        ],
-        "type": "object"
-      },
-      "McpServerElicitationRequestParams": {
-        "properties": {
+          },
           "serverName": {
             "type": "string"
           },
@@ -13430,10 +13614,16 @@
           }
         },
         "required": [
+          "elicitationId",
+          "message",
+          "mode",
+          "url",
           "serverName",
           "threadId"
         ],
-        "type": "object",
+        "type": "object"
+      },
+      "McpServerElicitationRequestParams": {
         "oneOf": [
           {
             "$ref": "#/components/schemas/McpServerElicitationRequestParamsOpenaiUserVerification"
@@ -14144,6 +14334,7 @@
               "flexUnavailable",
               "serverOverloaded",
               "modelNotFound",
+              "policyCapacityUnavailable",
               "cyberPolicy",
               "misalignmentPolicyViolation",
               "tooManyDenials",
@@ -14369,6 +14560,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ErrorNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -14674,6 +14870,20 @@
             ],
             "title": "UserMessageThreadItemType",
             "type": "string"
+          },
+          "completedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item completed, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
+          },
+          "startedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item started, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
           }
         },
         "required": [
@@ -14716,6 +14926,20 @@
             ],
             "title": "HookPromptThreadItemType",
             "type": "string"
+          },
+          "completedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item completed, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
+          },
+          "startedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item started, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
           }
         },
         "required": [
@@ -14828,6 +15052,20 @@
             ],
             "title": "AgentMessageThreadItemType",
             "type": "string"
+          },
+          "completedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item completed, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
+          },
+          "startedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item started, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
           }
         },
         "required": [
@@ -14859,6 +15097,20 @@
             ],
             "title": "FunctionCallOutputThreadItemType",
             "type": "string"
+          },
+          "completedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item completed, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
+          },
+          "startedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item started, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
           }
         },
         "required": [
@@ -14885,6 +15137,20 @@
             ],
             "title": "PlanThreadItemType",
             "type": "string"
+          },
+          "completedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item completed, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
+          },
+          "startedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item started, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
           }
         },
         "required": [
@@ -14920,6 +15186,20 @@
             ],
             "title": "ReasoningThreadItemType",
             "type": "string"
+          },
+          "completedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item completed, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
+          },
+          "startedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item started, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
           }
         },
         "required": [
@@ -15014,6 +15294,20 @@
             ],
             "title": "CommandExecutionThreadItemType",
             "type": "string"
+          },
+          "completedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item completed, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
+          },
+          "startedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item started, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
           }
         },
         "required": [
@@ -15148,6 +15442,20 @@
             ],
             "title": "FileChangeThreadItemType",
             "type": "string"
+          },
+          "completedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item completed, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
+          },
+          "startedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item started, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
           }
         },
         "required": [
@@ -15294,6 +15602,20 @@
             ],
             "title": "McpToolCallThreadItemType",
             "type": "string"
+          },
+          "completedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item completed, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
+          },
+          "startedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item started, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
           }
         },
         "required": [
@@ -15434,6 +15756,20 @@
             ],
             "title": "DynamicToolCallThreadItemType",
             "type": "string"
+          },
+          "completedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item completed, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
+          },
+          "startedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item started, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
           }
         },
         "required": [
@@ -15547,6 +15883,20 @@
             ],
             "title": "CollabAgentToolCallThreadItemType",
             "type": "string"
+          },
+          "completedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item completed, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
+          },
+          "startedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item started, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
           }
         },
         "required": [
@@ -15598,6 +15948,20 @@
             ],
             "title": "SubAgentActivityThreadItemType",
             "type": "string"
+          },
+          "completedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item completed, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
+          },
+          "startedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item started, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
           }
         },
         "required": [
@@ -15744,6 +16108,20 @@
             ],
             "title": "WebSearchThreadItemType",
             "type": "string"
+          },
+          "completedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item completed, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
+          },
+          "startedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item started, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
           }
         },
         "required": [
@@ -15768,6 +16146,20 @@
             ],
             "title": "ImageViewThreadItemType",
             "type": "string"
+          },
+          "completedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item completed, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
+          },
+          "startedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item started, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
           }
         },
         "required": [
@@ -15795,6 +16187,20 @@
             ],
             "title": "SleepThreadItemType",
             "type": "string"
+          },
+          "completedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item completed, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
+          },
+          "startedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item started, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
           }
         },
         "required": [
@@ -15879,6 +16285,12 @@
           "failure": {
             "$ref": "#/components/schemas/ImageGenerationFailure"
           },
+          "generationId": {
+            "default": null,
+            "description": "Image generation identifier for the generated image, when provided by the image backend.",
+            "type": "string",
+            "nullable": true
+          },
           "id": {
             "type": "string"
           },
@@ -15910,6 +16322,20 @@
             ],
             "title": "ImageGenerationThreadItemType",
             "type": "string"
+          },
+          "completedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item completed, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
+          },
+          "startedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item started, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
           }
         },
         "required": [
@@ -15934,6 +16360,20 @@
             ],
             "title": "EnteredReviewModeThreadItemType",
             "type": "string"
+          },
+          "completedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item completed, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
+          },
+          "startedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item started, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
           }
         },
         "required": [
@@ -15958,6 +16398,20 @@
             ],
             "title": "ExitedReviewModeThreadItemType",
             "type": "string"
+          },
+          "completedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item completed, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
+          },
+          "startedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item started, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
           }
         },
         "required": [
@@ -15979,6 +16433,20 @@
             ],
             "title": "ContextCompactionThreadItemType",
             "type": "string"
+          },
+          "completedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item completed, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
+          },
+          "startedAtMs": {
+            "default": null,
+            "description": "Unix timestamp in milliseconds when the item started, if recorded.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
           }
         },
         "required": [
@@ -15989,6 +16457,7 @@
         "type": "object"
       },
       "ThreadItem": {
+        "description": "A thread item and its recorded lifecycle times. The payload stays flat on the wire.",
         "oneOf": [
           {
             "$ref": "#/components/schemas/ThreadItemUserMessageThreadItem"
@@ -16328,6 +16797,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ThreadStartedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -16363,6 +16837,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ThreadStatusChangedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -16468,6 +16947,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ThreadReadStateChangedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -16499,6 +16983,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ThreadArchivedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -16530,6 +17019,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ThreadDeletedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -16561,6 +17055,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ThreadUnarchivedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -16592,6 +17091,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ThreadClosedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -16623,6 +17127,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ThreadRevertedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -16647,6 +17156,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/SkillsChangedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -16682,6 +17196,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ThreadNameUpdatedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -16738,6 +17257,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ThreadAttachmentUpdatedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -16821,6 +17345,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ThreadGoalUpdatedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -16913,6 +17442,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ThreadPredictionUpdatedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -16944,6 +17478,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ThreadGoalClearedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -16975,6 +17514,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ThreadQueueChangedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -17018,6 +17562,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ProjectChangedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -17054,6 +17603,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ThreadProjectUpdatedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -17089,6 +17643,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/EnvironmentConnectionNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -17109,6 +17668,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/EnvironmentConnectionNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -17226,6 +17790,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ThreadSettingsUpdatedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -17322,6 +17891,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ThreadTokenUsageUpdatedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -17357,6 +17931,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/TurnStartedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -17501,7 +18080,7 @@
             "default": "unknown"
           },
           "sourcePath": {
-            "$ref": "#/components/schemas/AbsolutePathBuf"
+            "$ref": "#/components/schemas/LegacyAppPathString"
           },
           "startedAt": {
             "format": "int64",
@@ -17559,6 +18138,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/HookStartedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -17594,6 +18178,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/TurnCompletedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -17633,6 +18222,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/HookCompletedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -17673,6 +18267,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/TurnDiffUpdatedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -17742,6 +18341,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/TurnPlanUpdatedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -17787,6 +18391,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ItemStartedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -18161,6 +18770,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ItemGuardianApprovalReviewStartedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -18238,6 +18852,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ItemGuardianApprovalReviewCompletedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -18279,6 +18898,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/StrictReviewRequiredNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -18324,6 +18948,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ItemCompletedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -18367,6 +18996,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/AgentMessageDeltaNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -18412,6 +19046,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/PlanDeltaNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -18469,6 +19108,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/CommandExecOutputDeltaNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -18526,6 +19170,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ProcessOutputDeltaNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -18542,6 +19191,11 @@
             "description": "Process exit code.",
             "format": "int32",
             "type": "integer"
+          },
+          "outputDrainTimedOut": {
+            "description": "Whether output collection hit its post-exit deadline before seeing EOF or reaching the requested byte cap on either stream. Older servers omit this field.",
+            "type": "boolean",
+            "nullable": true
           },
           "processHandle": {
             "description": "Client-supplied, connection-scoped `processHandle` from `process/spawn`.",
@@ -18586,6 +19240,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ProcessExitedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -18629,6 +19288,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/CommandExecutionOutputDeltaNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -18676,6 +19340,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/TerminalInteractionNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -18721,6 +19390,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/FileChangeOutputDeltaNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -18767,6 +19441,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/FileChangePatchUpdatedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -18802,6 +19481,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ServerRequestResolvedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -18845,6 +19529,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/McpToolCallProgressNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -18893,6 +19582,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/McpServerOauthLoginCompletedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -18954,6 +19648,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/McpServerStatusUpdatedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -19002,6 +19701,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/McpServerEventStreamNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -19072,6 +19776,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/AccountUpdatedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -19125,6 +19834,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/GatewayOAuthChangedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -19274,6 +19988,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/AccountRateLimitsUpdatedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -19501,6 +20220,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/AppListUpdatedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -19554,6 +20278,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/RemoteControlStatusChangedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -19646,6 +20375,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ExternalAgentConfigImportProgressNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -19684,6 +20418,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ExternalAgentConfigImportCompletedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -19725,6 +20464,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/FsChangedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -19773,6 +20517,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ReasoningSummaryTextDeltaNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -19817,6 +20566,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ReasoningSummaryPartAddedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -19865,6 +20619,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ReasoningTextDeltaNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -19902,6 +20661,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ContextCompactedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -19955,6 +20719,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ModelReroutedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -20003,6 +20772,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ModelVerificationNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -20046,6 +20820,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/AuthRecoveryNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -20066,6 +20845,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/AuthRecoveryNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -20103,6 +20887,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/TurnModerationMetadataNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -20164,6 +20953,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ModelSafetyBufferingUpdatedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -20201,6 +20995,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/WarningNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -20238,6 +21037,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/GuardianWarningNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -20275,6 +21079,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/DeprecationNoticeNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -20356,6 +21165,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ConfigWarningNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -20443,6 +21257,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/FuzzyFileSearchSessionUpdatedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -20474,6 +21293,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/FuzzyFileSearchSessionCompletedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -20514,6 +21338,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ThreadRealtimeStartedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -20548,6 +21377,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ThreadRealtimeItemAddedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -20565,10 +21399,18 @@
             ],
             "title": "RealtimeSessionStartedThreadRealtimeItemType",
             "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "realtimeSessionId": {
+            "type": "string"
           }
         },
         "required": [
-          "type"
+          "type",
+          "id",
+          "realtimeSessionId"
         ],
         "title": "RealtimeSessionStartedThreadRealtimeItem",
         "type": "object"
@@ -20594,12 +21436,20 @@
             ],
             "title": "TranscriptSegmentThreadRealtimeItemType",
             "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "realtimeSessionId": {
+            "type": "string"
           }
         },
         "required": [
           "role",
           "text",
-          "type"
+          "type",
+          "id",
+          "realtimeSessionId"
         ],
         "title": "TranscriptSegmentThreadRealtimeItem",
         "type": "object"
@@ -20697,13 +21547,21 @@
             ],
             "title": "BemItemPromotedThreadRealtimeItemType",
             "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "realtimeSessionId": {
+            "type": "string"
           }
         },
         "required": [
           "item_id",
           "presentation",
           "turn_id",
-          "type"
+          "type",
+          "id",
+          "realtimeSessionId"
         ],
         "title": "BemItemPromotedThreadRealtimeItem",
         "type": "object"
@@ -20726,18 +21584,7 @@
             ],
             "title": "RealtimeSessionClosedThreadRealtimeItemType",
             "type": "string"
-          }
-        },
-        "required": [
-          "outcome",
-          "type"
-        ],
-        "title": "RealtimeSessionClosedThreadRealtimeItem",
-        "type": "object"
-      },
-      "ThreadRealtimeItem": {
-        "description": "EXPERIMENTAL - a thread-scoped realtime item in the canonical timeline.",
-        "properties": {
+          },
           "id": {
             "type": "string"
           },
@@ -20746,10 +21593,16 @@
           }
         },
         "required": [
+          "outcome",
+          "type",
           "id",
           "realtimeSessionId"
         ],
-        "type": "object",
+        "title": "RealtimeSessionClosedThreadRealtimeItem",
+        "type": "object"
+      },
+      "ThreadRealtimeItem": {
+        "description": "EXPERIMENTAL - a thread-scoped realtime item in the canonical timeline.",
         "oneOf": [
           {
             "$ref": "#/components/schemas/ThreadRealtimeItemRealtimeSessionStartedThreadRealtimeItem"
@@ -20801,6 +21654,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ThreadRealtimeItemStartedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -20841,6 +21699,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ThreadRealtimeItemTranscriptDeltaNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -20877,6 +21740,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ThreadRealtimeItemCompletedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -20918,6 +21786,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ThreadRealtimeTranscriptDeltaNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -20959,6 +21832,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ThreadRealtimeTranscriptDoneNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -20995,6 +21873,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ThreadRealtimeOutputAudioDeltaNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -21031,6 +21914,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ThreadRealtimeSdpNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -21067,6 +21955,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ThreadRealtimeErrorNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -21103,6 +21996,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/ThreadRealtimeClosedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -21148,6 +22046,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/WindowsWorldWritableWarningNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -21187,6 +22090,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/WindowsSandboxSetupCompletedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -21235,6 +22143,11 @@
           },
           "params": {
             "$ref": "#/components/schemas/AccountLoginCompletedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
           }
         },
         "required": [
@@ -21246,13 +22159,6 @@
       },
       "ServerNotification": {
         "description": "Notification sent from the server to the client.",
-        "properties": {
-          "emittedAtMs": {
-            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
-            "format": "int64",
-            "type": "integer"
-          }
-        },
         "title": "ServerNotification",
         "oneOf": [
           {
@@ -21998,6 +22904,141 @@
         ],
         "title": "InitializeResponse",
         "type": "object"
+      },
+      "AccountSessionWorkspaceKind": {
+        "enum": [
+          "personal",
+          "workspace"
+        ],
+        "type": "string"
+      },
+      "AccountSessionWorkspace": {
+        "properties": {
+          "accountId": {
+            "type": "string"
+          },
+          "imageUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "kind": {
+            "$ref": "#/components/schemas/AccountSessionWorkspaceKind"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "accountId"
+        ],
+        "type": "object"
+      },
+      "AccountSession": {
+        "properties": {
+          "displayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "imageUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "lastUsedAt": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "selectedWorkspaceAccountId": {
+            "type": "string",
+            "nullable": true
+          },
+          "sessionId": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string",
+            "nullable": true
+          },
+          "workspaces": {
+            "items": {
+              "$ref": "#/components/schemas/AccountSessionWorkspace"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "isActive",
+          "lastUsedAt",
+          "sessionId",
+          "workspaces"
+        ],
+        "type": "object"
+      },
+      "AccountSessionsResponse": {
+        "properties": {
+          "activeSessionId": {
+            "type": "string",
+            "nullable": true
+          },
+          "sessions": {
+            "items": {
+              "$ref": "#/components/schemas/AccountSession"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "sessions"
+        ],
+        "title": "AccountSessionsResponse",
+        "type": "object"
+      },
+      "AccountSessionsSwitchResponse": {
+        "anyOf": [
+          {
+            "properties": {
+              "activeSessionId": {
+                "type": "string",
+                "nullable": true
+              },
+              "sessions": {
+                "items": {
+                  "$ref": "#/components/schemas/AccountSession"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "sessions"
+            ],
+            "title": "Sessionsv2::AccountSessionsSwitchResponse",
+            "type": "object"
+          },
+          {
+            "description": "Open the URL and await account/login/completed for this login ID.",
+            "properties": {
+              "auth_url": {
+                "type": "string"
+              },
+              "login_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "auth_url",
+              "login_id"
+            ],
+            "type": "object"
+          }
+        ],
+        "title": "AccountSessionsSwitchResponse"
       },
       "InstalledApp": {
         "description": "Installed connector runtime state.",
@@ -23650,7 +24691,7 @@
             "additionalProperties": {
               "$ref": "#/components/schemas/NetworkDomainPermission"
             },
-            "description": "Canonical network permission map for `experimental_network`.",
+            "description": "Canonical managed network permission map.",
             "type": "object"
           },
           "enabled": {
@@ -23685,7 +24726,171 @@
             "additionalProperties": {
               "$ref": "#/components/schemas/NetworkUnixSocketPermission"
             },
-            "description": "Canonical unix socket permission map for `experimental_network`.",
+            "description": "Canonical managed unix socket permission map.",
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "OtelHttpProtocol": {
+        "enum": [
+          "binary",
+          "json"
+        ],
+        "type": "string"
+      },
+      "OtelTlsConfig": {
+        "properties": {
+          "ca-certificate": {
+            "type": "string",
+            "nullable": true
+          },
+          "client-certificate": {
+            "type": "string",
+            "nullable": true
+          },
+          "client-private-key": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "type": "object"
+      },
+      "OtelExporter": {
+        "oneOf": [
+          {
+            "enum": [
+              "none",
+              "statsig"
+            ],
+            "type": "string"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "otlp-http": {
+                "properties": {
+                  "endpoint": {
+                    "type": "string"
+                  },
+                  "headers": {
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "description": "Header names are retained; values are redacted by the server.",
+                    "type": "object"
+                  },
+                  "protocol": {
+                    "$ref": "#/components/schemas/OtelHttpProtocol"
+                  },
+                  "tls": {
+                    "$ref": "#/components/schemas/OtelTlsConfig"
+                  }
+                },
+                "required": [
+                  "endpoint",
+                  "headers",
+                  "protocol"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "otlp-http"
+            ],
+            "title": "OtlpHttpOtelExporter",
+            "type": "object"
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "otlp-grpc": {
+                "properties": {
+                  "endpoint": {
+                    "type": "string"
+                  },
+                  "headers": {
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "description": "Header names are retained; values are redacted by the server.",
+                    "type": "object"
+                  },
+                  "tls": {
+                    "$ref": "#/components/schemas/OtelTlsConfig"
+                  }
+                },
+                "required": [
+                  "endpoint",
+                  "headers"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "otlp-grpc"
+            ],
+            "title": "OtlpGrpcOtelExporter",
+            "type": "object"
+          }
+        ]
+      },
+      "OtelToolResultLogConfig": {
+        "properties": {
+          "max_bytes": {
+            "format": "uint",
+            "minimum": 0.0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "max_bytes"
+        ],
+        "type": "object"
+      },
+      "OtelRequirements": {
+        "properties": {
+          "environment": {
+            "type": "string",
+            "nullable": true
+          },
+          "exporter": {
+            "$ref": "#/components/schemas/OtelExporter"
+          },
+          "log_agent_responses": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "log_guardian_assessments": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "log_user_prompt": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "metrics_exporter": {
+            "$ref": "#/components/schemas/OtelExporter"
+          },
+          "span_attributes": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "tool_result": {
+            "$ref": "#/components/schemas/OtelToolResultLogConfig"
+          },
+          "trace_exporter": {
+            "$ref": "#/components/schemas/OtelExporter"
+          },
+          "tracestate": {
+            "additionalProperties": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
             "type": "object"
           }
         },
@@ -23828,6 +25033,9 @@
           },
           "network": {
             "$ref": "#/components/schemas/NetworkRequirements"
+          },
+          "otel": {
+            "$ref": "#/components/schemas/OtelRequirements"
           },
           "sqliteHome": {
             "type": "string",
@@ -24444,6 +25652,10 @@
         "title": "GatewayOAuthReadResponse",
         "type": "object"
       },
+      "GcpSetupResponse": {
+        "title": "GcpSetupResponse",
+        "type": "object"
+      },
       "RateLimitResetType": {
         "enum": [
           "codexRateLimits",
@@ -24588,6 +25800,11 @@
             ],
             "title": "ChatgptAccountType",
             "type": "string"
+          },
+          "workspaceName": {
+            "description": "Display name of the selected ChatGPT workspace, when available.",
+            "type": "string",
+            "nullable": true
           }
         },
         "required": [
@@ -24818,6 +26035,12 @@
             },
             "type": "array"
           },
+          "nativeUsageUsdMicros": {
+            "description": "Native dollar usage, independent of credit estimates. None means unknown, not zero.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
+          },
           "threadId": {
             "type": "string"
           }
@@ -24948,68 +26171,7 @@
               "command"
             ],
             "type": "string"
-          }
-        },
-        "required": [
-          "command",
-          "handlerType"
-        ],
-        "type": "object"
-      },
-      "HookMetadataMcpTool": {
-        "properties": {
-          "handlerType": {
-            "enum": [
-              "mcpTool"
-            ],
-            "type": "string"
           },
-          "server": {
-            "type": "string"
-          },
-          "tool": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "handlerType",
-          "server",
-          "tool"
-        ],
-        "type": "object"
-      },
-      "HookMetadataPromptHookMetadata": {
-        "properties": {
-          "handlerType": {
-            "enum": [
-              "prompt"
-            ],
-            "type": "string"
-          }
-        },
-        "required": [
-          "handlerType"
-        ],
-        "title": "PromptHookMetadata",
-        "type": "object"
-      },
-      "HookMetadataAgentHookMetadata": {
-        "properties": {
-          "handlerType": {
-            "enum": [
-              "agent"
-            ],
-            "type": "string"
-          }
-        },
-        "required": [
-          "handlerType"
-        ],
-        "title": "AgentHookMetadata",
-        "type": "object"
-      },
-      "HookMetadata": {
-        "properties": {
           "additionalContextLimit": {
             "description": "Configured `additionalContext` spill threshold. `null` uses 2,500 tokens; `0` disables spilling.",
             "format": "uint",
@@ -25026,6 +26188,11 @@
           },
           "enabled": {
             "type": "boolean"
+          },
+          "environmentId": {
+            "description": "The owning execution environment, if this hook came from its requirements.",
+            "type": "string",
+            "nullable": true
           },
           "eventName": {
             "$ref": "#/components/schemas/HookEventName"
@@ -25064,6 +26231,8 @@
           }
         },
         "required": [
+          "command",
+          "handlerType",
           "currentHash",
           "displayOrder",
           "enabled",
@@ -25075,7 +26244,262 @@
           "timeoutSec",
           "trustStatus"
         ],
-        "type": "object",
+        "type": "object"
+      },
+      "HookMetadataMcpTool": {
+        "properties": {
+          "handlerType": {
+            "enum": [
+              "mcpTool"
+            ],
+            "type": "string"
+          },
+          "server": {
+            "type": "string"
+          },
+          "tool": {
+            "type": "string"
+          },
+          "additionalContextLimit": {
+            "description": "Configured `additionalContext` spill threshold. `null` uses 2,500 tokens; `0` disables spilling.",
+            "format": "uint",
+            "minimum": 0.0,
+            "type": "integer",
+            "nullable": true
+          },
+          "currentHash": {
+            "type": "string"
+          },
+          "displayOrder": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "environmentId": {
+            "description": "The owning execution environment, if this hook came from its requirements.",
+            "type": "string",
+            "nullable": true
+          },
+          "eventName": {
+            "$ref": "#/components/schemas/HookEventName"
+          },
+          "isManaged": {
+            "type": "boolean"
+          },
+          "key": {
+            "type": "string"
+          },
+          "matcher": {
+            "type": "string",
+            "nullable": true
+          },
+          "pluginId": {
+            "type": "string",
+            "nullable": true
+          },
+          "source": {
+            "$ref": "#/components/schemas/HookSource"
+          },
+          "sourcePath": {
+            "$ref": "#/components/schemas/AbsolutePathBuf"
+          },
+          "statusMessage": {
+            "type": "string",
+            "nullable": true
+          },
+          "timeoutSec": {
+            "format": "uint64",
+            "minimum": 0.0,
+            "type": "integer"
+          },
+          "trustStatus": {
+            "$ref": "#/components/schemas/HookTrustStatus"
+          }
+        },
+        "required": [
+          "handlerType",
+          "server",
+          "tool",
+          "currentHash",
+          "displayOrder",
+          "enabled",
+          "eventName",
+          "isManaged",
+          "key",
+          "source",
+          "sourcePath",
+          "timeoutSec",
+          "trustStatus"
+        ],
+        "type": "object"
+      },
+      "HookMetadataPromptHookMetadata": {
+        "properties": {
+          "handlerType": {
+            "enum": [
+              "prompt"
+            ],
+            "type": "string"
+          },
+          "additionalContextLimit": {
+            "description": "Configured `additionalContext` spill threshold. `null` uses 2,500 tokens; `0` disables spilling.",
+            "format": "uint",
+            "minimum": 0.0,
+            "type": "integer",
+            "nullable": true
+          },
+          "currentHash": {
+            "type": "string"
+          },
+          "displayOrder": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "environmentId": {
+            "description": "The owning execution environment, if this hook came from its requirements.",
+            "type": "string",
+            "nullable": true
+          },
+          "eventName": {
+            "$ref": "#/components/schemas/HookEventName"
+          },
+          "isManaged": {
+            "type": "boolean"
+          },
+          "key": {
+            "type": "string"
+          },
+          "matcher": {
+            "type": "string",
+            "nullable": true
+          },
+          "pluginId": {
+            "type": "string",
+            "nullable": true
+          },
+          "source": {
+            "$ref": "#/components/schemas/HookSource"
+          },
+          "sourcePath": {
+            "$ref": "#/components/schemas/AbsolutePathBuf"
+          },
+          "statusMessage": {
+            "type": "string",
+            "nullable": true
+          },
+          "timeoutSec": {
+            "format": "uint64",
+            "minimum": 0.0,
+            "type": "integer"
+          },
+          "trustStatus": {
+            "$ref": "#/components/schemas/HookTrustStatus"
+          }
+        },
+        "required": [
+          "handlerType",
+          "currentHash",
+          "displayOrder",
+          "enabled",
+          "eventName",
+          "isManaged",
+          "key",
+          "source",
+          "sourcePath",
+          "timeoutSec",
+          "trustStatus"
+        ],
+        "title": "PromptHookMetadata",
+        "type": "object"
+      },
+      "HookMetadataAgentHookMetadata": {
+        "properties": {
+          "handlerType": {
+            "enum": [
+              "agent"
+            ],
+            "type": "string"
+          },
+          "additionalContextLimit": {
+            "description": "Configured `additionalContext` spill threshold. `null` uses 2,500 tokens; `0` disables spilling.",
+            "format": "uint",
+            "minimum": 0.0,
+            "type": "integer",
+            "nullable": true
+          },
+          "currentHash": {
+            "type": "string"
+          },
+          "displayOrder": {
+            "format": "int64",
+            "type": "integer"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "environmentId": {
+            "description": "The owning execution environment, if this hook came from its requirements.",
+            "type": "string",
+            "nullable": true
+          },
+          "eventName": {
+            "$ref": "#/components/schemas/HookEventName"
+          },
+          "isManaged": {
+            "type": "boolean"
+          },
+          "key": {
+            "type": "string"
+          },
+          "matcher": {
+            "type": "string",
+            "nullable": true
+          },
+          "pluginId": {
+            "type": "string",
+            "nullable": true
+          },
+          "source": {
+            "$ref": "#/components/schemas/HookSource"
+          },
+          "sourcePath": {
+            "$ref": "#/components/schemas/AbsolutePathBuf"
+          },
+          "statusMessage": {
+            "type": "string",
+            "nullable": true
+          },
+          "timeoutSec": {
+            "format": "uint64",
+            "minimum": 0.0,
+            "type": "integer"
+          },
+          "trustStatus": {
+            "$ref": "#/components/schemas/HookTrustStatus"
+          }
+        },
+        "required": [
+          "handlerType",
+          "currentHash",
+          "displayOrder",
+          "enabled",
+          "eventName",
+          "isManaged",
+          "key",
+          "source",
+          "sourcePath",
+          "timeoutSec",
+          "trustStatus"
+        ],
+        "title": "AgentHookMetadata",
+        "type": "object"
+      },
+      "HookMetadata": {
         "oneOf": [
           {
             "$ref": "#/components/schemas/HookMetadataCommand"
@@ -27529,7 +28953,7 @@
       "ReviewStartResponse": {
         "properties": {
           "reviewThreadId": {
-            "description": "Identifies the thread where the review runs.\n\nFor inline reviews, this is the original thread id. For detached reviews, this is the id of the new review thread.",
+            "description": "The thread id supplied to `review/start`.",
             "type": "string"
           },
           "turn": {

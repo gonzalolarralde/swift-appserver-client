@@ -79,7 +79,7 @@ import Testing
 
 @Test func mcpServerElicitationUserVerificationRoundTrips() throws {
     let input = Data(
-        #"{"challenge":"Y2hhbGxlbmdl","description":"Approve this operation","mode":"openai/userVerification","title":"Verify"}"#.utf8
+        #"{"challenge":"Y2hhbGxlbmdl","description":"Approve this operation","mode":"openai/userVerification","serverName":"test-server","threadId":"thread-1","turnId":"turn-1","title":"Verify"}"#.utf8
     )
     let value = try JSONDecoder().decode(
         Components.Schemas.McpServerElicitationRequestParams.self,
@@ -101,7 +101,7 @@ import Testing
     let encoder = JSONEncoder()
 
     let legacyData = Data(
-        #"{"message":"legacy","mode":"openai/form","requestedSchema":{}}"#.utf8
+        #"{"message":"legacy","mode":"openai/form","requestedSchema":{},"serverName":"test-server","threadId":"thread-1","turnId":"turn-1"}"#.utf8
     )
     let legacy = try decoder.decode(
         Components.Schemas.McpServerElicitationRequestParams.self,
@@ -116,9 +116,11 @@ import Testing
         JSONSerialization.jsonObject(with: encoder.encode(legacy)) as? [String: Any]
     )
     #expect(legacyObject["mode"] as? String == "openai/form")
+    let expectedLegacy = try #require(JSONSerialization.jsonObject(with: legacyData) as? NSDictionary)
+    #expect(legacyObject as NSDictionary == expectedLegacy)
 
     let currentData = Data(
-        #"{"message":"current","mode":"openaiForm","requestedSchema":{}}"#.utf8
+        #"{"message":"current","mode":"openaiForm","requestedSchema":{},"serverName":"test-server","threadId":"thread-1","turnId":"turn-1"}"#.utf8
     )
     let current = try decoder.decode(
         Components.Schemas.McpServerElicitationRequestParams.self,
@@ -133,6 +135,8 @@ import Testing
         JSONSerialization.jsonObject(with: encoder.encode(current)) as? [String: Any]
     )
     #expect(currentObject["mode"] as? String == "openaiForm")
+    let expectedCurrent = try #require(JSONSerialization.jsonObject(with: currentData) as? NSDictionary)
+    #expect(currentObject as NSDictionary == expectedCurrent)
 }
 
 @Test func clientCanSendRequestWithoutParams() async throws {

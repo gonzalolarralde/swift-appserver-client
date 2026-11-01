@@ -1,5 +1,32 @@
 # Changelog
 
+## 0.166.0 — 2026-11-01
+
+- Schema provenance: the experimental export from official `@openai/codex@0.166.0`
+  matches all 467 checked-in schema files byte-for-byte against clean public tag
+  `rust-v0.166.0`, peeled commit `6ff1e1ca3b30fc8b914720681fcf5fe62e95f856`.
+- Contract: seven schema files added, none removed, and 38 existing files changed.
+  Adds Google Cloud setup and account-session listing/switching, workspace names,
+  managed OpenTelemetry requirements, item start/completion timestamps, image
+  generation IDs, native usage in USD micros, and process output-drain status.
+  Hook queries gain thread context; hook metadata gains environment context.
+  Adds the known `policyCapacityUnavailable` error. Upstream removes detached
+  review delivery; callers must use the remaining inline mode.
+- Swift compatibility: adds three explicit response-name mappings. The bundler
+  moves shared object properties into each discriminated-union payload, preserving
+  timestamps and the already-required MCP `serverName`/`threadId` plus optional
+  `turnId` that older generated models dropped. MCP payload constructors now
+  require that context. The image override retains timestamps and generation IDs.
+  Existing deprecated APIs and unknown-error handling remain available.
+- Verification: idempotent generation, exact source-bundle verification, all four
+  Python generator tests, library build, all 31 Swift tests, `git diff --check`,
+  and unchanged `Package.resolved` passed. Coverage includes large millisecond
+  timestamps, image IDs, both account-switch response shapes, response mappings,
+  MCP context round-trips, and the new known error. Exact-CLI smoke passed
+  initialize, account, usage, and empty thread-list calls in an isolated
+  authenticated home; no turn-list or live Google Cloud inference coverage is
+  claimed. The copied credential was removed afterward.
+
 ## 0.165.0 — 2026-11-01
 
 - Schema provenance: the experimental export from official `@openai/codex@0.165.0`
