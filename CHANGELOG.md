@@ -1,5 +1,33 @@
 # Changelog
 
+## 0.167.0 — 2026-11-06
+
+- Schema provenance: the experimental export from official `@openai/codex@0.167.0`
+  matches all 470 files byte-for-byte against clean public tag `rust-v0.167.0`,
+  peeled commit `086ccc833bc9cf01024ad2dd6af7dbd421b6bf9a`.
+- Contract: three schema files added, none removed, and 39 existing files changed.
+  Adds `thread/guardianReview` with allow/deny assessments and
+  `thread/section/changed` notifications. Guardian review subscribes the connection
+  to the thread until unsubscribe or disconnect. Adds `humanCommand` approvals
+  and the opt-in `requiredHumanApproval` capability, sampling cancellation
+  interruption overrides, and managed OpenTelemetry SSE-delta logging policy.
+  Audio inputs and content items can carry file IDs instead of URLs/inline data.
+- Swift compatibility: narrow audio overrides preserve the discriminator that
+  the pinned generator drops beside `anyOf`, retaining URL-only, file-ID-only,
+  and combined representations. The historical URL initializer remains available.
+  URL fields are now optional; encoding/decoding rejects audio with neither
+  representation. Existing approval cases retain their string-enum API; exhaustive
+  switches must handle `humanCommand`. Only advertise `requiredHumanApproval`
+  when the client can present approvals to a person and return one-time decisions.
+- Verification: exact source-bundle verification, idempotent generation, four
+  Python generator tests, library build, all 35 Swift tests, `git diff --check`,
+  and unchanged `Package.resolved` passed. Audio tests cover both union envelopes,
+  all output representations, invalid empty payloads, and historical constructors.
+  Smoke against the exact official CLI passed initialize, account, usage, and
+  empty thread-list calls in an isolated authenticated home. No turn-list,
+  Guardian-model, or audio-inference coverage is claimed; the temporary copied
+  credential was removed afterward.
+
 ## 0.166.0 — 2026-11-01
 
 - Schema provenance: the experimental export from official `@openai/codex@0.166.0`

@@ -4,6 +4,8 @@ accessModifier: public
 namingStrategy: idiomatic
 typeOverrides:
   schemas:
+    UserInputAudioUserInput: AudioUserInputValue
+    ContentItemInputAudioContentItem: InputAudioContentItemValue
     CodexErrorInfo: CodexErrorInfoValue
     ThreadItemImageGenerationThreadItem: ThreadItemImageGenerationValue
     RequestId: RequestIdValue

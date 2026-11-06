@@ -71,6 +71,7 @@ public extension AppServerModels.ClientRequest {
     typealias ThreadTurnsList = Components.Schemas.ClientRequestThreadTurnsListRequest
     typealias ThreadItemsList = Components.Schemas.ClientRequestThreadItemsListRequest
     typealias ThreadItemsRead = Components.Schemas.ClientRequestThreadItemsReadRequest
+    typealias ThreadGuardianReview = Components.Schemas.ClientRequestThreadGuardianReviewRequest
     typealias ThreadInjectItems = Components.Schemas.ClientRequestThreadInjectItemsRequest
     typealias SkillsList = Components.Schemas.ClientRequestSkillsListRequest
     typealias SkillsExtraRootsSet = Components.Schemas.ClientRequestSkillsExtraRootsSetRequest
@@ -254,6 +255,7 @@ public extension AppServerModels.ClientRequest {
         public typealias ThreadTurnsList = Components.Schemas.ThreadTurnsListResponse
         public typealias ThreadItemsList = Components.Schemas.ThreadItemsListResponse
         public typealias ThreadItemsRead = Components.Schemas.ThreadItemsReadResponse
+        public typealias ThreadGuardianReview = Components.Schemas.ThreadGuardianReviewResponse
         public typealias ThreadInjectItems = Components.Schemas.ThreadInjectItemsResponse
         public typealias SkillsList = Components.Schemas.SkillsListResponse
         public typealias SkillsExtraRootsSet = Components.Schemas.SkillsExtraRootsSetResponse
@@ -439,6 +441,7 @@ public extension AppServerModels.ClientRequest {
         case let .threadTurnsList(value): value
         case let .threadItemsList(value): value
         case let .threadItemsRead(value): value
+        case let .threadGuardianReview(value): value
         case let .threadInjectItems(value): value
         case let .skillsList(value): value
         case let .skillsExtraRootsSet(value): value
@@ -1096,6 +1099,14 @@ extension Components.Schemas.ClientRequestThreadItemsReadRequest: ClientRequesta
     public typealias Response = AppServerModels.ClientRequest.Response.ThreadItemsRead
     public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .threadItemsRead(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestThreadGuardianReviewRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ThreadGuardianReviewParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadGuardianReview
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .threadGuardianReview(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
@@ -2140,6 +2151,7 @@ public extension AppServerModels.ServerNotification {
     typealias ThreadReverted = Components.Schemas.ServerNotificationThreadRevertedNotification
     typealias SkillsChanged = Components.Schemas.ServerNotificationSkillsChangedNotification
     typealias ThreadNameUpdated = Components.Schemas.ServerNotificationThreadNameUpdatedNotification
+    typealias ThreadSectionChanged = Components.Schemas.ServerNotificationThreadSectionChangedNotification
     typealias ThreadAttachmentUpdated = Components.Schemas.ServerNotificationThreadAttachmentUpdatedNotification
     typealias ThreadGoalUpdated = Components.Schemas.ServerNotificationThreadGoalUpdatedNotification
     typealias ThreadPredictionUpdated = Components.Schemas.ServerNotificationThreadPredictionUpdatedNotification
@@ -2228,6 +2240,7 @@ public extension AppServerModels.ServerNotification {
         case let .threadReverted(value): value
         case let .skillsChanged(value): value
         case let .threadNameUpdated(value): value
+        case let .threadSectionChanged(value): value
         case let .threadAttachmentUpdated(value): value
         case let .threadGoalUpdated(value): value
         case let .threadPredictionUpdated(value): value
@@ -2380,6 +2393,13 @@ extension Components.Schemas.ServerNotificationThreadNameUpdatedNotification: Se
     public typealias Params = Components.Schemas.ThreadNameUpdatedNotification
     public static func build(params: Params) -> AppServerModels.ServerNotification {
         .threadNameUpdated(.init(method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ServerNotificationThreadSectionChangedNotification: ServerNotificationPayload {
+    public typealias Params = Components.Schemas.ThreadSectionChangedNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
+        .threadSectionChanged(.init(method: .allCases.first!, params: params))
     }
 }
 

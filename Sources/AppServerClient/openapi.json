@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Codex App Server Protocol",
-    "version": "0.166.0"
+    "version": "0.167.0"
   },
   "paths": {},
   "components": {
@@ -49,6 +49,10 @@
           "requestAttestation": {
             "default": false,
             "description": "Opt into `attestation/generate` requests for upstream `x-oai-attestation`.",
+            "type": "boolean"
+          },
+          "requiredHumanApproval": {
+            "description": "Present `humanCommand` approvals to a person and return only a one-time decision. Requires `experimentalApi`. Pending requests can be replayed to compatible clients.",
             "type": "boolean"
           }
         },
@@ -854,10 +858,34 @@
         "type": "object"
       },
       "ContentItemInputAudioContentItem": {
-        "properties": {
-          "audio_url": {
-            "type": "string"
+        "anyOf": [
+          {
+            "properties": {
+              "audio_url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "audio_url"
+            ],
+            "title": "AudioUrlContentItem",
+            "type": "object"
           },
+          {
+            "properties": {
+              "file_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "file_id"
+            ],
+            "title": "FileIdContentItem",
+            "type": "object"
+          }
+        ],
+        "description": "Inline audio data or an uploaded file loaded by the Responses API.",
+        "properties": {
           "type": {
             "enum": [
               "input_audio"
@@ -867,7 +895,6 @@
           }
         },
         "required": [
-          "audio_url",
           "type"
         ],
         "title": "InputAudioContentItem",
@@ -2366,6 +2393,11 @@
             "description": "The loaded source's latest completed, failed, or interrupted turn. Stale or active sources are rejected.",
             "type": "string"
           },
+          "interruptOnCancel": {
+            "description": "Override upstream interruption on cancellation for this sample; otherwise inherit the parent.",
+            "type": "boolean",
+            "nullable": true
+          },
           "prompt": {
             "type": "string"
           },
@@ -2988,6 +3020,32 @@
         "type": "object"
       },
       "UserInputAudioUserInput": {
+        "anyOf": [
+          {
+            "properties": {
+              "url": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "url"
+            ],
+            "title": "UrlUserInput",
+            "type": "object"
+          },
+          {
+            "properties": {
+              "fileId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "fileId"
+            ],
+            "title": "FileIdUserInput",
+            "type": "object"
+          }
+        ],
         "properties": {
           "type": {
             "enum": [
@@ -2995,14 +3053,10 @@
             ],
             "title": "AudioUserInputType",
             "type": "string"
-          },
-          "url": {
-            "type": "string"
           }
         },
         "required": [
-          "type",
-          "url"
+          "type"
         ],
         "title": "AudioUserInput",
         "type": "object"
@@ -5571,6 +5625,43 @@
           "params"
         ],
         "title": "Thread/items/readRequest",
+        "type": "object"
+      },
+      "ThreadGuardianReviewParams": {
+        "description": "Calling `thread/guardianReview` subscribes the connection to the thread. The subscription remains after the review completes, keeping the thread loaded until the client calls `thread/unsubscribe` or disconnects.",
+        "properties": {
+          "threadId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "threadId"
+        ],
+        "type": "object"
+      },
+      "ClientRequestThreadGuardianReviewRequest": {
+        "description": "Review the idle thread's final injected exec_command without executing it.",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "thread/guardianReview"
+            ],
+            "title": "Thread/guardianReviewRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ThreadGuardianReviewParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "Thread/guardianReviewRequest",
         "type": "object"
       },
       "ThreadInjectItemsParams": {
@@ -11634,6 +11725,9 @@
             "$ref": "#/components/schemas/ClientRequestThreadItemsReadRequest"
           },
           {
+            "$ref": "#/components/schemas/ClientRequestThreadGuardianReviewRequest"
+          },
+          {
             "$ref": "#/components/schemas/ClientRequestThreadInjectItemsRequest"
           },
           {
@@ -12041,6 +12135,7 @@
             "thread/turns/list": "#/components/schemas/ClientRequestThreadTurnsListRequest",
             "thread/items/list": "#/components/schemas/ClientRequestThreadItemsListRequest",
             "thread/items/read": "#/components/schemas/ClientRequestThreadItemsReadRequest",
+            "thread/guardianReview": "#/components/schemas/ClientRequestThreadGuardianReviewRequest",
             "thread/inject_items": "#/components/schemas/ClientRequestThreadInjectItemsRequest",
             "skills/list": "#/components/schemas/ClientRequestSkillsListRequest",
             "skills/extraRoots/set": "#/components/schemas/ClientRequestSkillsExtraRootsSetRequest",
@@ -12671,11 +12766,12 @@
       },
       "CommandExecutionApprovalKind": {
         "description": "Distinguishes a command approval from input sent to an existing terminal.",
+        "type": "string",
         "enum": [
           "command",
-          "writeStdin"
-        ],
-        "type": "string"
+          "writeStdin",
+          "humanCommand"
+        ]
       },
       "NetworkApprovalProtocol": {
         "enum": [
@@ -17208,6 +17304,49 @@
           "params"
         ],
         "title": "Thread/name/updatedNotification",
+        "type": "object"
+      },
+      "ThreadSectionChangedNotification": {
+        "description": "Broadcast after a successful move into, within, or out of a section.",
+        "properties": {
+          "sectionId": {
+            "description": "Destination section, or `null` when the thread was removed from its section.",
+            "type": "string",
+            "nullable": true
+          },
+          "threadId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "sectionId",
+          "threadId"
+        ],
+        "type": "object"
+      },
+      "ServerNotificationThreadSectionChangedNotification": {
+        "properties": {
+          "method": {
+            "enum": [
+              "thread/section/changed"
+            ],
+            "title": "Thread/section/changedNotificationMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ThreadSectionChangedNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "method",
+          "params"
+        ],
+        "title": "Thread/section/changedNotification",
         "type": "object"
       },
       "ThreadAttachmentOperation": {
@@ -22195,6 +22334,9 @@
             "$ref": "#/components/schemas/ServerNotificationThreadNameUpdatedNotification"
           },
           {
+            "$ref": "#/components/schemas/ServerNotificationThreadSectionChangedNotification"
+          },
+          {
             "$ref": "#/components/schemas/ServerNotificationThreadAttachmentUpdatedNotification"
           },
           {
@@ -22431,6 +22573,7 @@
             "thread/reverted": "#/components/schemas/ServerNotificationThreadRevertedNotification",
             "skills/changed": "#/components/schemas/ServerNotificationSkillsChangedNotification",
             "thread/name/updated": "#/components/schemas/ServerNotificationThreadNameUpdatedNotification",
+            "thread/section/changed": "#/components/schemas/ServerNotificationThreadSectionChangedNotification",
             "thread/attachment/updated": "#/components/schemas/ServerNotificationThreadAttachmentUpdatedNotification",
             "thread/goal/updated": "#/components/schemas/ServerNotificationThreadGoalUpdatedNotification",
             "thread/prediction/updated": "#/components/schemas/ServerNotificationThreadPredictionUpdatedNotification",
@@ -24862,6 +25005,10 @@
             "nullable": true
           },
           "log_guardian_assessments": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "log_sse_deltas": {
             "type": "boolean",
             "nullable": true
           },
@@ -29554,6 +29701,52 @@
           "goal"
         ],
         "title": "ThreadGoalSetResponse",
+        "type": "object"
+      },
+      "GuardianAssessmentOutcome": {
+        "description": "Final allow/deny outcome returned by the guardian reviewer.",
+        "enum": [
+          "allow",
+          "deny"
+        ],
+        "type": "string"
+      },
+      "ThreadGuardianAssessment": {
+        "properties": {
+          "outcome": {
+            "$ref": "#/components/schemas/GuardianAssessmentOutcome"
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "riskLevel": {
+            "$ref": "#/components/schemas/GuardianRiskLevel"
+          },
+          "userAuthorization": {
+            "$ref": "#/components/schemas/GuardianUserAuthorization"
+          }
+        },
+        "required": [
+          "outcome",
+          "rationale",
+          "riskLevel",
+          "userAuthorization"
+        ],
+        "type": "object"
+      },
+      "ThreadGuardianReviewResponse": {
+        "properties": {
+          "assessment": {
+            "$ref": "#/components/schemas/ThreadGuardianAssessment"
+          },
+          "callId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "callId"
+        ],
+        "title": "ThreadGuardianReviewResponse",
         "type": "object"
       },
       "ThreadIncrementElicitationResponse": {
