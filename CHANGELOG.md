@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.167.1 — 2026-11-11
+
+- Schema provenance: exported the experimental contract using official
+  `@openai/codex@0.167.1` and verified all 470 files byte-for-byte against the
+  clean public `rust-v0.167.1` source bundle at
+  `0a94398fa60c4fac0e7659e4213a0a36e613dd46`.
+- No public app-server contract change from 0.167.0. All exported schema files
+  and generated Swift mappings are unchanged; updated compatibility metadata
+  and the generated OpenAPI version.
+- Verification: idempotent generation, four generator tests, the Swift library
+  build, all 35 Swift tests, diff checks, and unchanged `Package.resolved` passed.
+  The exact official CLI passed initialize, account, usage, and empty thread-list
+  smoke checks; no turn-list coverage is claimed. The temporary credential copy
+  was removed.
+
 ## 0.167.0 — 2026-11-06
 
 - Schema provenance: the experimental export from official `@openai/codex@0.167.0`
