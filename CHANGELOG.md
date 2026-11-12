@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.167.2 — 2026-11-12
+
+- Schema provenance: exported the experimental contract with the official
+  macOS arm64 CLI asset for `rust-v0.167.2`, verified its SHA-256 against
+  GitHub release metadata, and checked all 470 files byte-for-byte against
+  the clean source bundle at `ce21072c90d32c40af7a55b60b2fb35c84a43a6a`.
+- No public app-server contract change from 0.167.1. The exported schema and
+  generated Swift mappings are unchanged; updated version metadata only.
+  The [upstream patch](https://github.com/openai/codex/releases/tag/rust-v0.167.2)
+  enables incremental tool updates by default on Google Cloud Vertex AI.
+- Verification: idempotent generation, four generator tests, the Swift library
+  build, all 35 Swift tests, diff checks, and unchanged `Package.resolved` passed.
+  The exact official CLI passed initialize, account, usage, and empty thread-list
+  smoke checks. No turn-list or Vertex AI inference coverage is claimed; the
+  temporary credential copy was removed.
+
 ## 0.167.1 — 2026-11-11
 
 - Schema provenance: exported the experimental contract using official
