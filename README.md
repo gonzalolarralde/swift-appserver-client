@@ -22,8 +22,8 @@ models under `Sources/AppServerClient/Models/TypeOverrides`.
 
 ## Compatibility
 
-Release `0.167.2` is generated from the experimental app-server schema exposed
-by the stable public Codex tag `rust-v0.167.2`. App-server experimental APIs can
+Release `0.168.0` is generated from the experimental app-server schema exposed
+by the stable public Codex tag `rust-v0.168.0`. App-server experimental APIs can
 change between Codex releases, so matching these versions is recommended.
 
 ### Deprecated compatibility APIs
@@ -77,6 +77,9 @@ and `threadId`, plus optional `turnId`, on MCP elicitation payloads. Supply the
 required context when constructing those payloads; earlier generated Swift
 models incorrectly omitted these shared fields.
 
+For `modelProvider/config/write`, use `.unchanged` to omit a setting,
+`.clear` to send an explicit null, or `.set(value)` to replace it.
+
 ## Requirements
 
 Starting in `0.167.0`, audio user inputs and input-audio content can carry a
@@ -89,7 +92,7 @@ Approval switches must handle `humanCommand`; only opt into
 one-time decisions.
 
 - Swift 6.2 or newer.
-- Codex `0.167.2` must be available on `PATH` for the stdio connection and smoke
+- Codex `0.168.0` must be available on `PATH` for the stdio connection and smoke
   executable.
 - `codex app-server` must be supported by the installed Codex CLI.
 
@@ -141,7 +144,7 @@ Prefer the matching tagged release:
 dependencies: [
     .package(
         url: "https://github.com/gonzalolarralde/swift-appserver-client.git",
-        exact: "0.167.2"
+        exact: "0.168.0"
     ),
 ],
 ```
@@ -333,5 +336,5 @@ swift build --target AppServerClient
 - Requests whose protocol `params` are null support `send(request:)` without a
   `with:` argument.
 - The generated `multiAgentMode` fields are retained for wire compatibility,
-  but Codex `0.167.2` ignores them and derives proactive delegation from Ultra
+  but Codex `0.168.0` ignores them and derives proactive delegation from Ultra
   reasoning effort.

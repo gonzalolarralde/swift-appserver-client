@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Codex App Server Protocol",
-    "version": "0.167.2"
+    "version": "0.168.0"
   },
   "paths": {},
   "components": {
@@ -4530,6 +4530,10 @@
             "type": "string",
             "nullable": true
           },
+          "currentAccountOnly": {
+            "description": "Show local history visible to the current ChatGPT account. Defaults to false.",
+            "type": "boolean"
+          },
           "cursor": {
             "description": "Opaque pagination cursor returned by a previous call.",
             "type": "string",
@@ -5156,6 +5160,10 @@
             "type": "boolean",
             "nullable": true
           },
+          "currentAccountOnly": {
+            "description": "Show local history visible to the current ChatGPT account. Defaults to false.",
+            "type": "boolean"
+          },
           "cursor": {
             "description": "Opaque pagination cursor returned by a previous call.",
             "type": "string",
@@ -5526,10 +5534,22 @@
         ],
         "description": "Starting position for an item-history page."
       },
+      "ThreadItemOutputDeferral": {
+        "properties": {
+          "commandExecution": {
+            "description": "Defer nonempty output from successful commands.",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
       "ThreadItemsListParams": {
         "properties": {
           "cursor": {
             "$ref": "#/components/schemas/ThreadItemsListCursor"
+          },
+          "deferOutput": {
+            "$ref": "#/components/schemas/ThreadItemOutputDeferral"
           },
           "limit": {
             "description": "Optional item page size.",
@@ -8322,6 +8342,201 @@
         "title": "Account/gatewayOAuth/cancelRequest",
         "type": "object"
       },
+      "ModelProviderListParams": {
+        "type": "object"
+      },
+      "ClientRequestModelProviderListRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "modelProvider/list"
+            ],
+            "title": "ModelProvider/listRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ModelProviderListParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "ModelProvider/listRequest",
+        "type": "object"
+      },
+      "ProviderSettingsPatchCustomGatewayProviderSettingsPatch": {
+        "additionalProperties": false,
+        "properties": {
+          "baseUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "envKey": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string"
+          },
+          "providerId": {
+            "description": "Omit or pass null to allocate a new custom provider ID.",
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "enum": [
+              "customGateway"
+            ],
+            "title": "CustomGatewayProviderSettingsPatchType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "title": "CustomGatewayProviderSettingsPatch",
+        "type": "object"
+      },
+      "BedrockProviderId": {
+        "enum": [
+          "amazon-bedrock",
+          "amazon-bedrock-runtime"
+        ],
+        "type": "string"
+      },
+      "ProviderSettingsPatchBedrockProviderSettingsPatch": {
+        "additionalProperties": false,
+        "description": "AWS configuration fields for built-in Bedrock providers.",
+        "properties": {
+          "profile": {
+            "type": "string",
+            "nullable": true
+          },
+          "providerId": {
+            "$ref": "#/components/schemas/BedrockProviderId"
+          },
+          "region": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "enum": [
+              "bedrock"
+            ],
+            "title": "BedrockProviderSettingsPatchType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "providerId",
+          "type"
+        ],
+        "title": "BedrockProviderSettingsPatch",
+        "type": "object"
+      },
+      "GcpProviderId": {
+        "enum": [
+          "gcp"
+        ],
+        "type": "string"
+      },
+      "ProviderSettingsPatchGcpProviderSettingsPatch": {
+        "additionalProperties": false,
+        "description": "GCP configuration fields. Credential-file paths refer to the app-server host.",
+        "properties": {
+          "credentialFile": {
+            "type": "string",
+            "nullable": true
+          },
+          "location": {
+            "type": "string",
+            "nullable": true
+          },
+          "projectId": {
+            "type": "string",
+            "nullable": true
+          },
+          "providerId": {
+            "$ref": "#/components/schemas/GcpProviderId"
+          },
+          "type": {
+            "enum": [
+              "gcp"
+            ],
+            "title": "GcpProviderSettingsPatchType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "providerId",
+          "type"
+        ],
+        "title": "GcpProviderSettingsPatch",
+        "type": "object"
+      },
+      "ProviderSettingsPatch": {
+        "description": "Omitted patch fields preserve their values. Explicit null clears a nullable field.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ProviderSettingsPatchCustomGatewayProviderSettingsPatch"
+          },
+          {
+            "$ref": "#/components/schemas/ProviderSettingsPatchBedrockProviderSettingsPatch"
+          },
+          {
+            "$ref": "#/components/schemas/ProviderSettingsPatchGcpProviderSettingsPatch"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "customGateway": "#/components/schemas/ProviderSettingsPatchCustomGatewayProviderSettingsPatch",
+            "bedrock": "#/components/schemas/ProviderSettingsPatchBedrockProviderSettingsPatch",
+            "gcp": "#/components/schemas/ProviderSettingsPatchGcpProviderSettingsPatch"
+          }
+        }
+      },
+      "ModelProviderConfigWriteParams": {
+        "additionalProperties": false,
+        "properties": {
+          "settings": {
+            "$ref": "#/components/schemas/ProviderSettingsPatch"
+          }
+        },
+        "required": [
+          "settings"
+        ],
+        "type": "object"
+      },
+      "ClientRequestModelProviderConfigWriteRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "modelProvider/config/write"
+            ],
+            "title": "ModelProvider/config/writeRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ModelProviderConfigWriteParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "ModelProvider/config/writeRequest",
+        "type": "object"
+      },
       "ModelProviderCapabilitiesReadParams": {
         "type": "object"
       },
@@ -9101,6 +9316,11 @@
       },
       "McpResourceReadParams": {
         "properties": {
+          "_meta": {
+            "additionalProperties": true,
+            "description": "Additional MCP request metadata. Account and turn routing keys are reserved.",
+            "type": "object"
+          },
           "connectorId": {
             "type": "string",
             "nullable": true
@@ -11875,6 +12095,12 @@
             "$ref": "#/components/schemas/ClientRequestAccountGatewayOAuthCancelRequest"
           },
           {
+            "$ref": "#/components/schemas/ClientRequestModelProviderListRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ClientRequestModelProviderConfigWriteRequest"
+          },
+          {
             "$ref": "#/components/schemas/ClientRequestModelProviderCapabilitiesReadRequest"
           },
           {
@@ -12185,6 +12411,8 @@
             "account/gatewayOAuth/read": "#/components/schemas/ClientRequestAccountGatewayOAuthReadRequest",
             "account/gatewayOAuth/login": "#/components/schemas/ClientRequestAccountGatewayOAuthLoginRequest",
             "account/gatewayOAuth/cancel": "#/components/schemas/ClientRequestAccountGatewayOAuthCancelRequest",
+            "modelProvider/list": "#/components/schemas/ClientRequestModelProviderListRequest",
+            "modelProvider/config/write": "#/components/schemas/ClientRequestModelProviderConfigWriteRequest",
             "modelProvider/capabilities/read": "#/components/schemas/ClientRequestModelProviderCapabilitiesReadRequest",
             "experimentalFeature/list": "#/components/schemas/ClientRequestExperimentalFeatureListRequest",
             "permissionProfile/list": "#/components/schemas/ClientRequestPermissionProfileListRequest",
@@ -19058,6 +19286,14 @@
             "format": "int64",
             "type": "integer"
           },
+          "contentTokenCount": {
+            "default": null,
+            "description": "Native content tokens for the completed assistant message, including a sampled footer. Null when unavailable. Completion telemetry is not part of the stored thread item.",
+            "format": "uint64",
+            "minimum": 0.0,
+            "type": "integer",
+            "nullable": true
+          },
           "item": {
             "$ref": "#/components/schemas/ThreadItem"
           },
@@ -23623,6 +23859,14 @@
         },
         "type": "object"
       },
+      "WebSearchProvider": {
+        "description": "Provider preference selected by the resolved model catalog entry.",
+        "enum": [
+          "standalone",
+          "search_mcp"
+        ],
+        "type": "string"
+      },
       "ComputerUseMacosConfig": {
         "properties": {
           "bundle_ids": {
@@ -23832,6 +24076,9 @@
           },
           "browser_use": {
             "$ref": "#/components/schemas/BrowserUseConfig"
+          },
+          "client_search_provider": {
+            "$ref": "#/components/schemas/WebSearchProvider"
           },
           "compact_prompt": {
             "type": "string",
@@ -27565,6 +27812,260 @@
         "title": "ModelProviderCapabilitiesReadResponse",
         "type": "object"
       },
+      "ProviderSettingsOpenaiProviderSettings": {
+        "properties": {
+          "type": {
+            "enum": [
+              "openai"
+            ],
+            "title": "OpenaiProviderSettingsType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "title": "OpenaiProviderSettings",
+        "type": "object"
+      },
+      "GatewayAuthNoneGatewayAuth": {
+        "properties": {
+          "mode": {
+            "enum": [
+              "none"
+            ],
+            "title": "NoneGatewayAuthMode",
+            "type": "string"
+          }
+        },
+        "required": [
+          "mode"
+        ],
+        "title": "NoneGatewayAuth",
+        "type": "object"
+      },
+      "GatewayAuthEnvironmentVariable": {
+        "properties": {
+          "envKey": {
+            "type": "string"
+          },
+          "mode": {
+            "enum": [
+              "environmentVariable"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "envKey",
+          "mode"
+        ],
+        "type": "object"
+      },
+      "GatewayAuthModeGatewayAuth": {
+        "description": "Authentication is configured outside the gateway form. Preserve it on edits.",
+        "properties": {
+          "envKey": {
+            "type": "string",
+            "nullable": true
+          },
+          "mode": {
+            "enum": [
+              "externallyConfigured"
+            ],
+            "title": "ModeGatewayAuthMode",
+            "type": "string"
+          }
+        },
+        "required": [
+          "mode"
+        ],
+        "title": "ModeGatewayAuth",
+        "type": "object"
+      },
+      "GatewayAuth": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/GatewayAuthNoneGatewayAuth"
+          },
+          {
+            "$ref": "#/components/schemas/GatewayAuthEnvironmentVariable"
+          },
+          {
+            "$ref": "#/components/schemas/GatewayAuthModeGatewayAuth"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "mode",
+          "mapping": {
+            "none": "#/components/schemas/GatewayAuthNoneGatewayAuth",
+            "environmentVariable": "#/components/schemas/GatewayAuthEnvironmentVariable",
+            "externallyConfigured": "#/components/schemas/GatewayAuthModeGatewayAuth"
+          }
+        }
+      },
+      "ProviderSettingsCustomGatewayProviderSettings": {
+        "properties": {
+          "auth": {
+            "$ref": "#/components/schemas/GatewayAuth"
+          },
+          "type": {
+            "enum": [
+              "customGateway"
+            ],
+            "title": "CustomGatewayProviderSettingsType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "auth",
+          "type"
+        ],
+        "title": "CustomGatewayProviderSettings",
+        "type": "object"
+      },
+      "ProviderSettingsBedrockProviderSettings": {
+        "properties": {
+          "profile": {
+            "type": "string",
+            "nullable": true
+          },
+          "region": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "enum": [
+              "bedrock"
+            ],
+            "title": "BedrockProviderSettingsType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "title": "BedrockProviderSettings",
+        "type": "object"
+      },
+      "ProviderSettingsGcpProviderSettings": {
+        "properties": {
+          "credentialFile": {
+            "description": "Path on the app-server host, without credential-file contents.",
+            "type": "string",
+            "nullable": true
+          },
+          "location": {
+            "type": "string",
+            "nullable": true
+          },
+          "projectId": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "enum": [
+              "gcp"
+            ],
+            "title": "GcpProviderSettingsType",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "title": "GcpProviderSettings",
+        "type": "object"
+      },
+      "ProviderSettings": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ProviderSettingsOpenaiProviderSettings"
+          },
+          {
+            "$ref": "#/components/schemas/ProviderSettingsCustomGatewayProviderSettings"
+          },
+          {
+            "$ref": "#/components/schemas/ProviderSettingsBedrockProviderSettings"
+          },
+          {
+            "$ref": "#/components/schemas/ProviderSettingsGcpProviderSettings"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "type",
+          "mapping": {
+            "openai": "#/components/schemas/ProviderSettingsOpenaiProviderSettings",
+            "customGateway": "#/components/schemas/ProviderSettingsCustomGatewayProviderSettings",
+            "bedrock": "#/components/schemas/ProviderSettingsBedrockProviderSettings",
+            "gcp": "#/components/schemas/ProviderSettingsGcpProviderSettings"
+          }
+        }
+      },
+      "ModelProviderSummary": {
+        "properties": {
+          "baseUrl": {
+            "description": "Null when the endpoint is absent or cannot be safely displayed.",
+            "type": "string",
+            "nullable": true
+          },
+          "canEdit": {
+            "description": "Whether a supported configuration field can be edited in the active user layer.",
+            "type": "boolean"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "settings": {
+            "$ref": "#/components/schemas/ProviderSettings"
+          }
+        },
+        "required": [
+          "canEdit",
+          "id",
+          "name",
+          "settings"
+        ],
+        "type": "object"
+      },
+      "ModelProviderConfigWriteResponse": {
+        "properties": {
+          "provider": {
+            "$ref": "#/components/schemas/ModelProviderSummary"
+          }
+        },
+        "required": [
+          "provider"
+        ],
+        "title": "ModelProviderConfigWriteResponse",
+        "type": "object"
+      },
+      "ModelProviderListResponse": {
+        "properties": {
+          "canChangeDefault": {
+            "type": "boolean"
+          },
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/ModelProviderSummary"
+            },
+            "type": "array"
+          },
+          "defaultProviderId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "canChangeDefault",
+          "data",
+          "defaultProviderId"
+        ],
+        "title": "ModelProviderListResponse",
+        "type": "object"
+      },
       "PermissionProfileSummary": {
         "properties": {
           "allowed": {
@@ -29783,6 +30284,10 @@
           },
           "item": {
             "$ref": "#/components/schemas/ThreadItem"
+          },
+          "outputDeferred": {
+            "description": "The saved command output was omitted. Fetch the complete item with `thread/items/read`.",
+            "type": "boolean"
           },
           "startedAtMs": {
             "description": "Unix timestamp (milliseconds) when the item started, if recorded by the producer.",

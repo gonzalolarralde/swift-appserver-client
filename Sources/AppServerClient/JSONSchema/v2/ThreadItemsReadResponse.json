@@ -1744,6 +1744,10 @@
         "item": {
           "$ref": "#/definitions/ThreadItem"
         },
+        "outputDeferred": {
+          "description": "The saved command output was omitted. Fetch the complete item with `thread/items/read`.",
+          "type": "boolean"
+        },
         "startedAtMs": {
           "description": "Unix timestamp (milliseconds) when the item started, if recorded by the producer.",
           "format": "int64",

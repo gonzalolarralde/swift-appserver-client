@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.168.0 — 2026-11-13
+
+- Verified the official macOS arm64 CLI archive digest and all 474 experimental
+  schema files against public tag `rust-v0.168.0`, commit
+  `9480ec100c3edee9fc69172e8e80a4730444094d`.
+- Adds `modelProvider/list` and `modelProvider/config/write`, account-scoped
+  thread listing/search, optional thread item output deferral, completed-item
+  token counts, MCP resource-read metadata, and client search-provider config.
+  Four schema files were added, 13 changed, and none removed.
+- Provider configuration patches use `ProviderSetting` to distinguish
+  `.unchanged` (omit), `.clear` (null), and `.set(value)`. This prevents
+  generated optional strings from silently dropping explicit clears.
+- Passed idempotent generation, four generator tests, Swift library build,
+  all 38 Swift tests, diff checks, and exact CLI initialize/account/usage/empty
+  thread-list smoke checks. `Package.resolved` is unchanged and the temporary
+  smoke credential was removed. No live provider writes or turn-list coverage
+  were exercised.
+
 ## 0.167.2 — 2026-11-12
 
 - Schema provenance: exported the experimental contract with the official

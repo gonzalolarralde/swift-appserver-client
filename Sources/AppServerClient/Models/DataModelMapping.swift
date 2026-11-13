@@ -121,6 +121,8 @@ public extension AppServerModels.ClientRequest {
     typealias AccountGatewayOAuthRead = Components.Schemas.ClientRequestAccountGatewayOAuthReadRequest
     typealias AccountGatewayOAuthLogin = Components.Schemas.ClientRequestAccountGatewayOAuthLoginRequest
     typealias AccountGatewayOAuthCancel = Components.Schemas.ClientRequestAccountGatewayOAuthCancelRequest
+    typealias ModelProviderList = Components.Schemas.ClientRequestModelProviderListRequest
+    typealias ModelProviderConfigWrite = Components.Schemas.ClientRequestModelProviderConfigWriteRequest
     typealias ModelProviderCapabilitiesRead = Components.Schemas.ClientRequestModelProviderCapabilitiesReadRequest
     typealias ExperimentalFeatureList = Components.Schemas.ClientRequestExperimentalFeatureListRequest
     typealias PermissionProfileList = Components.Schemas.ClientRequestPermissionProfileListRequest
@@ -305,6 +307,8 @@ public extension AppServerModels.ClientRequest {
         public typealias AccountGatewayOAuthRead = Components.Schemas.GatewayOAuthReadResponse
         public typealias AccountGatewayOAuthLogin = Components.Schemas.GatewayOAuthLoginResponse
         public typealias AccountGatewayOAuthCancel = Components.Schemas.GatewayOAuthCancelResponse
+        public typealias ModelProviderList = Components.Schemas.ModelProviderListResponse
+        public typealias ModelProviderConfigWrite = Components.Schemas.ModelProviderConfigWriteResponse
         public typealias ModelProviderCapabilitiesRead = Components.Schemas.ModelProviderCapabilitiesReadResponse
         public typealias ExperimentalFeatureList = Components.Schemas.ExperimentalFeatureListResponse
         public typealias PermissionProfileList = Components.Schemas.PermissionProfileListResponse
@@ -491,6 +495,8 @@ public extension AppServerModels.ClientRequest {
         case let .accountGatewayOAuthRead(value): value
         case let .accountGatewayOAuthLogin(value): value
         case let .accountGatewayOAuthCancel(value): value
+        case let .modelProviderList(value): value
+        case let .modelProviderConfigWrite(value): value
         case let .modelProviderCapabilitiesRead(value): value
         case let .experimentalFeatureList(value): value
         case let .permissionProfileList(value): value
@@ -1499,6 +1505,22 @@ extension Components.Schemas.ClientRequestAccountGatewayOAuthCancelRequest: Clie
     public typealias Response = AppServerModels.ClientRequest.Response.AccountGatewayOAuthCancel
     public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .accountGatewayOAuthCancel(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestModelProviderListRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ModelProviderListParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ModelProviderList
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .modelProviderList(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestModelProviderConfigWriteRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ModelProviderConfigWriteParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ModelProviderConfigWrite
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .modelProviderConfigWrite(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
