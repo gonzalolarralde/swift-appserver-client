@@ -4,6 +4,7 @@ accessModifier: public
 namingStrategy: idiomatic
 typeOverrides:
   schemas:
+    FunctionCallOutputContentItemInputAudioFunctionCallOutputContentItem: InputAudioContentItemValue
     ProviderSettingsPatchCustomGatewayProviderSettingsPatch: CustomGatewayProviderSettingsPatchValue
     ProviderSettingsPatchBedrockProviderSettingsPatch: BedrockProviderSettingsPatchValue
     ProviderSettingsPatchGcpProviderSettingsPatch: GcpProviderSettingsPatchValue

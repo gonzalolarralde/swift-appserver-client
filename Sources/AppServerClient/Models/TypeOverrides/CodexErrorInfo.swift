@@ -29,6 +29,7 @@ public enum CodexErrorInfoValue: Codable, Hashable, Sendable {
         case serverOverloaded
         case modelNotFound
         case policyCapacityUnavailable
+        case inferenceHookDenied
         case cyberPolicy
         case misalignmentPolicyViolation
         case tooManyDenials

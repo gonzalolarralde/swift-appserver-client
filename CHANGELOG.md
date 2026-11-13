@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.169.0 — 2026-11-13
+
+- Verified the official macOS arm64 CLI archive digest and all 479 experimental
+  schema files against public tag `rust-v0.169.0`, commit
+  `d32063f96c2dff1dc96af839b3952abb6acfeda4`.
+- Adds `account/securitySetup/read` and `thread/prepareApprovedPlan`,
+  provider-scoped gateway OAuth with optional device authorization, account IDs,
+  attached-thread filters, thread and turn environment settings, agent-message
+  moderation metadata, queue metadata, and MCP tool-output deferral. Five schema
+  files were added, 51 changed, and none removed.
+- Gateway OAuth read/login requests accept typed optional parameters; the
+  no-parameter Swift call remains available. Added the security-setup response
+  mapping and the known `inferenceHookDenied` error. Function-call outputs can
+  now carry audio file IDs; the audio override preserves the discriminator and
+  both representations. Handle optional `audioUrl` and `fileId` on these outputs.
+- Passed idempotent generation, four generator tests, the Swift library build,
+  all 40 Swift tests, diff checks, and exact CLI initialize/account/usage/empty
+  thread-list smoke checks. `Package.resolved` is unchanged and the temporary
+  smoke credential was removed. No live OAuth, audio inference, or turn-list
+  coverage is claimed.
+
 ## 0.168.0 — 2026-11-13
 
 - Verified the official macOS arm64 CLI archive digest and all 474 experimental

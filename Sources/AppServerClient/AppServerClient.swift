@@ -70,7 +70,7 @@ public actor AppServerClient<Connection: AppServerConnection> {
             clientInfo: .init(
                 name: "swift-appserver-client",
                 title: "Swift AppServer Client",
-                version: "0.168.0"
+                version: "0.169.0"
             )
         )
     }
@@ -135,10 +135,10 @@ public actor AppServerClient<Connection: AppServerConnection> {
         }
     }
 
-    public func send<Requestable: ClientRequestable>(
+    public func send<Requestable: ClientRequestable, Parameters>(
         request: Requestable.Type
     ) async throws -> Requestable.Response
-    where Requestable.Params == OpenAPIValueContainer? {
+    where Requestable.Params == Parameters? {
         try await send(request: request, with: nil)
     }
 

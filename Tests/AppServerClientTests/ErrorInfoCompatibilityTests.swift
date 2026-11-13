@@ -14,6 +14,7 @@ import Testing
         .case1(.rateLimitExceeded),
         .case1(.modelNotFound),
         .case1(.policyCapacityUnavailable),
+        .case1(.inferenceHookDenied),
         .case2(.init(httpConnectionFailed: .init(httpStatusCode: 503))),
         .case3(.init(responseStreamConnectionFailed: .init())),
         .case4(.init(responseStreamDisconnected: .init(httpStatusCode: 429))),

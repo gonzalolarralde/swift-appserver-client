@@ -73,6 +73,7 @@ public extension AppServerModels.ClientRequest {
     typealias ThreadItemsRead = Components.Schemas.ClientRequestThreadItemsReadRequest
     typealias ThreadGuardianReview = Components.Schemas.ClientRequestThreadGuardianReviewRequest
     typealias ThreadInjectItems = Components.Schemas.ClientRequestThreadInjectItemsRequest
+    typealias ThreadPrepareApprovedPlan = Components.Schemas.ClientRequestThreadPrepareApprovedPlanRequest
     typealias SkillsList = Components.Schemas.ClientRequestSkillsListRequest
     typealias SkillsExtraRootsSet = Components.Schemas.ClientRequestSkillsExtraRootsSetRequest
     typealias HooksList = Components.Schemas.ClientRequestHooksListRequest
@@ -157,6 +158,7 @@ public extension AppServerModels.ClientRequest {
     typealias AccountSessionList = Components.Schemas.ClientRequestAccountSessionListRequest
     typealias AccountSessionSwitch = Components.Schemas.ClientRequestAccountSessionSwitchRequest
     typealias AccountLogout = Components.Schemas.ClientRequestAccountLogoutRequest
+    typealias AccountSecuritySetupRead = Components.Schemas.ClientRequestAccountSecuritySetupReadRequest
     typealias AccountRateLimitsRead = Components.Schemas.ClientRequestAccountRateLimitsReadRequest
     typealias AccountRateLimitResetCreditConsume = Components.Schemas.ClientRequestAccountRateLimitResetCreditConsumeRequest
     typealias AccountUsageRead = Components.Schemas.ClientRequestAccountUsageReadRequest
@@ -259,6 +261,7 @@ public extension AppServerModels.ClientRequest {
         public typealias ThreadItemsRead = Components.Schemas.ThreadItemsReadResponse
         public typealias ThreadGuardianReview = Components.Schemas.ThreadGuardianReviewResponse
         public typealias ThreadInjectItems = Components.Schemas.ThreadInjectItemsResponse
+        public typealias ThreadPrepareApprovedPlan = Components.Schemas.ThreadPrepareApprovedPlanResponse
         public typealias SkillsList = Components.Schemas.SkillsListResponse
         public typealias SkillsExtraRootsSet = Components.Schemas.SkillsExtraRootsSetResponse
         public typealias HooksList = Components.Schemas.HooksListResponse
@@ -343,6 +346,7 @@ public extension AppServerModels.ClientRequest {
         public typealias AccountSessionList = Components.Schemas.AccountSessionsResponse
         public typealias AccountSessionSwitch = Components.Schemas.AccountSessionsSwitchResponse
         public typealias AccountLogout = Components.Schemas.LogoutAccountResponse
+        public typealias AccountSecuritySetupRead = Components.Schemas.GetAccountSecuritySetupResponse
         public typealias AccountRateLimitsRead = Components.Schemas.GetAccountRateLimitsResponse
         public typealias AccountRateLimitResetCreditConsume = Components.Schemas.ConsumeAccountRateLimitResetCreditResponse
         public typealias AccountUsageRead = Components.Schemas.GetAccountTokenUsageResponse
@@ -447,6 +451,7 @@ public extension AppServerModels.ClientRequest {
         case let .threadItemsRead(value): value
         case let .threadGuardianReview(value): value
         case let .threadInjectItems(value): value
+        case let .threadPrepareApprovedPlan(value): value
         case let .skillsList(value): value
         case let .skillsExtraRootsSet(value): value
         case let .hooksList(value): value
@@ -531,6 +536,7 @@ public extension AppServerModels.ClientRequest {
         case let .accountSessionList(value): value
         case let .accountSessionSwitch(value): value
         case let .accountLogout(value): value
+        case let .accountSecuritySetupRead(value): value
         case let .accountRateLimitsRead(value): value
         case let .accountRateLimitResetCreditConsume(value): value
         case let .accountUsageRead(value): value
@@ -1124,6 +1130,14 @@ extension Components.Schemas.ClientRequestThreadInjectItemsRequest: ClientReques
     }
 }
 
+extension Components.Schemas.ClientRequestThreadPrepareApprovedPlanRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ThreadPrepareApprovedPlanParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadPrepareApprovedPlan
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .threadPrepareApprovedPlan(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
 extension Components.Schemas.ClientRequestSkillsListRequest: ClientRequestable {
     public typealias Params = Components.Schemas.SkillsListParams
     public typealias Response = AppServerModels.ClientRequest.Response.SkillsList
@@ -1485,7 +1499,7 @@ extension Components.Schemas.ClientRequestModelListRequest: ClientRequestable {
 }
 
 extension Components.Schemas.ClientRequestAccountGatewayOAuthReadRequest: ClientRequestable {
-    public typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
+    public typealias Params = Components.Schemas.GatewayOAuthReadParams?
     public typealias Response = AppServerModels.ClientRequest.Response.AccountGatewayOAuthRead
     public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .accountGatewayOAuthRead(.init(id: id, method: .allCases.first!, params: params))
@@ -1493,7 +1507,7 @@ extension Components.Schemas.ClientRequestAccountGatewayOAuthReadRequest: Client
 }
 
 extension Components.Schemas.ClientRequestAccountGatewayOAuthLoginRequest: ClientRequestable {
-    public typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
+    public typealias Params = Components.Schemas.GatewayOAuthLoginParams?
     public typealias Response = AppServerModels.ClientRequest.Response.AccountGatewayOAuthLogin
     public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .accountGatewayOAuthLogin(.init(id: id, method: .allCases.first!, params: params))
@@ -1793,6 +1807,14 @@ extension Components.Schemas.ClientRequestAccountLogoutRequest: ClientRequestabl
     public typealias Response = AppServerModels.ClientRequest.Response.AccountLogout
     public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .accountLogout(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestAccountSecuritySetupReadRequest: ClientRequestable {
+    public typealias Params = OpenAPIRuntime.OpenAPIValueContainer?
+    public typealias Response = AppServerModels.ClientRequest.Response.AccountSecuritySetupRead
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .accountSecuritySetupRead(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 

@@ -35,6 +35,19 @@ import Testing
     #expect(throws: (any Error).self) { try JSONEncoder().encode(InputAudioContentItemValue(_type: .inputAudio)) }
 }
 
+@Test func functionOutputAudioReferencesPreserveTheWireShape() throws {
+    for payload in [
+        #"[{"type":"input_audio","audio_url":"data:audio/wav;base64,YQ=="}]"#,
+        #"[{"type":"input_audio","file_id":"file-audio"}]"#,
+        #"[{"type":"input_audio","audio_url":"data:audio/wav;base64,YQ==","file_id":"file-audio"}]"#
+    ] {
+        let original = Data(payload.utf8)
+        let value = try JSONDecoder().decode(Components.Schemas.FunctionCallOutputBody.self, from: original)
+        let encoded = try JSONEncoder().encode(value)
+        #expect(try JSONSerialization.jsonObject(with: original) as? NSArray == JSONSerialization.jsonObject(with: encoded) as? NSArray)
+    }
+}
+
 @Test func historicalAudioConstructorsRetainWireShape() throws {
     let url = "data:audio/wav;base64,YQ=="
     let user = AudioUserInputValue(_type: .audio, url: url)
