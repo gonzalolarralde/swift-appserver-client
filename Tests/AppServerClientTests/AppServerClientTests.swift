@@ -96,6 +96,31 @@ import Testing
     #expect(actual == expected)
 }
 
+@Test(arguments: [
+    #"{"mode":"show","version":1,"trustedContacts":"check","annotation":{"kind":"wellbeingHelpline","subject":"answer"}}"#,
+    #"{"mode":"hide","version":1,"replacement":{"kind":"wellbeingPromptHelpline"}}"#,
+    #"{"mode":"block","version":1,"reason":{"kind":"protection","protectionType":"example"}}"#,
+    #"{"mode":"block","version":1,"reason":{"kind":"cyber","trustedAccess":false}}"#,
+])
+func agentMessageDisplayRoundTripsTaggedVariants(_ json: String) throws {
+    let source = Data(json.utf8)
+    let value = try JSONDecoder().decode(Components.Schemas.AgentMessageDisplay.self, from: source)
+    let actual = try #require(JSONSerialization.jsonObject(with: JSONEncoder().encode(value)) as? NSDictionary)
+    let expected = try #require(JSONSerialization.jsonObject(with: source) as? NSDictionary)
+    #expect(actual == expected)
+}
+
+@Test func userVerificationAcceptsResponsesWithAndWithoutBiometricType() throws {
+    let decoder = JSONDecoder()
+    let old = Data(#"{"proof":{"credentialId":"id","signature":"c2ln"}}"#.utf8)
+    let current = Data(#"{"proof":{"credentialId":"id","signature":"c2ln"},"biometricType":"fingerprint"}"#.utf8)
+    let oldResponse = try decoder.decode(Components.Schemas.UserVerificationVerifyResponse.self, from: old)
+    let currentResponse = try decoder.decode(Components.Schemas.UserVerificationVerifyResponse.self, from: current)
+    #expect(oldResponse.biometricType == nil)
+    #expect(currentResponse.biometricType == .fingerprint)
+    #expect(oldResponse.proof == currentResponse.proof)
+}
+
 @Test func mcpServerElicitationOpenaiFormModesRemainDistinct() throws {
     let decoder = JSONDecoder()
     let encoder = JSONEncoder()

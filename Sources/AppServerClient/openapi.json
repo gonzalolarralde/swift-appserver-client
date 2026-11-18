@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Codex App Server Protocol",
-    "version": "0.169.1"
+    "version": "0.170.0"
   },
   "paths": {},
   "components": {
@@ -5708,7 +5708,7 @@
         "type": "object"
       },
       "ThreadGuardianReviewParams": {
-        "description": "Calling `thread/guardianReview` subscribes the connection to the thread. The subscription remains after the review completes, keeping the thread loaded until the client calls `thread/unsubscribe` or disconnects.",
+        "description": "Calling `thread/guardianReview` subscribes the connection to the thread. The subscription remains after the review completes, keeping the thread loaded until the client calls `thread/unsubscribe` or disconnects. Sequential calls on the same loaded thread can reuse Guardian history across direct reviews and live approvals. The reviewer keeps a separate conversation from the actor and follows the parent thread's normal persistence settings. A retry evaluates the final call again under the current policy.",
         "properties": {
           "threadId": {
             "type": "string"
@@ -15509,30 +15509,213 @@
         ],
         "type": "object"
       },
-      "AgentMessageDisplay": {
-        "description": "A presentation instruction for Chat to apply to this answer when recovering history.",
+      "HelplineSubject": {
+        "enum": [
+          "answer",
+          "prompt"
+        ],
+        "type": "string"
+      },
+      "AnswerAnnotation": {
         "properties": {
-          "action": {
-            "description": "Unknown actions must be left for the producing client to handle.",
+          "kind": {
+            "enum": [
+              "wellbeingHelpline"
+            ],
             "type": "string"
           },
-          "blockType": {
-            "type": "string",
-            "nullable": true
+          "subject": {
+            "$ref": "#/components/schemas/HelplineSubject"
+          }
+        },
+        "required": [
+          "kind",
+          "subject"
+        ],
+        "type": "object"
+      },
+      "TrustedContacts": {
+        "enum": [
+          "check",
+          "skip"
+        ],
+        "type": "string"
+      },
+      "AgentMessageDisplayShow": {
+        "properties": {
+          "annotation": {
+            "$ref": "#/components/schemas/AnswerAnnotation"
           },
-          "checkTrustedContacts": {
-            "type": "boolean",
-            "nullable": true
+          "mode": {
+            "enum": [
+              "show"
+            ],
+            "type": "string"
           },
-          "cyberTrustedAccess": {
+          "trustedContacts": {
+            "$ref": "#/components/schemas/TrustedContacts"
+          },
+          "version": {
+            "enum": [
+              1
+            ],
+            "format": "uint8",
+            "minimum": 0.0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "mode",
+          "trustedContacts",
+          "version"
+        ],
+        "type": "object"
+      },
+      "AnswerReplacement": {
+        "properties": {
+          "kind": {
+            "enum": [
+              "wellbeingPromptHelpline"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind"
+        ],
+        "title": "WellbeingPromptHelplineAnswerReplacement",
+        "type": "object"
+      },
+      "AgentMessageDisplayHide": {
+        "properties": {
+          "mode": {
+            "enum": [
+              "hide"
+            ],
+            "type": "string"
+          },
+          "replacement": {
+            "$ref": "#/components/schemas/AnswerReplacement"
+          },
+          "version": {
+            "enum": [
+              1
+            ],
+            "format": "uint8",
+            "minimum": 0.0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "mode",
+          "replacement",
+          "version"
+        ],
+        "type": "object"
+      },
+      "BlockReasonProtection": {
+        "properties": {
+          "kind": {
+            "enum": [
+              "protection"
+            ],
+            "type": "string"
+          },
+          "protectionType": {
+            "description": "Identifies the same moderation row that Chat writes on the live path.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "protectionType"
+        ],
+        "type": "object"
+      },
+      "BlockReasonKindBlockReason": {
+        "properties": {
+          "kind": {
+            "enum": [
+              "cyber"
+            ],
+            "type": "string"
+          },
+          "trustedAccess": {
             "type": "boolean",
             "nullable": true
           }
         },
         "required": [
-          "action"
+          "kind"
+        ],
+        "title": "KindBlockReason",
+        "type": "object"
+      },
+      "BlockReason": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/BlockReasonProtection"
+          },
+          {
+            "$ref": "#/components/schemas/BlockReasonKindBlockReason"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "kind",
+          "mapping": {
+            "protection": "#/components/schemas/BlockReasonProtection",
+            "cyber": "#/components/schemas/BlockReasonKindBlockReason"
+          }
+        }
+      },
+      "AgentMessageDisplayBlock": {
+        "properties": {
+          "mode": {
+            "enum": [
+              "block"
+            ],
+            "type": "string"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/BlockReason"
+          },
+          "version": {
+            "enum": [
+              1
+            ],
+            "format": "uint8",
+            "minimum": 0.0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "mode",
+          "reason",
+          "version"
         ],
         "type": "object"
+      },
+      "AgentMessageDisplay": {
+        "description": "How Chat should present a recovered answer.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/AgentMessageDisplayShow"
+          },
+          {
+            "$ref": "#/components/schemas/AgentMessageDisplayHide"
+          },
+          {
+            "$ref": "#/components/schemas/AgentMessageDisplayBlock"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "mode",
+          "mapping": {
+            "show": "#/components/schemas/AgentMessageDisplayShow",
+            "hide": "#/components/schemas/AgentMessageDisplayHide",
+            "block": "#/components/schemas/AgentMessageDisplayBlock"
+          }
+        }
       },
       "AgentMessageModeration": {
         "properties": {
@@ -31758,6 +31941,12 @@
         "title": "UserVerificationStatusResponse",
         "type": "object"
       },
+      "UserVerificationBiometricType": {
+        "enum": [
+          "fingerprint"
+        ],
+        "type": "string"
+      },
       "UserVerificationProof": {
         "additionalProperties": false,
         "description": "A signature over the exact decoded challenge. The verifier validates and consumes it.",
@@ -31778,6 +31967,9 @@
       },
       "UserVerificationVerifyResponse": {
         "properties": {
+          "biometricType": {
+            "$ref": "#/components/schemas/UserVerificationBiometricType"
+          },
           "proof": {
             "$ref": "#/components/schemas/UserVerificationProof"
           }

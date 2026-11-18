@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.170.0 — 2026-11-18
+
+- Verified all 479 experimental schema files exported by official
+  `@openai/codex@0.170.0` against the clean public tag `rust-v0.170.0`, peeled
+  commit `29eb79e9866b3262a777fdf8195c1b9e63684c91`. Twenty-seven schema files
+  changed, with no additions or removals.
+- The recovered-answer `AgentMessageDisplay` object with an `action` field is
+  replaced by a versioned `mode` union with `show`, `hide`, and `block` variants.
+  Swift consumers now switch on these variants. User verification responses
+  can include optional `biometricType` metadata outside the signed proof.
+  The Guardian review documentation also clarifies history reuse and retry
+  behavior. RPC mappings are unchanged.
+- Passed idempotent generation, four generator tests, the Swift library
+  build, all 42 Swift tests, diff checks, and exact CLI initialize, account,
+  usage, and empty thread-list smoke checks. The Swift tests cover tagged
+  display round trips and verification responses with and without metadata.
+  `Package.resolved` is unchanged and the temporary credential copy was removed.
+  Live moderation, native verification, and turn listing were unexercised.
+
 ## 0.169.1 — 2026-11-18
 
 - Verified all 479 experimental schema files exported by official
