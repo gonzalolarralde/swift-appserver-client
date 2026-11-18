@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.169.1 — 2026-11-18
+
+- Verified all 479 experimental schema files exported by official
+  `@openai/codex@0.169.1` against the clean public tag `rust-v0.169.1`, peeled
+  commit `c376cf7396eff83ce4c6ac61b9553df142e7a0be`.
+- No public app-server contract change from 0.169.0. The schema and Swift
+  mappings are identical. Updated compatibility and OpenAPI version metadata.
+- Passed idempotent generation, four generator tests, the Swift library
+  build, all 40 Swift tests, diff checks, and exact CLI initialize, account,
+  usage, and empty thread-list smoke checks. `Package.resolved` is unchanged.
+  The temporary credential copy was removed. Turn listing was unexercised.
+
 ## 0.169.0 — 2026-11-13
 
 - Verified the official macOS arm64 CLI archive digest and all 479 experimental
