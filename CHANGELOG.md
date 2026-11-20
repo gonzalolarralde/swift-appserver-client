@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.171.0 — 2026-11-20
+
+- Verified all 483 experimental schema files exported by official
+  `@openai/codex@0.171.0` against clean public tag `rust-v0.171.0`, peeled
+  commit `ccf9be8cc458bd6b8336fe84d68d8893f2691a5e`. Six schema files were
+  added, two removed, and 47 changed.
+- Adds streaming thread search, cancellation of regular and streaming searches,
+  partial search notifications, realtime history listing, and default provider
+  selection. Realtime items gain frames, turn-input acceptance, saved session-end
+  input, and observation timestamps. MCP requests, status, elicitation, and call
+  history gain optional environment registration IDs. Thread listing accepts
+  an ID filter. Account updates can report workspace routing readiness, and
+  managed OpenTelemetry requirements can specify header refresh helpers.
+- The upstream contract removes `currentTime/read` and `Project.position`.
+  The Swift compatibility overlay retains deprecated clock models and the
+  optional position field for historical data. Realtime item switches must
+  handle the new variants. Added the known `bioPolicy` error and repaired three
+  request-to-response mappings using the exact protocol declarations.
+- Passed idempotent generation, seven generator tests, the Swift library build,
+  all 45 Swift tests, diff checks, and exact CLI initialize, authenticated
+  account, usage, and empty thread-list smoke checks. Tests cover retained clock
+  and project data, MCP environment IDs, and realtime observation metadata.
+  `Package.resolved` is unchanged and the temporary credential copy was removed.
+  Live streaming search, realtime voice, provider writes, and turn listing
+  were unexercised.
+
 ## 0.170.0 — 2026-11-18
 
 - Verified all 479 experimental schema files exported by official

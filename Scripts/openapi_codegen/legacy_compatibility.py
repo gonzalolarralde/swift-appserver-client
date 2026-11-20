@@ -20,9 +20,13 @@ def retain_legacy_symbols(document: dict[str, Any]) -> None:
             for key, schema in properties.items():
                 schemas[name]["properties"].setdefault(key, copy.deepcopy(schema))
             schemas[name]["properties"] = dict(sorted(schemas[name]["properties"].items()))
-    for name in legacy["clientRequestComponents"]:
-        if name in added:
-            method = schemas[name]["properties"]["method"]["enum"][0]
-            reference = f"#/components/schemas/{name}"
-            schemas["ClientRequest"]["oneOf"].append({"$ref": reference})
-            schemas["ClientRequest"]["discriminator"]["mapping"][method] = reference
+    for union, components in (
+        ("ClientRequest", legacy["clientRequestComponents"]),
+        ("ServerRequest", legacy["serverRequestComponents"]),
+    ):
+        for name in components:
+            if name in added:
+                method = schemas[name]["properties"]["method"]["enum"][0]
+                reference = f"#/components/schemas/{name}"
+                schemas[union]["oneOf"].append({"$ref": reference})
+                schemas[union]["discriminator"]["mapping"][method] = reference

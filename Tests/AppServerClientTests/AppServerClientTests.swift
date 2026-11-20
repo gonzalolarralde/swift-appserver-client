@@ -79,7 +79,7 @@ import Testing
 
 @Test func mcpServerElicitationUserVerificationRoundTrips() throws {
     let input = Data(
-        #"{"challenge":"Y2hhbGxlbmdl","description":"Approve this operation","mode":"openai/userVerification","serverName":"test-server","threadId":"thread-1","turnId":"turn-1","title":"Verify"}"#.utf8
+        #"{"challenge":"Y2hhbGxlbmdl","description":"Approve this operation","mode":"openai/userVerification","environmentId":"env-1","serverName":"test-server","threadId":"thread-1","turnId":"turn-1","title":"Verify"}"#.utf8
     )
     let value = try JSONDecoder().decode(
         Components.Schemas.McpServerElicitationRequestParams.self,

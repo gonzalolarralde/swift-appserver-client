@@ -31,6 +31,7 @@ public enum CodexErrorInfoValue: Codable, Hashable, Sendable {
         case policyCapacityUnavailable
         case inferenceHookDenied
         case cyberPolicy
+        case bioPolicy
         case misalignmentPolicyViolation
         case tooManyDenials
         case internalServerError

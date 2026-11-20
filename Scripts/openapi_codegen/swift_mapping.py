@@ -6,6 +6,9 @@ from openapi_codegen.common import UnionCase, UnionMapping, pascal_case
 
 
 RESPONSE_OVERRIDES = {
+    "ClientRequestThreadSearchStreamRequest": "ThreadSearchResponse",
+    "ClientRequestThreadSearchStreamCancelRequest": "ThreadSearchCancelResponse",
+    "ClientRequestModelProviderDefaultSetRequest": "ConfigWriteResponse",
     "ClientRequestThreadNameSetRequest": "ThreadSetNameResponse",
     "ClientRequestAppListRequest": "AppsListResponse",
     "ClientRequestAppReadRequest": "AppsReadResponse",

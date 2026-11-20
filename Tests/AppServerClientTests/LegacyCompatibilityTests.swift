@@ -2,6 +2,34 @@ import Foundation
 import Testing
 @testable import AppServerClient
 
+@Test func legacyClockRequestAndResponsePreserveTheirWirePayloads() throws {
+    let request = AppServerModels.ServerRequest.CurrentTimeRead.build(
+        id: .integer(7), params: .init(threadId: "thread-1")
+    )
+    let data = try JSONEncoder().encode(request)
+    let actual = try #require(JSONSerialization.jsonObject(with: data) as? NSDictionary)
+    let expected: NSDictionary = [
+        "id": 7, "method": "currentTime/read", "params": ["threadId": "thread-1"]
+    ]
+    #expect(actual == expected)
+    #expect(try JSONDecoder().decode(AppServerModels.ServerRequest.self, from: data) == request)
+    let response = Components.Schemas.CurrentTimeReadResponse(currentTimeAt: 1_795_186_654)
+    #expect(try JSONDecoder().decode(
+        Components.Schemas.CurrentTimeReadResponse.self, from: JSONEncoder().encode(response)
+    ) == response)
+}
+
+@Test func projectPositionCanBeAbsentAndHistoricalOrderingIsRetained() throws {
+    let json = Data(#"{"createdAt":1,"id":"project-1","metadata":{},"name":"Project","roots":[],"updatedAt":2}"#.utf8)
+    let decoder = JSONDecoder()
+    var project = try decoder.decode(Components.Schemas.Project.self, from: json)
+    #expect(project.position == nil)
+    project.position = 42
+    #expect(try decoder.decode(
+        Components.Schemas.Project.self, from: JSONEncoder().encode(project)
+    ) == project)
+}
+
 @Test func removedNamespaceCapabilityIsOptionalAndPreservesHistoricalValues() throws {
     let decoder = JSONDecoder()
     let current = try decoder.decode(Components.Schemas.ModelProviderCapabilitiesReadResponse.self,

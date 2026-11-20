@@ -2,6 +2,22 @@ import unittest
 from pathlib import Path
 
 from openapi_codegen.schema_bundler import Bundler
+from openapi_codegen.swift_mapping import SchemaIntrospector
+
+
+class SharedResponseMappingTests(unittest.TestCase):
+    def test_reused_response_types_are_mapped_to_their_existing_schemas(self):
+        for component, response in (
+            ("ClientRequestThreadSearchStreamRequest", "ThreadSearchResponse"),
+            ("ClientRequestThreadSearchStreamCancelRequest", "ThreadSearchCancelResponse"),
+            ("ClientRequestModelProviderDefaultSetRequest", "ConfigWriteResponse"),
+        ):
+            with self.subTest(component=component):
+                introspector = SchemaIntrospector({"components": {"schemas": {response: {}}}})
+                self.assertEqual(
+                    introspector.response_type_for_component("ClientRequest", component),
+                    f"Components.Schemas.{response}",
+                )
 
 
 class MultiTypeSchemaTests(unittest.TestCase):

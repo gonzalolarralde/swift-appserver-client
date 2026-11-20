@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Codex App Server Protocol",
-    "version": "0.170.0"
+    "version": "0.171.0"
   },
   "paths": {},
   "components": {
@@ -4601,6 +4601,13 @@
             "description": "Include persistent threads attached to a parent when searching by title.",
             "type": "boolean"
           },
+          "includedThreadIds": {
+            "description": "Restrict results to up to 100 thread IDs before pagination. Omit or send null for unrestricted results. An empty list matches nothing. Exclusions still apply. Repeat the same IDs on each page. The local store uses indexed metadata for this filter.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
           "limit": {
             "description": "Optional page size; defaults to a reasonable server-side value.",
             "format": "uint32",
@@ -4656,7 +4663,7 @@
             "type": "array"
           },
           "useStateDbOnly": {
-            "description": "If true, return from the state DB without scanning JSONL rollouts to repair thread metadata. Omitted or false preserves scan-and-repair behavior.",
+            "description": "If true, the local store returns indexed metadata without scanning JSONL rollouts for repairs. Requests with `includedThreadIds` always use indexed metadata.",
             "type": "boolean"
           }
         },
@@ -4948,6 +4955,7 @@
       "ProjectMoveParams": {
         "properties": {
           "beforeProjectId": {
+            "description": "Place the project before this ID, or append it when omitted or null.",
             "type": "string",
             "nullable": true
           },
@@ -5233,7 +5241,7 @@
             "nullable": true
           },
           "searchTerm": {
-            "description": "Required substring/full-text query for thread search.",
+            "description": "Required substring/full-text query. `thread/search/stream` limits this to 65,536 UTF-8 bytes after trimming surrounding whitespace.",
             "type": "string"
           },
           "sortDirection": {
@@ -5277,6 +5285,92 @@
           "params"
         ],
         "title": "Thread/searchRequest",
+        "type": "object"
+      },
+      "ClientRequestThreadSearchStreamRequest": {
+        "description": "Search with best-effort incremental `thread/search/partial` notifications. The final response is authoritative for results, ordering, and cursors.",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "thread/search/stream"
+            ],
+            "title": "Thread/search/streamRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ThreadSearchParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "Thread/search/streamRequest",
+        "type": "object"
+      },
+      "ThreadSearchCancelParams": {
+        "description": "Request cancellation on the same connection. `thread/search/cancel` targets only `thread/search`; `thread/search/stream/cancel` targets only `thread/search/stream`. Cancellation is idempotent: the cancel response acknowledges the request, and an interrupted search completes with an error after its subprocess is stopped and reaped. If completion races cancellation, the original search may still succeed. An already-completed search is unaffected.",
+        "properties": {
+          "requestId": {
+            "$ref": "#/components/schemas/RequestId"
+          }
+        },
+        "required": [
+          "requestId"
+        ],
+        "type": "object"
+      },
+      "ClientRequestThreadSearchCancelRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "thread/search/cancel"
+            ],
+            "title": "Thread/search/cancelRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ThreadSearchCancelParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "Thread/search/cancelRequest",
+        "type": "object"
+      },
+      "ClientRequestThreadSearchStreamCancelRequest": {
+        "description": "Cancel a `thread/search/stream` request on this connection.",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "thread/search/stream/cancel"
+            ],
+            "title": "Thread/search/stream/cancelRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ThreadSearchCancelParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "Thread/search/stream/cancelRequest",
         "type": "object"
       },
       "ThreadSearchOccurrencesParams": {
@@ -8153,6 +8247,102 @@
         "title": "Thread/timeline/listRequest",
         "type": "object"
       },
+      "ThreadRealtimeOrder": {
+        "type": "string",
+        "enum": [
+          "observedAt",
+          "position"
+        ]
+      },
+      "ThreadRealtimeListParams": {
+        "properties": {
+          "afterPosition": {
+            "format": "uint64",
+            "minimum": 0.0,
+            "type": "integer",
+            "nullable": true
+          },
+          "cursor": {
+            "type": "string",
+            "nullable": true
+          },
+          "eventId": {
+            "description": "A required exact event ID, such as a completed item's acknowledgement. Returns pending until projected. Explicit filters can exclude a known event.",
+            "type": "string",
+            "nullable": true
+          },
+          "fromObservedAtMs": {
+            "description": "Inclusive canonical observation time lower bound.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
+          },
+          "limit": {
+            "format": "uint32",
+            "minimum": 0.0,
+            "type": "integer",
+            "nullable": true
+          },
+          "order": {
+            "$ref": "#/components/schemas/ThreadRealtimeOrder"
+          },
+          "requiredThroughPosition": {
+            "description": "Return pending until the projection includes this committed position.",
+            "format": "uint64",
+            "minimum": 0.0,
+            "type": "integer",
+            "nullable": true
+          },
+          "sessionId": {
+            "type": "string",
+            "nullable": true
+          },
+          "snapshotEnd": {
+            "description": "Exclusive committed position delimiting an immutable snapshot.",
+            "format": "uint64",
+            "minimum": 0.0,
+            "type": "integer",
+            "nullable": true
+          },
+          "threadId": {
+            "type": "string"
+          },
+          "toObservedAtMs": {
+            "description": "Exclusive canonical observation time upper bound.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
+          }
+        },
+        "required": [
+          "threadId"
+        ],
+        "type": "object"
+      },
+      "ClientRequestThreadRealtimeListRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "thread/realtime/list"
+            ],
+            "title": "Thread/realtime/listRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ThreadRealtimeListParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "Thread/realtime/listRequest",
+        "type": "object"
+      },
       "ThreadRealtimeListVoicesParams": {
         "description": "EXPERIMENTAL - list voices supported by thread realtime.",
         "type": "object"
@@ -8678,6 +8868,42 @@
           "params"
         ],
         "title": "ModelProvider/config/writeRequest",
+        "type": "object"
+      },
+      "ModelProviderDefaultSetParams": {
+        "properties": {
+          "providerId": {
+            "description": "Configured provider to use by default for new threads and unscoped model lists.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "providerId"
+        ],
+        "type": "object"
+      },
+      "ClientRequestModelProviderDefaultSetRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "modelProvider/default/set"
+            ],
+            "title": "ModelProvider/default/setRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ModelProviderDefaultSetParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "ModelProvider/default/setRequest",
         "type": "object"
       },
       "ModelProviderCapabilitiesReadParams": {
@@ -9309,6 +9535,11 @@
           "clientRegistration": {
             "$ref": "#/components/schemas/McpServerOauthClientRegistration"
           },
+          "environmentId": {
+            "description": "Exact registration scope; omission preserves legacy name-only selection.",
+            "type": "string",
+            "nullable": true
+          },
           "name": {
             "type": "string"
           },
@@ -9397,6 +9628,11 @@
           "detail": {
             "$ref": "#/components/schemas/McpServerStatusDetail"
           },
+          "environmentId": {
+            "description": "Select this environment's registration. Requires `serverName` and `threadId`. When omitted, a named request uses the same server as older clients.",
+            "type": "string",
+            "nullable": true
+          },
           "limit": {
             "description": "Optional page size; defaults to a server-defined value.",
             "format": "uint32",
@@ -9465,6 +9701,11 @@
             "type": "object"
           },
           "connectorId": {
+            "type": "string",
+            "nullable": true
+          },
+          "environmentId": {
+            "description": "Exact registration scope; omission preserves legacy name-only selection.",
             "type": "string",
             "nullable": true
           },
@@ -9606,6 +9847,11 @@
         "properties": {
           "_meta": {},
           "arguments": {},
+          "environmentId": {
+            "description": "Exact registration scope; omission preserves legacy name-only selection.",
+            "type": "string",
+            "nullable": true
+          },
           "server": {
             "type": "string"
           },
@@ -12090,6 +12336,15 @@
             "$ref": "#/components/schemas/ClientRequestThreadSearchRequest"
           },
           {
+            "$ref": "#/components/schemas/ClientRequestThreadSearchStreamRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ClientRequestThreadSearchCancelRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ClientRequestThreadSearchStreamCancelRequest"
+          },
+          {
             "$ref": "#/components/schemas/ClientRequestThreadSearchOccurrencesRequest"
           },
           {
@@ -12246,6 +12501,9 @@
             "$ref": "#/components/schemas/ClientRequestThreadTimelineListRequest"
           },
           {
+            "$ref": "#/components/schemas/ClientRequestThreadRealtimeListRequest"
+          },
+          {
             "$ref": "#/components/schemas/ClientRequestThreadRealtimeListVoicesRequest"
           },
           {
@@ -12268,6 +12526,9 @@
           },
           {
             "$ref": "#/components/schemas/ClientRequestModelProviderConfigWriteRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ClientRequestModelProviderDefaultSetRequest"
           },
           {
             "$ref": "#/components/schemas/ClientRequestModelProviderCapabilitiesReadRequest"
@@ -12526,6 +12787,9 @@
             "threadSection/update": "#/components/schemas/ClientRequestThreadSectionUpdateRequest",
             "threadSection/delete": "#/components/schemas/ClientRequestThreadSectionDeleteRequest",
             "thread/search": "#/components/schemas/ClientRequestThreadSearchRequest",
+            "thread/search/stream": "#/components/schemas/ClientRequestThreadSearchStreamRequest",
+            "thread/search/cancel": "#/components/schemas/ClientRequestThreadSearchCancelRequest",
+            "thread/search/stream/cancel": "#/components/schemas/ClientRequestThreadSearchStreamCancelRequest",
             "thread/searchOccurrences": "#/components/schemas/ClientRequestThreadSearchOccurrencesRequest",
             "thread/loaded/list": "#/components/schemas/ClientRequestThreadLoadedListRequest",
             "thread/read": "#/components/schemas/ClientRequestThreadReadRequest",
@@ -12578,6 +12842,7 @@
             "thread/realtime/appendSpeech": "#/components/schemas/ClientRequestThreadRealtimeAppendSpeechRequest",
             "thread/realtime/stop": "#/components/schemas/ClientRequestThreadRealtimeStopRequest",
             "thread/timeline/list": "#/components/schemas/ClientRequestThreadTimelineListRequest",
+            "thread/realtime/list": "#/components/schemas/ClientRequestThreadRealtimeListRequest",
             "thread/realtime/listVoices": "#/components/schemas/ClientRequestThreadRealtimeListVoicesRequest",
             "review/start": "#/components/schemas/ClientRequestReviewStartRequest",
             "model/list": "#/components/schemas/ClientRequestModelListRequest",
@@ -12586,6 +12851,7 @@
             "account/gatewayOAuth/cancel": "#/components/schemas/ClientRequestAccountGatewayOAuthCancelRequest",
             "modelProvider/list": "#/components/schemas/ClientRequestModelProviderListRequest",
             "modelProvider/config/write": "#/components/schemas/ClientRequestModelProviderConfigWriteRequest",
+            "modelProvider/default/set": "#/components/schemas/ClientRequestModelProviderDefaultSetRequest",
             "modelProvider/capabilities/read": "#/components/schemas/ClientRequestModelProviderCapabilitiesReadRequest",
             "experimentalFeature/list": "#/components/schemas/ClientRequestExperimentalFeatureListRequest",
             "permissionProfile/list": "#/components/schemas/ClientRequestPermissionProfileListRequest",
@@ -13505,6 +13771,11 @@
           "title": {
             "type": "string"
           },
+          "environmentId": {
+            "description": "Registration scope, not necessarily the server's execution environment.",
+            "type": "string",
+            "nullable": true
+          },
           "serverName": {
             "type": "string"
           },
@@ -13992,6 +14263,11 @@
           "requestedSchema": {
             "$ref": "#/components/schemas/McpElicitationSchema"
           },
+          "environmentId": {
+            "description": "Registration scope, not necessarily the server's execution environment.",
+            "type": "string",
+            "nullable": true
+          },
           "serverName": {
             "type": "string"
           },
@@ -14026,6 +14302,11 @@
             "type": "string"
           },
           "requestedSchema": {},
+          "environmentId": {
+            "description": "Registration scope, not necessarily the server's execution environment.",
+            "type": "string",
+            "nullable": true
+          },
           "serverName": {
             "type": "string"
           },
@@ -14060,6 +14341,11 @@
             "type": "string"
           },
           "requestedSchema": {},
+          "environmentId": {
+            "description": "Registration scope, not necessarily the server's execution environment.",
+            "type": "string",
+            "nullable": true
+          },
           "serverName": {
             "type": "string"
           },
@@ -14098,6 +14384,11 @@
           },
           "url": {
             "type": "string"
+          },
+          "environmentId": {
+            "description": "Registration scope, not necessarily the server's execution environment.",
+            "type": "string",
+            "nullable": true
           },
           "serverName": {
             "type": "string"
@@ -14381,42 +14672,6 @@
           "params"
         ],
         "title": "Attestation/generateRequest",
-        "type": "object"
-      },
-      "CurrentTimeReadParams": {
-        "properties": {
-          "threadId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "threadId"
-        ],
-        "type": "object"
-      },
-      "ServerRequestCurrentTimeReadRequest": {
-        "description": "Read the current time from an external clock owned by the client.",
-        "properties": {
-          "id": {
-            "$ref": "#/components/schemas/RequestId"
-          },
-          "method": {
-            "enum": [
-              "currentTime/read"
-            ],
-            "title": "CurrentTime/readRequestMethod",
-            "type": "string"
-          },
-          "params": {
-            "$ref": "#/components/schemas/CurrentTimeReadParams"
-          }
-        },
-        "required": [
-          "id",
-          "method",
-          "params"
-        ],
-        "title": "CurrentTime/readRequest",
         "type": "object"
       },
       "ThreadId": {
@@ -14788,13 +15043,13 @@
             "$ref": "#/components/schemas/ServerRequestAttestationGenerateRequest"
           },
           {
-            "$ref": "#/components/schemas/ServerRequestCurrentTimeReadRequest"
-          },
-          {
             "$ref": "#/components/schemas/ServerRequestApplyPatchApprovalRequest"
           },
           {
             "$ref": "#/components/schemas/ServerRequestExecCommandApprovalRequest"
+          },
+          {
+            "$ref": "#/components/schemas/ServerRequestCurrentTimeReadRequest"
           }
         ],
         "discriminator": {
@@ -14808,9 +15063,9 @@
             "item/tool/call": "#/components/schemas/ServerRequestItemToolCallRequest",
             "account/chatgptAuthTokens/refresh": "#/components/schemas/ServerRequestAccountChatgptAuthTokensRefreshRequest",
             "attestation/generate": "#/components/schemas/ServerRequestAttestationGenerateRequest",
-            "currentTime/read": "#/components/schemas/ServerRequestCurrentTimeReadRequest",
             "applyPatchApproval": "#/components/schemas/ServerRequestApplyPatchApprovalRequest",
-            "execCommandApproval": "#/components/schemas/ServerRequestExecCommandApprovalRequest"
+            "execCommandApproval": "#/components/schemas/ServerRequestExecCommandApprovalRequest",
+            "currentTime/read": "#/components/schemas/ServerRequestCurrentTimeReadRequest"
           }
         }
       },
@@ -14834,6 +15089,7 @@
               "modelNotFound",
               "policyCapacityUnavailable",
               "cyberPolicy",
+              "bioPolicy",
               "misalignmentPolicyViolation",
               "tooManyDenials",
               "internalServerError",
@@ -16290,6 +16546,11 @@
             "description": "The duration of the MCP tool call in milliseconds.",
             "format": "int64",
             "type": "integer",
+            "nullable": true
+          },
+          "environmentId": {
+            "description": "Registration scope, not necessarily the server's execution environment.",
+            "type": "string",
             "nullable": true
           },
           "error": {
@@ -19978,6 +20239,65 @@
         "title": "Process/outputDeltaNotification",
         "type": "object"
       },
+      "ThreadSearchResult": {
+        "properties": {
+          "snippet": {
+            "type": "string"
+          },
+          "thread": {
+            "$ref": "#/components/schemas/Thread"
+          }
+        },
+        "required": [
+          "snippet",
+          "thread"
+        ],
+        "type": "object"
+      },
+      "ThreadSearchPartialNotification": {
+        "description": "A best-effort incremental batch for `thread/search/stream`. Match `requestId` to the request on this connection. Only a small subset of verified matches may be emitted; rows are unique and arrive in discovery order, but may be dropped under load or fall outside the final sorted page. Thread fields use stored metadata and the current watched status; live thread settings are enriched in the final response. Replace provisional rows with the authoritative final response. No partials follow it or an error.",
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/ThreadSearchResult"
+            },
+            "type": "array"
+          },
+          "requestId": {
+            "$ref": "#/components/schemas/RequestId"
+          }
+        },
+        "required": [
+          "data",
+          "requestId"
+        ],
+        "type": "object"
+      },
+      "ServerNotificationThreadSearchPartialNotification": {
+        "properties": {
+          "method": {
+            "enum": [
+              "thread/search/partial"
+            ],
+            "title": "Thread/search/partialNotificationMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/ThreadSearchPartialNotification"
+          },
+          "emittedAtMs": {
+            "description": "Unix timestamp (in milliseconds) when app-server emitted this notification.",
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "method",
+          "params"
+        ],
+        "title": "Thread/search/partialNotification",
+        "type": "object"
+      },
       "ProcessExitedNotification": {
         "description": "Final process exit notification for `process/spawn`.",
         "properties": {
@@ -20407,6 +20727,11 @@
       },
       "McpServerStatusUpdatedNotification": {
         "properties": {
+          "environmentId": {
+            "description": "Registration scope, not necessarily the server's execution environment.",
+            "type": "string",
+            "nullable": true
+          },
           "error": {
             "type": "string",
             "nullable": true
@@ -20548,6 +20873,13 @@
         ],
         "type": "string"
       },
+      "AccountUpdateReason": {
+        "enum": [
+          "workspaceRoutingReady",
+          "unknown"
+        ],
+        "type": "string"
+      },
       "AccountUpdatedNotification": {
         "properties": {
           "authMode": {
@@ -20555,6 +20887,9 @@
           },
           "planType": {
             "$ref": "#/components/schemas/PlanType"
+          },
+          "reason": {
+            "$ref": "#/components/schemas/AccountUpdateReason"
           }
         },
         "type": "object"
@@ -22202,6 +22537,12 @@
           "id": {
             "type": "string"
           },
+          "observedAtMs": {
+            "description": "Canonical observation time in Unix milliseconds for eligible voice calls.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
+          },
           "realtimeSessionId": {
             "type": "string"
           }
@@ -22221,6 +22562,67 @@
         ],
         "type": "string"
       },
+      "ThreadRealtimeVoiceTranscript": {
+        "properties": {
+          "role": {
+            "$ref": "#/components/schemas/ThreadRealtimeTranscriptRole"
+          },
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "role",
+          "text"
+        ],
+        "type": "object"
+      },
+      "ThreadRealtimeFrameChannels": {
+        "description": "A frame holds one or more payloads, at most one per channel. They share one ID, observation time, and seal. V1 requires its only channel, `voice_transcript`.",
+        "properties": {
+          "voice_transcript": {
+            "$ref": "#/components/schemas/ThreadRealtimeVoiceTranscript"
+          }
+        },
+        "required": [
+          "voice_transcript"
+        ],
+        "type": "object"
+      },
+      "ThreadRealtimeItemFrameThreadRealtimeItem": {
+        "properties": {
+          "channels": {
+            "$ref": "#/components/schemas/ThreadRealtimeFrameChannels"
+          },
+          "type": {
+            "enum": [
+              "frame"
+            ],
+            "title": "FrameThreadRealtimeItemType",
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "observedAtMs": {
+            "description": "Canonical observation time in Unix milliseconds for eligible voice calls.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
+          },
+          "realtimeSessionId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "channels",
+          "type",
+          "id",
+          "realtimeSessionId"
+        ],
+        "title": "FrameThreadRealtimeItem",
+        "type": "object"
+      },
       "ThreadRealtimeItemTranscriptSegmentThreadRealtimeItem": {
         "properties": {
           "role": {
@@ -22238,6 +22640,12 @@
           },
           "id": {
             "type": "string"
+          },
+          "observedAtMs": {
+            "description": "Canonical observation time in Unix milliseconds for eligible voice calls.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
           },
           "realtimeSessionId": {
             "type": "string"
@@ -22350,6 +22758,12 @@
           "id": {
             "type": "string"
           },
+          "observedAtMs": {
+            "description": "Canonical observation time in Unix milliseconds for eligible voice calls.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
+          },
           "realtimeSessionId": {
             "type": "string"
           }
@@ -22387,6 +22801,12 @@
           "id": {
             "type": "string"
           },
+          "observedAtMs": {
+            "description": "Canonical observation time in Unix milliseconds for eligible voice calls.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
+          },
           "realtimeSessionId": {
             "type": "string"
           }
@@ -22400,11 +22820,123 @@
         "title": "RealtimeSessionClosedThreadRealtimeItem",
         "type": "object"
       },
+      "ThreadRealtimeHandoffMode": {
+        "enum": [
+          "start",
+          "steer"
+        ],
+        "type": "string"
+      },
+      "ThreadRealtimeItemTurnInputAcceptedThreadRealtimeItem": {
+        "properties": {
+          "handoff_id": {
+            "type": "string"
+          },
+          "input": {
+            "type": "string"
+          },
+          "input_item_id": {
+            "type": "string"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/ThreadRealtimeHandoffMode"
+          },
+          "source_event_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "turn_id": {
+            "type": "string"
+          },
+          "type": {
+            "enum": [
+              "turnInputAccepted"
+            ],
+            "title": "TurnInputAcceptedThreadRealtimeItemType",
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "observedAtMs": {
+            "description": "Canonical observation time in Unix milliseconds for eligible voice calls.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
+          },
+          "realtimeSessionId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "handoff_id",
+          "input",
+          "input_item_id",
+          "mode",
+          "source_event_ids",
+          "turn_id",
+          "type",
+          "id",
+          "realtimeSessionId"
+        ],
+        "title": "TurnInputAcceptedThreadRealtimeItem",
+        "type": "object"
+      },
+      "ThreadRealtimeItemSessionEndInputSavedThreadRealtimeItem": {
+        "properties": {
+          "input": {
+            "type": "string"
+          },
+          "input_item_id": {
+            "type": "string"
+          },
+          "source_event_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "type": {
+            "enum": [
+              "sessionEndInputSaved"
+            ],
+            "title": "SessionEndInputSavedThreadRealtimeItemType",
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "observedAtMs": {
+            "description": "Canonical observation time in Unix milliseconds for eligible voice calls.",
+            "format": "int64",
+            "type": "integer",
+            "nullable": true
+          },
+          "realtimeSessionId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "input",
+          "input_item_id",
+          "source_event_ids",
+          "type",
+          "id",
+          "realtimeSessionId"
+        ],
+        "title": "SessionEndInputSavedThreadRealtimeItem",
+        "type": "object"
+      },
       "ThreadRealtimeItem": {
         "description": "EXPERIMENTAL - a thread-scoped realtime item in the canonical timeline.",
         "oneOf": [
           {
             "$ref": "#/components/schemas/ThreadRealtimeItemRealtimeSessionStartedThreadRealtimeItem"
+          },
+          {
+            "$ref": "#/components/schemas/ThreadRealtimeItemFrameThreadRealtimeItem"
           },
           {
             "$ref": "#/components/schemas/ThreadRealtimeItemTranscriptSegmentThreadRealtimeItem"
@@ -22414,15 +22946,24 @@
           },
           {
             "$ref": "#/components/schemas/ThreadRealtimeItemRealtimeSessionClosedThreadRealtimeItem"
+          },
+          {
+            "$ref": "#/components/schemas/ThreadRealtimeItemTurnInputAcceptedThreadRealtimeItem"
+          },
+          {
+            "$ref": "#/components/schemas/ThreadRealtimeItemSessionEndInputSavedThreadRealtimeItem"
           }
         ],
         "discriminator": {
           "propertyName": "type",
           "mapping": {
             "realtimeSessionStarted": "#/components/schemas/ThreadRealtimeItemRealtimeSessionStartedThreadRealtimeItem",
+            "frame": "#/components/schemas/ThreadRealtimeItemFrameThreadRealtimeItem",
             "transcriptSegment": "#/components/schemas/ThreadRealtimeItemTranscriptSegmentThreadRealtimeItem",
             "bemItemPromoted": "#/components/schemas/ThreadRealtimeItemBemItemPromotedThreadRealtimeItem",
-            "realtimeSessionClosed": "#/components/schemas/ThreadRealtimeItemRealtimeSessionClosedThreadRealtimeItem"
+            "realtimeSessionClosed": "#/components/schemas/ThreadRealtimeItemRealtimeSessionClosedThreadRealtimeItem",
+            "turnInputAccepted": "#/components/schemas/ThreadRealtimeItemTurnInputAcceptedThreadRealtimeItem",
+            "sessionEndInputSaved": "#/components/schemas/ThreadRealtimeItemSessionEndInputSavedThreadRealtimeItem"
           }
         }
       },
@@ -23075,6 +23616,9 @@
             "$ref": "#/components/schemas/ServerNotificationProcessOutputDeltaNotification"
           },
           {
+            "$ref": "#/components/schemas/ServerNotificationThreadSearchPartialNotification"
+          },
+          {
             "$ref": "#/components/schemas/ServerNotificationProcessExitedNotification"
           },
           {
@@ -23260,6 +23804,7 @@
             "item/plan/delta": "#/components/schemas/ServerNotificationItemPlanDeltaNotification",
             "command/exec/outputDelta": "#/components/schemas/ServerNotificationCommandExecOutputDeltaNotification",
             "process/outputDelta": "#/components/schemas/ServerNotificationProcessOutputDeltaNotification",
+            "thread/search/partial": "#/components/schemas/ServerNotificationThreadSearchPartialNotification",
             "process/exited": "#/components/schemas/ServerNotificationProcessExitedNotification",
             "item/commandExecution/outputDelta": "#/components/schemas/ServerNotificationItemCommandExecutionOutputDeltaNotification",
             "item/commandExecution/terminalInteraction": "#/components/schemas/ServerNotificationItemCommandExecutionTerminalInteractionNotification",
@@ -23475,20 +24020,6 @@
           "decision"
         ],
         "title": "CommandExecutionRequestApprovalResponse",
-        "type": "object"
-      },
-      "CurrentTimeReadResponse": {
-        "properties": {
-          "currentTimeAt": {
-            "description": "Current time as whole Unix seconds.",
-            "format": "int64",
-            "type": "integer"
-          }
-        },
-        "required": [
-          "currentTimeAt"
-        ],
-        "title": "CurrentTimeReadResponse",
         "type": "object"
       },
       "DynamicToolCallResponse": {
@@ -25671,6 +26202,16 @@
           "exporter": {
             "$ref": "#/components/schemas/OtelExporter"
           },
+          "headers_helper": {
+            "type": "string",
+            "nullable": true
+          },
+          "headers_helper_refresh_interval_ms": {
+            "format": "uint64",
+            "minimum": 1.0,
+            "type": "integer",
+            "nullable": true
+          },
           "log_agent_responses": {
             "type": "boolean",
             "nullable": true
@@ -27631,6 +28172,11 @@
         "properties": {
           "authStatus": {
             "$ref": "#/components/schemas/McpAuthStatus"
+          },
+          "environmentId": {
+            "description": "Environment that contributed this registration; null for a thread-wide server. Older servers omit this field.",
+            "type": "string",
+            "nullable": true
           },
           "httpOrigin": {
             "description": "HTTP origin of the effective configured endpoint, including plugin servers. Excludes credentials, path, query, and fragment; null for non-HTTP transports.",
@@ -29832,7 +30378,10 @@
           },
           "position": {
             "format": "int64",
-            "type": "integer"
+            "type": "integer",
+            "nullable": true,
+            "deprecated": true,
+            "description": "Removed in Codex 0.171.0. Retained for historical project ordering."
           },
           "recencyAt": {
             "description": "Newest non-archived member thread's recency, in Unix seconds; null when none exist.",
@@ -29856,7 +30405,6 @@
           "id",
           "metadata",
           "name",
-          "position",
           "roots",
           "updatedAt"
         ],
@@ -31098,6 +31646,67 @@
         "title": "ThreadRealtimeAppendTextResponse",
         "type": "object"
       },
+      "ThreadRealtimeCoverage": {
+        "enum": [
+          "unsupported",
+          "pending",
+          "ready"
+        ],
+        "type": "string"
+      },
+      "ThreadRealtimeEntry": {
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/ThreadRealtimeItem"
+          },
+          "position": {
+            "format": "uint64",
+            "minimum": 0.0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "item",
+          "position"
+        ],
+        "type": "object"
+      },
+      "ThreadRealtimeListResponse": {
+        "properties": {
+          "coverage": {
+            "$ref": "#/components/schemas/ThreadRealtimeCoverage"
+          },
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/ThreadRealtimeEntry"
+            },
+            "type": "array"
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          },
+          "projectedThroughItemIndex": {
+            "description": "Exclusive position through which the projection has processed canonical history.",
+            "format": "uint64",
+            "minimum": 0.0,
+            "type": "integer"
+          },
+          "snapshotEnd": {
+            "format": "uint64",
+            "minimum": 0.0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "coverage",
+          "data",
+          "projectedThroughItemIndex",
+          "snapshotEnd"
+        ],
+        "title": "ThreadRealtimeListResponse",
+        "type": "object"
+      },
       "RealtimeVoicesList": {
         "properties": {
           "defaultV1": {
@@ -31337,6 +31946,10 @@
         "title": "ThreadSampleResponse",
         "type": "object"
       },
+      "ThreadSearchCancelResponse": {
+        "title": "ThreadSearchCancelResponse",
+        "type": "object"
+      },
       "ThreadSearchTextRange": {
         "description": "UTF-16 code-unit range within `snippet`.",
         "properties": {
@@ -31408,21 +32021,6 @@
           "data"
         ],
         "title": "ThreadSearchOccurrencesResponse",
-        "type": "object"
-      },
-      "ThreadSearchResult": {
-        "properties": {
-          "snippet": {
-            "type": "string"
-          },
-          "thread": {
-            "$ref": "#/components/schemas/Thread"
-          }
-        },
-        "required": [
-          "snippet",
-          "thread"
-        ],
         "type": "object"
       },
       "ThreadSearchResponse": {
@@ -32011,6 +32609,61 @@
         ],
         "title": "WindowsSandboxSetupStartResponse",
         "type": "object"
+      },
+      "CurrentTimeReadParams": {
+        "properties": {
+          "threadId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "threadId"
+        ],
+        "type": "object",
+        "deprecated": true,
+        "description": "Removed in Codex 0.171.0. Retained for historical client clock requests."
+      },
+      "CurrentTimeReadResponse": {
+        "properties": {
+          "currentTimeAt": {
+            "description": "Current time as whole Unix seconds.",
+            "format": "int64",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "currentTimeAt"
+        ],
+        "title": "CurrentTimeReadResponse",
+        "type": "object",
+        "deprecated": true,
+        "description": "Removed in Codex 0.171.0. Retained for historical client clock requests."
+      },
+      "ServerRequestCurrentTimeReadRequest": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/RequestId"
+          },
+          "method": {
+            "enum": [
+              "currentTime/read"
+            ],
+            "title": "CurrentTime/readRequestMethod",
+            "type": "string"
+          },
+          "params": {
+            "$ref": "#/components/schemas/CurrentTimeReadParams"
+          }
+        },
+        "required": [
+          "id",
+          "method",
+          "params"
+        ],
+        "title": "CurrentTime/readRequest",
+        "type": "object",
+        "deprecated": true,
+        "description": "Removed in Codex 0.171.0. Retained for historical client clock requests."
       },
       "ThreadRollbackParams": {
         "description": "Deprecated compatibility model. thread/rollback was removed in Codex 0.156.0; sending it throws AppServerClientError.unsupportedMethod.",

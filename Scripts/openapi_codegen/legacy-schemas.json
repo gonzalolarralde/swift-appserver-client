@@ -1,6 +1,43 @@
 {
-  "description": "Swift source-compatibility only. Historical normalized schemas from SDK 0.155.1 (rollback and Windows field), 0.157.1 (plugin models), and 0.161.0 (namespace capability). Not part of the current upstream wire contract.",
+  "description": "Swift source-compatibility only. Historical normalized schemas from SDK 0.155.1 (rollback and Windows field), 0.157.1 (plugin models), 0.161.0 (namespace capability), and 0.170.0 (clock request and project position). Not part of the current upstream wire contract.",
   "components": {
+    "CurrentTimeReadParams": {
+      "properties": { "threadId": { "type": "string" } },
+      "required": ["threadId"],
+      "type": "object",
+      "deprecated": true,
+      "description": "Removed in Codex 0.171.0. Retained for historical client clock requests."
+    },
+    "CurrentTimeReadResponse": {
+      "properties": {
+        "currentTimeAt": {
+          "description": "Current time as whole Unix seconds.",
+          "format": "int64",
+          "type": "integer"
+        }
+      },
+      "required": ["currentTimeAt"],
+      "title": "CurrentTimeReadResponse",
+      "type": "object",
+      "deprecated": true,
+      "description": "Removed in Codex 0.171.0. Retained for historical client clock requests."
+    },
+    "ServerRequestCurrentTimeReadRequest": {
+      "properties": {
+        "id": { "$ref": "#/components/schemas/RequestId" },
+        "method": {
+          "enum": ["currentTime/read"],
+          "title": "CurrentTime/readRequestMethod",
+          "type": "string"
+        },
+        "params": { "$ref": "#/components/schemas/CurrentTimeReadParams" }
+      },
+      "required": ["id", "method", "params"],
+      "title": "CurrentTime/readRequest",
+      "type": "object",
+      "deprecated": true,
+      "description": "Removed in Codex 0.171.0. Retained for historical client clock requests."
+    },
     "ThreadRollbackParams": {
       "description": "Deprecated compatibility model. thread/rollback was removed in Codex 0.156.0; sending it throws AppServerClientError.unsupportedMethod.",
       "properties": {
@@ -462,6 +499,15 @@
     }
   },
   "properties": {
+    "Project": {
+      "position": {
+        "format": "int64",
+        "type": "integer",
+        "nullable": true,
+        "deprecated": true,
+        "description": "Removed in Codex 0.171.0. Retained for historical project ordering."
+      }
+    },
     "ModelProviderCapabilitiesReadResponse": {
       "namespaceTools": {
         "type": "boolean",
@@ -488,5 +534,8 @@
   },
   "clientRequestComponents": [
     "ClientRequestThreadRollbackRequest"
+  ],
+  "serverRequestComponents": [
+    "ServerRequestCurrentTimeReadRequest"
   ]
 }

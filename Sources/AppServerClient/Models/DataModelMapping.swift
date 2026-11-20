@@ -64,6 +64,9 @@ public extension AppServerModels.ClientRequest {
     typealias ThreadSectionUpdate = Components.Schemas.ClientRequestThreadSectionUpdateRequest
     typealias ThreadSectionDelete = Components.Schemas.ClientRequestThreadSectionDeleteRequest
     typealias ThreadSearch = Components.Schemas.ClientRequestThreadSearchRequest
+    typealias ThreadSearchStream = Components.Schemas.ClientRequestThreadSearchStreamRequest
+    typealias ThreadSearchCancel = Components.Schemas.ClientRequestThreadSearchCancelRequest
+    typealias ThreadSearchStreamCancel = Components.Schemas.ClientRequestThreadSearchStreamCancelRequest
     typealias ThreadSearchOccurrences = Components.Schemas.ClientRequestThreadSearchOccurrencesRequest
     typealias ThreadLoadedList = Components.Schemas.ClientRequestThreadLoadedListRequest
     typealias ThreadRead = Components.Schemas.ClientRequestThreadReadRequest
@@ -116,6 +119,7 @@ public extension AppServerModels.ClientRequest {
     typealias ThreadRealtimeAppendSpeech = Components.Schemas.ClientRequestThreadRealtimeAppendSpeechRequest
     typealias ThreadRealtimeStop = Components.Schemas.ClientRequestThreadRealtimeStopRequest
     typealias ThreadTimelineList = Components.Schemas.ClientRequestThreadTimelineListRequest
+    typealias ThreadRealtimeList = Components.Schemas.ClientRequestThreadRealtimeListRequest
     typealias ThreadRealtimeListVoices = Components.Schemas.ClientRequestThreadRealtimeListVoicesRequest
     typealias ReviewStart = Components.Schemas.ClientRequestReviewStartRequest
     typealias ModelList = Components.Schemas.ClientRequestModelListRequest
@@ -124,6 +128,7 @@ public extension AppServerModels.ClientRequest {
     typealias AccountGatewayOAuthCancel = Components.Schemas.ClientRequestAccountGatewayOAuthCancelRequest
     typealias ModelProviderList = Components.Schemas.ClientRequestModelProviderListRequest
     typealias ModelProviderConfigWrite = Components.Schemas.ClientRequestModelProviderConfigWriteRequest
+    typealias ModelProviderDefaultSet = Components.Schemas.ClientRequestModelProviderDefaultSetRequest
     typealias ModelProviderCapabilitiesRead = Components.Schemas.ClientRequestModelProviderCapabilitiesReadRequest
     typealias ExperimentalFeatureList = Components.Schemas.ClientRequestExperimentalFeatureListRequest
     typealias PermissionProfileList = Components.Schemas.ClientRequestPermissionProfileListRequest
@@ -252,6 +257,9 @@ public extension AppServerModels.ClientRequest {
         public typealias ThreadSectionUpdate = Components.Schemas.ThreadSectionUpdateResponse
         public typealias ThreadSectionDelete = Components.Schemas.ThreadSectionDeleteResponse
         public typealias ThreadSearch = Components.Schemas.ThreadSearchResponse
+        public typealias ThreadSearchStream = Components.Schemas.ThreadSearchResponse
+        public typealias ThreadSearchCancel = Components.Schemas.ThreadSearchCancelResponse
+        public typealias ThreadSearchStreamCancel = Components.Schemas.ThreadSearchCancelResponse
         public typealias ThreadSearchOccurrences = Components.Schemas.ThreadSearchOccurrencesResponse
         public typealias ThreadLoadedList = Components.Schemas.ThreadLoadedListResponse
         public typealias ThreadRead = Components.Schemas.ThreadReadResponse
@@ -304,6 +312,7 @@ public extension AppServerModels.ClientRequest {
         public typealias ThreadRealtimeAppendSpeech = Components.Schemas.ThreadRealtimeAppendSpeechResponse
         public typealias ThreadRealtimeStop = Components.Schemas.ThreadRealtimeStopResponse
         public typealias ThreadTimelineList = Components.Schemas.ThreadTimelineListResponse
+        public typealias ThreadRealtimeList = Components.Schemas.ThreadRealtimeListResponse
         public typealias ThreadRealtimeListVoices = Components.Schemas.ThreadRealtimeListVoicesResponse
         public typealias ReviewStart = Components.Schemas.ReviewStartResponse
         public typealias ModelList = Components.Schemas.ModelListResponse
@@ -312,6 +321,7 @@ public extension AppServerModels.ClientRequest {
         public typealias AccountGatewayOAuthCancel = Components.Schemas.GatewayOAuthCancelResponse
         public typealias ModelProviderList = Components.Schemas.ModelProviderListResponse
         public typealias ModelProviderConfigWrite = Components.Schemas.ModelProviderConfigWriteResponse
+        public typealias ModelProviderDefaultSet = Components.Schemas.ConfigWriteResponse
         public typealias ModelProviderCapabilitiesRead = Components.Schemas.ModelProviderCapabilitiesReadResponse
         public typealias ExperimentalFeatureList = Components.Schemas.ExperimentalFeatureListResponse
         public typealias PermissionProfileList = Components.Schemas.PermissionProfileListResponse
@@ -442,6 +452,9 @@ public extension AppServerModels.ClientRequest {
         case let .threadSectionUpdate(value): value
         case let .threadSectionDelete(value): value
         case let .threadSearch(value): value
+        case let .threadSearchStream(value): value
+        case let .threadSearchCancel(value): value
+        case let .threadSearchStreamCancel(value): value
         case let .threadSearchOccurrences(value): value
         case let .threadLoadedList(value): value
         case let .threadRead(value): value
@@ -494,6 +507,7 @@ public extension AppServerModels.ClientRequest {
         case let .threadRealtimeAppendSpeech(value): value
         case let .threadRealtimeStop(value): value
         case let .threadTimelineList(value): value
+        case let .threadRealtimeList(value): value
         case let .threadRealtimeListVoices(value): value
         case let .reviewStart(value): value
         case let .modelList(value): value
@@ -502,6 +516,7 @@ public extension AppServerModels.ClientRequest {
         case let .accountGatewayOAuthCancel(value): value
         case let .modelProviderList(value): value
         case let .modelProviderConfigWrite(value): value
+        case let .modelProviderDefaultSet(value): value
         case let .modelProviderCapabilitiesRead(value): value
         case let .experimentalFeatureList(value): value
         case let .permissionProfileList(value): value
@@ -1058,6 +1073,30 @@ extension Components.Schemas.ClientRequestThreadSearchRequest: ClientRequestable
     }
 }
 
+extension Components.Schemas.ClientRequestThreadSearchStreamRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ThreadSearchParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadSearchStream
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .threadSearchStream(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestThreadSearchCancelRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ThreadSearchCancelParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadSearchCancel
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .threadSearchCancel(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestThreadSearchStreamCancelRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ThreadSearchCancelParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadSearchStreamCancel
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .threadSearchStreamCancel(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
 extension Components.Schemas.ClientRequestThreadSearchOccurrencesRequest: ClientRequestable {
     public typealias Params = Components.Schemas.ThreadSearchOccurrencesParams
     public typealias Response = AppServerModels.ClientRequest.Response.ThreadSearchOccurrences
@@ -1474,6 +1513,14 @@ extension Components.Schemas.ClientRequestThreadTimelineListRequest: ClientReque
     }
 }
 
+extension Components.Schemas.ClientRequestThreadRealtimeListRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ThreadRealtimeListParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ThreadRealtimeList
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .threadRealtimeList(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
 extension Components.Schemas.ClientRequestThreadRealtimeListVoicesRequest: ClientRequestable {
     public typealias Params = Components.Schemas.ThreadRealtimeListVoicesParams
     public typealias Response = AppServerModels.ClientRequest.Response.ThreadRealtimeListVoices
@@ -1535,6 +1582,14 @@ extension Components.Schemas.ClientRequestModelProviderConfigWriteRequest: Clien
     public typealias Response = AppServerModels.ClientRequest.Response.ModelProviderConfigWrite
     public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
         .modelProviderConfigWrite(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ClientRequestModelProviderDefaultSetRequest: ClientRequestable {
+    public typealias Params = Components.Schemas.ModelProviderDefaultSetParams
+    public typealias Response = AppServerModels.ClientRequest.Response.ModelProviderDefaultSet
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ClientRequest {
+        .modelProviderDefaultSet(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
@@ -2060,9 +2115,9 @@ public extension AppServerModels.ServerRequest {
     typealias ItemToolCall = Components.Schemas.ServerRequestItemToolCallRequest
     typealias AccountChatgptAuthTokensRefresh = Components.Schemas.ServerRequestAccountChatgptAuthTokensRefreshRequest
     typealias AttestationGenerate = Components.Schemas.ServerRequestAttestationGenerateRequest
-    typealias CurrentTimeRead = Components.Schemas.ServerRequestCurrentTimeReadRequest
     typealias ApplyPatchApproval = Components.Schemas.ServerRequestApplyPatchApprovalRequest
     typealias ExecCommandApproval = Components.Schemas.ServerRequestExecCommandApprovalRequest
+    typealias CurrentTimeRead = Components.Schemas.ServerRequestCurrentTimeReadRequest
 
     enum Response {
         public typealias ItemCommandExecutionRequestApproval = Components.Schemas.CommandExecutionRequestApprovalResponse
@@ -2073,9 +2128,9 @@ public extension AppServerModels.ServerRequest {
         public typealias ItemToolCall = Components.Schemas.DynamicToolCallResponse
         public typealias AccountChatgptAuthTokensRefresh = Components.Schemas.ChatgptAuthTokensRefreshResponse
         public typealias AttestationGenerate = Components.Schemas.AttestationGenerateResponse
-        public typealias CurrentTimeRead = Components.Schemas.CurrentTimeReadResponse
         public typealias ApplyPatchApproval = Components.Schemas.ApplyPatchApprovalResponse
         public typealias ExecCommandApproval = Components.Schemas.ExecCommandApprovalResponse
+        public typealias CurrentTimeRead = Components.Schemas.CurrentTimeReadResponse
     }
 
     var asServerRequest: any ServerRequestable {
@@ -2088,9 +2143,9 @@ public extension AppServerModels.ServerRequest {
         case let .itemToolCall(value): value
         case let .accountChatgptAuthTokensRefresh(value): value
         case let .attestationGenerate(value): value
-        case let .currentTimeRead(value): value
         case let .applyPatchApproval(value): value
         case let .execCommandApproval(value): value
+        case let .currentTimeRead(value): value
         }
     }
 }
@@ -2159,14 +2214,6 @@ extension Components.Schemas.ServerRequestAttestationGenerateRequest: ServerRequ
     }
 }
 
-extension Components.Schemas.ServerRequestCurrentTimeReadRequest: ServerRequestable {
-    public typealias Params = Components.Schemas.CurrentTimeReadParams
-    public typealias Response = AppServerModels.ServerRequest.Response.CurrentTimeRead
-    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
-        .currentTimeRead(.init(id: id, method: .allCases.first!, params: params))
-    }
-}
-
 extension Components.Schemas.ServerRequestApplyPatchApprovalRequest: ServerRequestable {
     public typealias Params = Components.Schemas.ApplyPatchApprovalParams
     public typealias Response = AppServerModels.ServerRequest.Response.ApplyPatchApproval
@@ -2180,6 +2227,14 @@ extension Components.Schemas.ServerRequestExecCommandApprovalRequest: ServerRequ
     public typealias Response = AppServerModels.ServerRequest.Response.ExecCommandApproval
     public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
         .execCommandApproval(.init(id: id, method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ServerRequestCurrentTimeReadRequest: ServerRequestable {
+    public typealias Params = Components.Schemas.CurrentTimeReadParams
+    public typealias Response = AppServerModels.ServerRequest.Response.CurrentTimeRead
+    public static func build(id: Components.Schemas.RequestId, params: Params) -> AppServerModels.ServerRequest {
+        .currentTimeRead(.init(id: id, method: .allCases.first!, params: params))
     }
 }
 
@@ -2222,6 +2277,7 @@ public extension AppServerModels.ServerNotification {
     typealias ItemPlanDelta = Components.Schemas.ServerNotificationItemPlanDeltaNotification
     typealias CommandExecOutputDelta = Components.Schemas.ServerNotificationCommandExecOutputDeltaNotification
     typealias ProcessOutputDelta = Components.Schemas.ServerNotificationProcessOutputDeltaNotification
+    typealias ThreadSearchPartial = Components.Schemas.ServerNotificationThreadSearchPartialNotification
     typealias ProcessExited = Components.Schemas.ServerNotificationProcessExitedNotification
     typealias ItemCommandExecutionOutputDelta = Components.Schemas.ServerNotificationItemCommandExecutionOutputDeltaNotification
     typealias ItemCommandExecutionTerminalInteraction = Components.Schemas.ServerNotificationItemCommandExecutionTerminalInteractionNotification
@@ -2311,6 +2367,7 @@ public extension AppServerModels.ServerNotification {
         case let .itemPlanDelta(value): value
         case let .commandExecOutputDelta(value): value
         case let .processOutputDelta(value): value
+        case let .threadSearchPartial(value): value
         case let .processExited(value): value
         case let .itemCommandExecutionOutputDelta(value): value
         case let .itemCommandExecutionTerminalInteraction(value): value
@@ -2626,6 +2683,13 @@ extension Components.Schemas.ServerNotificationProcessOutputDeltaNotification: S
     public typealias Params = Components.Schemas.ProcessOutputDeltaNotification
     public static func build(params: Params) -> AppServerModels.ServerNotification {
         .processOutputDelta(.init(method: .allCases.first!, params: params))
+    }
+}
+
+extension Components.Schemas.ServerNotificationThreadSearchPartialNotification: ServerNotificationPayload {
+    public typealias Params = Components.Schemas.ThreadSearchPartialNotification
+    public static func build(params: Params) -> AppServerModels.ServerNotification {
+        .threadSearchPartial(.init(method: .allCases.first!, params: params))
     }
 }
 
