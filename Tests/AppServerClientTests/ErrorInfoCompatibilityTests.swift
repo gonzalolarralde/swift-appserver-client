@@ -12,6 +12,9 @@ import Testing
 @Test func knownErrorCasesPreserveTheirSwiftAPIAndRoundTrip() throws {
     let values: [Components.Schemas.CodexErrorInfo] = [
         .case1(.rateLimitExceeded),
+        .case1(.apiKeySpendLimitExceeded),
+        .case1(.projectSpendLimitExceeded),
+        .case1(.organizationSpendLimitExceeded),
         .case1(.modelNotFound),
         .case1(.policyCapacityUnavailable),
         .case1(.inferenceHookDenied),

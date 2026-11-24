@@ -22,8 +22,8 @@ models under `Sources/AppServerClient/Models/TypeOverrides`.
 
 ## Compatibility
 
-Release `0.171.0` is generated from the experimental app-server schema exposed
-by the stable public Codex tag `rust-v0.171.0`. App-server experimental APIs can
+Release `0.172.0` is generated from the experimental app-server schema exposed
+by the stable public Codex tag `rust-v0.172.0`. App-server experimental APIs can
 change between Codex releases, so matching these versions is recommended.
 
 ### Deprecated compatibility APIs
@@ -95,6 +95,15 @@ The upstream `currentTime/read` server request and `Project.position` field were
 removed in `0.171.0`. Their Swift symbols remain deprecated for historical
 messages, with `position` optional when decoding current projects.
 
+In `0.172.0`, realtime history uses `sessionInputSaved` with a required `reason`
+of `chunk` or `sessionEnd`. Handle this new Swift case; the deprecated
+`sessionEndInputSaved` payload remains available for historical data. Bedrock
+setup and login can select `amazon-bedrock-runtime` with optional `providerId`;
+omitting it keeps the server's Mantle default. Model discovery reports Daybreak
+availability, thread creation can request a propagation opt-out, and sampling
+can override the model. Spend-limit errors distinguish API-key, project, and
+organization scopes.
+
 ## Requirements
 
 Starting in `0.167.0`, audio user inputs and input-audio content can carry a
@@ -107,7 +116,7 @@ Approval switches must handle `humanCommand`; only opt into
 one-time decisions.
 
 - Swift 6.2 or newer.
-- Codex `0.171.0` must be available on `PATH` for the stdio connection and smoke
+- Codex `0.172.0` must be available on `PATH` for the stdio connection and smoke
   executable.
 - `codex app-server` must be supported by the installed Codex CLI.
 
@@ -159,7 +168,7 @@ Prefer the matching tagged release:
 dependencies: [
     .package(
         url: "https://github.com/gonzalolarralde/swift-appserver-client.git",
-        exact: "0.171.0"
+        exact: "0.172.0"
     ),
 ],
 ```
@@ -351,5 +360,5 @@ swift build --target AppServerClient
 - Requests whose protocol `params` are null support `send(request:)` without a
   `with:` argument.
 - The generated `multiAgentMode` fields are retained for wire compatibility,
-  but Codex `0.171.0` ignores them and derives proactive delegation from Ultra
+  but Codex `0.172.0` ignores them and derives proactive delegation from Ultra
   reasoning effort.

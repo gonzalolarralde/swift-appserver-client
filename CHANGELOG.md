@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.172.0 — 2026-11-24
+
+- Verified all 483 experimental schema files exported by official
+  `@openai/codex@0.172.0` against clean public tag `rust-v0.172.0`, peeled
+  commit `3d86e43b075adeba2193ec5c22ac92f55afd82e6`. Thirty-two schema files
+  changed, with no additions or removals. RPC mappings are unchanged.
+- Bedrock setup and login accept optional `providerId` selection, including
+  `amazon-bedrock-runtime`; omission retains the server's Mantle default.
+  Model discovery gains Daybreak availability. Thread creation can request a
+  Daybreak propagation opt-out, thread metadata reports enrollment, and
+  `thread/sample` can override the model. The exported config definitions gain
+  per-tool `approvals_reviewer`; upstream `AppsConfig` still lacks a typed
+  per-app map, so this does not add a typed per-tool configuration API.
+- Realtime history replaces `sessionEndInputSaved` with `sessionInputSaved`
+  and a required `reason` of `chunk` or `sessionEnd`. Consumers must handle the
+  new Swift union case. The compatibility overlay retains the historical case
+  and its deprecated payload without changing the pristine export. Extended
+  known error handling for API-key, project, and organization spend limits.
+- Passed idempotent generation, seven generator tests, the Swift library build,
+  all 47 Swift tests, diff checks, and exact CLI initialize, authenticated
+  account, usage, and empty thread-list smoke checks. Tests cover both realtime
+  reasons, historical event decoding, Bedrock provider selection and omission,
+  and known spend-limit errors. `Package.resolved` is unchanged and the
+  temporary credential copy was removed. Live Bedrock authentication, Daybreak
+  enrollment, sampling, realtime calls, and turn listing were unexercised.
+
 ## 0.171.0 — 2026-11-20
 
 - Verified all 483 experimental schema files exported by official

@@ -24,6 +24,9 @@ public enum CodexErrorInfoValue: Codable, Hashable, Sendable {
         case contextWindowExceeded
         case sessionBudgetExceeded
         case usageLimitExceeded
+        case apiKeySpendLimitExceeded
+        case projectSpendLimitExceeded
+        case organizationSpendLimitExceeded
         case rateLimitExceeded
         case flexUnavailable
         case serverOverloaded

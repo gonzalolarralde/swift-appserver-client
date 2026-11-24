@@ -1,6 +1,34 @@
 {
-  "description": "Swift source-compatibility only. Historical normalized schemas from SDK 0.155.1 (rollback and Windows field), 0.157.1 (plugin models), 0.161.0 (namespace capability), and 0.170.0 (clock request and project position). Not part of the current upstream wire contract.",
+  "description": "Swift source-compatibility only. Historical normalized schemas from SDK 0.155.1 (rollback and Windows field), 0.157.1 (plugin models), 0.161.0 (namespace capability), 0.170.0 (clock request and project position), and 0.171.0 (session-end input history). Not part of the current upstream wire contract.",
+  "unionComponents": {
+    "ThreadRealtimeItem": ["ThreadRealtimeItemSessionEndInputSavedThreadRealtimeItem"]
+  },
   "components": {
+    "ThreadRealtimeItemSessionEndInputSavedThreadRealtimeItem": {
+      "properties": {
+        "input": { "type": "string" },
+        "input_item_id": { "type": "string" },
+        "source_event_ids": { "items": { "type": "string" }, "type": "array" },
+        "type": {
+          "enum": ["sessionEndInputSaved"],
+          "title": "SessionEndInputSavedThreadRealtimeItemType",
+          "type": "string"
+        },
+        "id": { "type": "string" },
+        "observedAtMs": {
+          "description": "Canonical observation time in Unix milliseconds for eligible voice calls.",
+          "format": "int64",
+          "type": "integer",
+          "nullable": true
+        },
+        "realtimeSessionId": { "type": "string" }
+      },
+      "required": ["input", "input_item_id", "source_event_ids", "type", "id", "realtimeSessionId"],
+      "title": "SessionEndInputSavedThreadRealtimeItem",
+      "type": "object",
+      "deprecated": true,
+      "description": "Replaced by sessionInputSaved with a reason in Codex 0.172.0. Retained for historical realtime history."
+    },
     "CurrentTimeReadParams": {
       "properties": { "threadId": { "type": "string" } },
       "required": ["threadId"],

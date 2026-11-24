@@ -23,10 +23,12 @@ def retain_legacy_symbols(document: dict[str, Any]) -> None:
     for union, components in (
         ("ClientRequest", legacy["clientRequestComponents"]),
         ("ServerRequest", legacy["serverRequestComponents"]),
+        *legacy.get("unionComponents", {}).items(),
     ):
         for name in components:
             if name in added:
-                method = schemas[name]["properties"]["method"]["enum"][0]
+                discriminator = schemas[union]["discriminator"]
+                value = schemas[name]["properties"][discriminator["propertyName"]]["enum"][0]
                 reference = f"#/components/schemas/{name}"
                 schemas[union]["oneOf"].append({"$ref": reference})
-                schemas[union]["discriminator"]["mapping"][method] = reference
+                discriminator["mapping"][value] = reference

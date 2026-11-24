@@ -10,8 +10,9 @@ class LegacyCompatibilityTests(unittest.TestCase):
     def setUp(self):
         self.legacy = json.loads(Path(__file__).with_name("legacy-schemas.json").read_text())
         self.document = {"components": {"schemas": {
-            "ClientRequest": {"oneOf": [], "discriminator": {"mapping": {}}},
-            "ServerRequest": {"oneOf": [], "discriminator": {"mapping": {}}},
+            "ClientRequest": {"oneOf": [], "discriminator": {"propertyName": "method", "mapping": {}}},
+            "ServerRequest": {"oneOf": [], "discriminator": {"propertyName": "method", "mapping": {}}},
+            "ThreadRealtimeItem": {"oneOf": [], "discriminator": {"propertyName": "type", "mapping": {}}},
             "Project": {"properties": {}},
             "PluginSummary": {"properties": {"id": {"type": "string"}}},
             "ConfigRequirements": {"properties": {}},
@@ -29,6 +30,9 @@ class LegacyCompatibilityTests(unittest.TestCase):
         self.assertEqual(schemas["ServerRequest"]["discriminator"]["mapping"], {
             "currentTime/read": "#/components/schemas/ServerRequestCurrentTimeReadRequest"
         })
+        self.assertEqual(schemas["ThreadRealtimeItem"]["discriminator"]["mapping"], {
+            "sessionEndInputSaved": "#/components/schemas/ThreadRealtimeItemSessionEndInputSavedThreadRealtimeItem"
+        })
         self.assertNotIn("required", schemas["Project"])
 
     def test_reintroduced_upstream_symbols_are_never_overridden(self):
@@ -42,6 +46,7 @@ class LegacyCompatibilityTests(unittest.TestCase):
         self.assertEqual({name: schemas[name] for name in current}, current)
         self.assertEqual(schemas["ClientRequest"]["oneOf"], [])
         self.assertEqual(schemas["ServerRequest"]["oneOf"], [])
+        self.assertEqual(schemas["ThreadRealtimeItem"]["oneOf"], [])
 
 
 if __name__ == "__main__":
